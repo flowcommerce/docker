@@ -16,46 +16,51 @@ end
 puts "Checking if docker image %s exists" % tag
 
 if run("docker pull %s > /dev/null 2>&1" % tag)
+  next_tag = `sem-info tag next`.strip + "-dev"
+
   puts ""
-  puts "Docker image %s already exists" % tag
-else
+  puts "Docker image %s already exists. Will build as %s" % [tag, next_tag]
+
+  tag = next_tag
+end
+
+puts ""
+puts "Starting build of tag " % tag
+
+base_dir = File.expand_path(File.join(File.dirname(__FILE__), '/../../'))
+
+dirs = PROJECTS_TO_BUILD.map do |project|
+  dir = File.join(base_dir, project)
+  if !File.exists?(dir)
+    puts "ERROR: Could not find local directory[#{dir}]"
+    exit(1)
+  end
+  dir
+end
+
+dirs.each do |dir|
   puts ""
-  puts "Docker image %s not found. Starting build" % tag
-
-  base_dir = File.expand_path(File.join(File.dirname(__FILE__), '/../../'))
-
-  dirs = PROJECTS_TO_BUILD.map do |project|
-    dir = File.join(base_dir, project)
-    if !File.exists?(dir)
-      puts "ERROR: Could not find local directory[#{dir}]"
-      exit(1)
-    end
-    dir
+  puts "Building #{dir}"
+  Dir.chdir(dir) do
+    run("git pull --rebase")
+    run("sbt compile")
   end
+end
 
-  dirs.each do |dir|
-    puts ""
-    puts "Building #{dir}"
-    Dir.chdir(dir) do
-      run("git pull --rebase")
-      run("sbt compile")
-    end
-  end
+run("cp -R $HOME/.ivy2 .")
+run("cp -R $HOME/.sbt .")
 
-  run("cp -R $HOME/.ivy2 .")
-  run("cp -R $HOME/.sbt .")
-
-  begin
-    run("curl --silent https://s3.amazonaws.com/io.flow.aws-s3-public/util/environment-provider/environment-provider.jar > environment-provider.jar")
-    run("docker build -t %s ." % tag)
-    run("docker push %s" % tag)
-    run("docker tag -f %s %s:%s" % [tag, base_image, "latest"])
-    run("docker push %s:%s" % [base_image, "latest"])
-  ensure
-    run("rm -f environment-provider.jar")
-    run("rm -rf .ivy2")
-    run("rm -rf .sbt")
-  end
+begin
+  run("wget https://s3.amazonaws.com/io.flow.aws-s3-public/util/environment-provider/environment-provider_2.11-0.0.5-one-jar.jar")
+  run("cp environment-provider_2.11-0.0.5-one-jar.jar environment-provider.jar")
+  run("docker build -t %s ." % tag)
+  run("docker push %s" % tag)
+  run("docker tag -f %s %s:%s" % [tag, base_image, "latest"])
+  run("docker push %s:%s" % [base_image, "latest"])
+ensure
+  run("rm -f environment-provider.jar")
+  run("rm -rf .ivy2")
+  run("rm -rf .sbt")
 end
 
 # Now update the example in the README
@@ -71,7 +76,7 @@ begin
       if md = l.match(/from flowcommerce\/play:(.+)/i)
         found = true
         if changed = (latest != md[1])
-           l.sub!(md[1], latest)
+          l.sub!(md[1], latest)
         end
       end
       out << l
