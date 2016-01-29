@@ -46,13 +46,15 @@ else
   run("cp -R $HOME/.sbt .")
 
   begin
+    run("curl --silent https://s3.amazonaws.com/io.flow.aws-s3-public/util/environment-provider/environment-provider.jar > environment-provider.jar")
     run("docker build -t %s ." % tag)
     run("docker push %s" % tag)
     run("docker tag -f %s %s:%s" % [tag, base_image, "latest"])
     run("docker push %s:%s" % [base_image, "latest"])
   ensure
-    run("rm -r .ivy2")
-    run("rm -r .sbt")
+    run("rm -f environment-provider.jar")
+    run("rm -rf .ivy2")
+    run("rm -rf .sbt")
   end
 end
 

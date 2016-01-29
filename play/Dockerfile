@@ -27,15 +27,4 @@ RUN mkdir .ivy2/
 ADD .sbt/ .sbt/.
 ADD .ivy2 .ivy2/.
 
-# Two different options to pre-populate the cache:
-# (1) [IMPLEMENTED ABOVE] Add .ivy2 and .sbt cache directories and just copy over
-# (2) Store Cache tarball in S3 and download it on build
-# ------------------------ OPTION 2 ----------------------------------
-# AWS ENV vars for interacting with S3
-# TODO: How do we NOT put it in here?
-#ENV AWS_ACCESS_KEY_ID=xxxxxxxxxxxxx
-#ENV AWS_SECRET_ACCESS_KEY=yyyyyyyyyyyyyyyyyyyyyy
-#RUN apt-get install -y --no-install-recommends ca-certificates awscli
-# Download cache from S3
-#RUN aws s3 sync s3://cache-data .
-#RUN tar -zxvf caches.tar.gz -C /root/
+ADD environment-provider.jar .
