@@ -74,7 +74,8 @@ begin
     run("docker push %s:%s" % [base_image, "latest"])
   end
 ensure
-  run("rm -f environment-provider.jar")
+  run("rm -f environment-provider*.jar")
+  run("rm -f environment-provider-version.txt")
   run("rm -rf .ivy2")
   run("rm -rf .sbt")
 end
