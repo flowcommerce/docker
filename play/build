@@ -3,10 +3,13 @@
 PROJECTS_TO_BUILD = %w(fulfillment user organization)
 
 ORG = "flowcommerce"
+
 app = `pwd`.strip.split("/").last
 latest = `sem-info tag latest`.strip
 base_image = "%s/%s" % [ORG, app]
 tag = "%s:%s" % [base_image, latest]
+
+refresh_build_caches = false
 
 def run(command)
   puts "  %s" % command
@@ -15,12 +18,22 @@ end
 
 puts "Checking if docker image %s exists" % tag
 
+args = ARGV.each_with_index
+
+development_tag = false
 if run("docker pull %s > /dev/null 2>&1" % tag)
+  next_tag = "%s:%s" % [base_image, `sem-info tag next`.strip + "-dev"]
+  development_tag = true
+  
   puts ""
-  puts "Docker image %s already exists" % tag
-else
-  puts ""
-  puts "Docker image %s not found. Starting build" % tag
+  puts "Docker image %s already exists. Will build as %s" % [tag, next_tag]
+  tag = next_tag
+end
+
+puts ""
+puts "Starting build of %s" % tag
+
+if refresh_build_caches
 
   base_dir = File.expand_path(File.join(File.dirname(__FILE__), '/../../'))
 
@@ -42,56 +55,66 @@ else
     end
   end
 
-  run("cp -R $HOME/.ivy2 .")
-  run("cp -R $HOME/.sbt .")
+end
 
-  begin
-    run("curl --silent https://s3.amazonaws.com/io.flow.aws-s3-public/util/environment-provider/environment-provider.jar > environment-provider.jar")
-    run("docker build -t %s ." % tag)
-    run("docker push %s" % tag)
+begin
+  run("cp -R $HOME/.ivy2 .")
+  run("rm -f .ivy2/.*")
+  run("cp -R $HOME/.sbt .")
+  run("rm -f .sbt/.*")
+
+  run("curl https://s3.amazonaws.com/io.flow.aws-s3-public/util/environment-provider/environment-provider_2.11-0.0.6-one-jar.jar > environment-provider.jar")
+  run("echo '0.0.6' > environment-provider-version.txt")
+
+  run("docker build -t %s ." % tag)
+  run("docker push %s" % tag)
+
+  if !development_tag
     run("docker tag -f %s %s:%s" % [tag, base_image, "latest"])
     run("docker push %s:%s" % [base_image, "latest"])
-  ensure
-    run("rm -f environment-provider.jar")
-    run("rm -rf .ivy2")
-    run("rm -rf .sbt")
   end
+ensure
+  run("rm -f environment-provider*.jar")
+  run("rm -f environment-provider-version.txt")
+  run("rm -rf .ivy2")
+  run("rm -rf .sbt")
 end
 
 # Now update the example in the README
-
-puts ""
-puts "Updating README.md to include latest version[%s]" % latest
-tmp = "/tmp/docker.readme.#{Process.pid}.tmp"
-found = false
-changed = false
-begin
-  File.open(tmp, "w") do |out|
-    IO.readlines("../README.md").each do |l|
-      if md = l.match(/from flowcommerce\/play:(.+)/i)
-        found = true
-        if changed = (latest != md[1])
-           l.sub!(md[1], latest)
+if !development_tag
+  puts ""
+  puts "Updating README.md to include latest version[%s]" % latest
+  tmp = "/tmp/docker.readme.#{Process.pid}.tmp"
+  found = false
+  changed = false
+  begin
+    File.open(tmp, "w") do |out|
+      IO.readlines("../README.md").each do |l|
+        if md = l.match(/from flowcommerce\/play:(.+)/i)
+          found = true
+          if changed = (latest != md[1])
+            l.sub!(md[1], latest)
+          end
         end
+        out << l
       end
-      out << l
     end
-  end
-
-  if found
-    if changed
-      run("cp #{tmp} ../README.md")
-      run("git commit -m 'Update version of flowcommerce/play image to #{latest}' ../README.md")
-      run("git push origin master")
+    
+    if found
+      if changed
+        run("cp #{tmp} ../README.md")
+        run("git commit -m 'Update version of flowcommerce/play image to #{latest}' ../README.md")
+        run("git push origin master")
+      else
+        puts "  README was not updated as it already referenced version #{latest}"
+      end
     else
-      puts "  README was not updated as it already referenced version #{latest}"
+      puts "** WARNING: Could not find FROM flowcommerce/play in ../README.md - update manually to add the latest version"
     end
-  else
-    puts "** WARNING: Could not find FROM flowcommerce/play in ../README.md - update manually to add the latest version"
-  end
 
-ensure
-  if File.exists?(tmp)
-    File.delete(tmp)
+  ensure
+    if File.exists?(tmp)
+      File.delete(tmp)
+    end
   end
 end

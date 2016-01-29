@@ -28,3 +28,4 @@ ADD .sbt/ .sbt/.
 ADD .ivy2 .ivy2/.
 
 ADD environment-provider.jar .
+ADD environment-provider-version.txt .
