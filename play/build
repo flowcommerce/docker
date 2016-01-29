@@ -3,10 +3,13 @@
 PROJECTS_TO_BUILD = %w(fulfillment user organization)
 
 ORG = "flowcommerce"
+
 app = `pwd`.strip.split("/").last
 latest = `sem-info tag latest`.strip
 base_image = "%s/%s" % [ORG, app]
 tag = "%s:%s" % [base_image, latest]
+
+refresh_build_caches = false
 
 def run(command)
   puts "  %s" % command
@@ -23,38 +26,44 @@ if run("docker pull %s > /dev/null 2>&1" % tag)
   puts ""
   puts "Docker image %s already exists. Will build as %s" % [tag, next_tag]
   tag = next_tag
-
 end
 
 puts ""
 puts "Starting build of %s" % tag
 
-base_dir = File.expand_path(File.join(File.dirname(__FILE__), '/../../'))
+if refresh_build_caches
 
-dirs = PROJECTS_TO_BUILD.map do |project|
-  dir = File.join(base_dir, project)
-  if !File.exists?(dir)
-    puts "ERROR: Could not find local directory[#{dir}]"
-    exit(1)
+  base_dir = File.expand_path(File.join(File.dirname(__FILE__), '/../../'))
+
+  dirs = PROJECTS_TO_BUILD.map do |project|
+    dir = File.join(base_dir, project)
+    if !File.exists?(dir)
+      puts "ERROR: Could not find local directory[#{dir}]"
+      exit(1)
+    end
+    dir
   end
-  dir
-end
 
-dirs.each do |dir|
-  puts ""
-  puts "Building #{dir}"
-  Dir.chdir(dir) do
-    run("git pull --rebase")
-    run("sbt compile")
+  dirs.each do |dir|
+    puts ""
+    puts "Building #{dir}"
+    Dir.chdir(dir) do
+      run("git pull --rebase")
+      run("sbt compile")
+    end
   end
-end
 
-run("cp -R $HOME/.ivy2 .")
-run("cp -R $HOME/.sbt .")
+end
 
 begin
-  run("wget https://s3.amazonaws.com/io.flow.aws-s3-public/util/environment-provider/environment-provider_2.11-0.0.5-one-jar.jar")
-  run("cp environment-provider_2.11-0.0.5-one-jar.jar environment-provider.jar")
+  run("cp -R $HOME/.ivy2 .")
+  run("rm -f .ivy2/.*")
+  run("cp -R $HOME/.sbt .")
+  run("rm -f .sbt/.*")
+
+  run("curl https://s3.amazonaws.com/io.flow.aws-s3-public/util/environment-provider/environment-provider_2.11-0.0.5-one-jar.jar > environment-provider_2.11-0.0.5-one-jar.jar")
+  run("cp environment-provider_*.jar environment-provider.jar")
+
   run("docker build -t %s ." % tag)
   run("docker push %s" % tag)
 
