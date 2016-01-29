@@ -27,7 +27,7 @@ if run("docker pull %s > /dev/null 2>&1" % tag)
 end
 
 puts ""
-puts "Starting build of tag " % tag
+puts "Starting build of %s" % tag
 
 base_dir = File.expand_path(File.join(File.dirname(__FILE__), '/../../'))
 
@@ -57,8 +57,11 @@ begin
   run("cp environment-provider_2.11-0.0.5-one-jar.jar environment-provider.jar")
   run("docker build -t %s ." % tag)
   run("docker push %s" % tag)
-  run("docker tag -f %s %s:%s" % [tag, base_image, "latest"])
-  run("docker push %s:%s" % [base_image, "latest"])
+
+  if !tag.match(/dev$/)
+    run("docker tag -f %s %s:%s" % [tag, base_image, "latest"])
+    run("docker push %s:%s" % [base_image, "latest"])
+  end
 ensure
   run("rm -f environment-provider.jar")
   run("rm -rf .ivy2")
