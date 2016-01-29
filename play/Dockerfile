@@ -27,4 +27,4 @@ RUN mkdir .ivy2/
 ADD .sbt/ .sbt/.
 ADD .ivy2 .ivy2/.
 
-ADD environment-provider.jar .
+ADD environment-provider*.jar .
