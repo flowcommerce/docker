@@ -42,9 +42,9 @@ else
     end
   end
 
-  system("cp -R +/.ivy2 .")
-  system("cp -R +/.sbt .")
-  
+  run("cp -R $HOME/.ivy2 .")
+  run("cp -R $HOME/.sbt .")
+
   run("docker build -t %s ." % tag)
   run("docker push %s" % tag)
   run("docker tag -f %s %s:%s" % [tag, base_image, "latest"])
