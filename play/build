@@ -15,13 +15,15 @@ end
 
 puts "Checking if docker image %s exists" % tag
 
+args = ARGV.each_with_index
+
 if run("docker pull %s > /dev/null 2>&1" % tag)
-  next_tag = `sem-info tag next`.strip + "-dev"
+  next_tag = "%s:%s" % [base_image, `sem-info tag next`.strip + "-dev"]
 
   puts ""
   puts "Docker image %s already exists. Will build as %s" % [tag, next_tag]
-
   tag = next_tag
+
 end
 
 puts ""
