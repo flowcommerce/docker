@@ -29,5 +29,3 @@ ADD .ivy2 .ivy2/.
 
 ADD environment-provider.jar .
 ADD environment-provider-version.txt .
-RUN mkdir .aws
-ADD aws-docker-user-credentials .aws/credentials
