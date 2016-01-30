@@ -16,7 +16,19 @@ def run(command)
   system(command)
 end
 
-puts "Checking if docker image %s exists" % tag
+## TODO: Move to AWS
+def get_docker_aws_user_credentials_file
+  path = File.expand_path(File.join(File.dirname(__FILE__), '/../../keys/ec2/aws-airinc-docker-iam-user.txt'))
+  if !File.exists?(path)
+    puts "ERROR: Could not find docker AWS user credentials. Expected at #{path}"
+    exit(1)
+  end
+
+  path
+end
+
+# Make sure file exists
+aws_docker_user_credentials = get_docker_aws_user_credentials_file
 
 args = ARGV.each_with_index
 
@@ -58,6 +70,8 @@ if refresh_build_caches
 end
 
 begin
+  run("cp #{aws_docker_user_credentials} ./aws-docker-user-credentials")
+
   run("cp -R $HOME/.ivy2 .")
   run("rm -f .ivy2/.*")
   run("cp -R $HOME/.sbt .")
@@ -74,6 +88,7 @@ begin
     run("docker push %s:%s" % [base_image, "latest"])
   end
 ensure
+  run("rm -f aws-docker-user-credentials")
   run("rm -f environment-provider*.jar")
   run("rm -f environment-provider-version.txt")
   run("rm -rf .ivy2")
