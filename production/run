@@ -1,0 +1,57 @@
+#!/usr/bin/env ruby
+
+# Pulls the image
+# Stop an existing image
+# Starts the image w/ default port mapping
+
+# Example:
+#  run flowcommerce/splashpage:0.1.12
+#
+
+image, version = ARGV.shift.to_s.split(":").map(&:to_s).map(&:strip)
+
+if image.to_s.empty? || version.to_s.empty?
+  puts "ERROR: Specify image w/ version (e.g. flowcommerce/splashpage:0.1.12)"
+  exit(1)
+end
+
+headers = nil
+instances = []
+`docker ps`.strip.split("\n").each do |l|
+  pieces = l.strip.split(/\s\s+/)
+
+  if headers.nil?
+    headers = pieces.map(&:downcase).map(&:strip).map { |f| f.gsub(/\s+/, '_') }.map(&:to_sym)
+  else
+    data = {}
+    for i in 0..headers.size
+      data[headers[i]] = pieces[i] || nil
+    end
+
+    if data[:image].nil?
+      puts "** WARNING ** No image for line: #{l}"
+    elsif data[:container_id].nil?
+      puts "** WARNING ** No container for line: #{l}"
+    elsif data[:image] == image
+      instances << data
+    else
+      puts "#{data[:image]} == #{image}"
+    end
+  end
+end
+
+commands = ["docker pull %s:%s" % [image, version]]
+instances.each do |i|
+  commands << "docker stop #{i[:container_id]}"
+end
+commands << "docker run -d -p 80:9000 %s:%s production" % [image, version]
+
+commands.each do |cmd|
+  puts "==> #{cmd}"
+  if !system(cmd)
+    puts "ERROR executing command: #{cmd}"
+    exit(1)
+  end
+end
+
+puts "Service restarted. Now running: %s:%s" % [image, version]
