@@ -67,10 +67,13 @@ begin
   run("echo '0.0.8' > environment-provider-version.txt")
 
   run("docker build -t %s ." % tag)
+  if !development_tag
+    run("docker tag -f %s %s:%s" % [tag, base_image, "latest"])
+  end
+
   run("docker push %s" % tag)
 
   if !development_tag
-    run("docker tag -f %s %s:%s" % [tag, base_image, "latest"])
     run("docker push %s:%s" % [base_image, "latest"])
   end
 ensure
