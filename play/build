@@ -9,7 +9,7 @@ latest = `sem-info tag latest`.strip
 base_image = "%s/%s" % [ORG, app]
 tag = "%s:%s" % [base_image, latest]
 
-refresh_build_caches = false
+refresh_build_caches = true
 
 def run(command)
   puts "  %s" % command
