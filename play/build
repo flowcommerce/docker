@@ -63,8 +63,8 @@ begin
   run("cp -R $HOME/.sbt .")
   run("rm -f .sbt/.*")
 
-  run("curl https://s3.amazonaws.com/io.flow.aws-s3-public/util/environment-provider/environment-provider_2.11-0.0.6-one-jar.jar > environment-provider.jar")
-  run("echo '0.0.6' > environment-provider-version.txt")
+  run("curl https://s3.amazonaws.com/io.flow.aws-s3-public/util/environment-provider/environment-provider_2.11-0.0.8-one-jar.jar > environment-provider.jar")
+  run("echo '0.0.8' > environment-provider-version.txt")
 
   run("docker build -t %s ." % tag)
   run("docker push %s" % tag)
