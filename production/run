@@ -1,0 +1,98 @@
+#!/usr/bin/env ruby
+
+# Pulls the image
+# Stop an existing image
+# Starts the image w/ default port mapping
+
+# Example:
+#  run flowcommerce/splashpage:0.1.12
+#
+
+MAX_HEALTHCHECK_ATTEMPTS = 30
+
+class Image
+
+  attr_reader :base, :version
+
+  def initialize(base, version)
+    @base = base.strip
+    @version = version.strip
+  end
+
+  def to_s
+    "%s:%s" % [@base, @version]
+  end
+  
+  def Image.parse(value)
+    base, version = value.to_s.split(":").map(&:to_s).map(&:strip)
+    Image.new(base.to_s, version.to_s)
+  end
+
+end
+
+container = Image.parse(ARGV.shift.to_s)
+
+if container.base.empty? || container.version.empty?
+  puts "ERROR: Specify image w/ version (e.g. flowcommerce/splashpage:0.1.12)"
+  exit(1)
+end
+
+headers = nil
+instances = []
+`docker ps`.strip.split("\n").each do |l|
+  pieces = l.strip.split(/\s\s+/)
+
+  if headers.nil?
+    headers = pieces.map(&:downcase).map(&:strip).map { |f| f.gsub(/\s+/, '_') }.map(&:to_sym)
+  else
+    data = {}
+    for i in 0..headers.size
+      data[headers[i]] = pieces[i] || nil
+    end
+
+    if Image.parse(data[:image]).base == container.base
+      instances << data
+    end
+  end
+end
+
+commands = ["docker pull #{container}"]
+instances.each do |i|
+  commands << "docker stop #{i[:container_id]}"
+end
+commands << "docker run -d -p 80:9000 #{container} production"
+
+commands.each do |cmd|
+  puts "==> #{cmd}"
+  if !system(cmd)
+    puts "ERROR executing command: #{cmd}"
+    exit(1)
+  end
+end
+
+puts "Service restarted. Now verifying healthcheck"
+
+milliseconds_between_healthcheck_attempts = 1000
+healthy = false
+number_attempts = 0
+healthcheck = "curl --silent http://localhost/_internal_/healthcheck"
+while !healthy
+  print "  %s/%s: %s ... " % [number_attempts + 1, MAX_HEALTHCHECK_ATTEMPTS, healthcheck]
+  if system(healthcheck)
+    healthy = true
+  else
+    number_attempts += 1
+    if number_attempts >= MAX_HEALTHCHECK_ATTEMPTS
+      puts "failed."
+      puts ""
+      puts "ERROR: Healthcheck not successful after #{number_attempts} attempts."
+      exit(1)
+    end
+    puts "failed. Next attempt in %s ms" % milliseconds_between_healthcheck_attempts
+    sleep(milliseconds_between_healthcheck_attempts / 1000.0)
+  end
+end
+
+puts ""
+puts "Healthcheck verified. Now running: #{container}"
+
