@@ -6,7 +6,7 @@ Central place for dockerfiles and other utilities to support docker at flow
 play/Dockerfile defines a base image that we can use when building our
 play applications.
 
-    FROM flowcommerce/play:0.0.8
+    FROM flowcommerce/play:0.0.9
 
 If you modify the Dockerfile and want to create a new image:
 
