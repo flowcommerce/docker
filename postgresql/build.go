@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	image := fmt.Sprintf("flowcommerce/postgresql:%s", latestTag())
+	image := fmt.Sprintf("flowdocker/postgresql:%s", latestTag())
 	fmt.Printf("Building docker image: %s\n", image)
 
 	runDocker(fmt.Sprintf("docker build -t %s .", image))

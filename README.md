@@ -6,7 +6,7 @@ Central place for dockerfiles and other utilities to support docker at flow
 templates/play/Dockerfile defines a base image that we can use when building our
 play applications.
 
-    FROM flowcommerce/play:0.0.9
+    FROM flowdocker/play:0.0.9
 
 To create a new play base image
 
@@ -24,7 +24,7 @@ is the latest version of the play image.
 templates/postgresql/Dockerfile defines a base image that we can use when building our
 postgresql applications.
 
-    FROM flowcommerce/postgresql:0.0.9
+    FROM flowdocker/postgresql:0.0.9
 
 To create a new postgresql base image
 
