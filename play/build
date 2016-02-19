@@ -24,7 +24,7 @@ development_tag = false
 if run("docker pull %s > /dev/null 2>&1" % tag)
   next_tag = "%s:%s" % [base_image, `sem-info tag next`.strip + "-dev"]
   development_tag = true
-  
+
   puts ""
   puts "Docker image %s already exists. Will build as %s" % [tag, next_tag]
   tag = next_tag
@@ -63,8 +63,8 @@ begin
   run("cp -R $HOME/.sbt .")
   run("rm -f .sbt/.*")
 
-  run("curl https://s3.amazonaws.com/io.flow.aws-s3-public/util/environment-provider/environment-provider_2.11-0.0.11-one-jar.jar > environment-provider.jar")
-  run("echo '0.0.11' > environment-provider-version.txt")
+  run("curl https://s3.amazonaws.com/io.flow.aws-s3-public/util/environment-provider/environment-provider_2.11-0.1.1-one-jar.jar > environment-provider.jar")
+  run("echo '0.1.1' > environment-provider-version.txt")
 
   run("docker build -t %s ." % tag)
   if !development_tag
@@ -102,7 +102,7 @@ if !development_tag
         out << l
       end
     end
-    
+
     if found
       if changed
         run("cp #{tmp} ../README.md")
