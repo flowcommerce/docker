@@ -22,23 +22,32 @@ end
 
 puts "Fetching latest version number for #{env_provider}"
 env_provider_version = Dir.chdir(env_provider) do
-  #run("git fetch --tags")
+  run("git fetch --tags")
   `sem-info tag latest`.strip
 end
 
 puts "env_provider_version: #{env_provider_version}"
 
-# We need to add version for play-base into Dockerfile.play
+# Build in a tmp directory to avoid adding anything unnecessary into
+# the context.
+tmp_dir = "/tmp/docker.play.#{Process.pid}"
 begin
-  dockerfile = "Dockerfile.play.interpolated"
+  run("mkdir #{tmp_dir}")
+  dockerfile = "#{tmp_dir}/Dockerfile"
   File.open(dockerfile, "w") do |out|
     out << IO.read("Dockerfile.play") % tag
   end
 
-  run("docker build -f #{dockerfile} -t %s ." % play_image_tag)
+  Dir.chdir(tmp_dir) do
+    run("echo '#{env_provider_version}' > environment-provider-version.txt")
+    run("curl https://s3.amazonaws.com/io.flow.aws-s3-public/util/environment-provider/environment-provider.jar > ./environment-provider.jar")
+    exit(1)
+    run("docker build -t %s ." % play_image_tag)
+  end
+
   run("docker push %s" % play_image_tag)
 ensure
-  run("rm -f #{dockerfile}")
+  run("rm -f #{tmp_dir}")
 end
 
 puts ""
