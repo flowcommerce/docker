@@ -7,6 +7,11 @@ if tag == ""
   exit(1)
 end
 
+def run(command)
+  puts "  %s" % command
+  system(command)
+end
+
 # Now update the example in the README
 puts ""
 puts "Updating README.md to include latest version[%s]" % tag
