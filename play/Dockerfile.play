@@ -1,4 +1,4 @@
-FROM flowdocker/play-base:%s
+FROM flowdocker/play_base:%s
 
 MAINTAINER tech@flow.io
 
