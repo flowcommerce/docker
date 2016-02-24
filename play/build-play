@@ -41,13 +41,12 @@ begin
   Dir.chdir(tmp_dir) do
     run("echo '#{env_provider_version}' > environment-provider-version.txt")
     run("curl https://s3.amazonaws.com/io.flow.aws-s3-public/util/environment-provider/environment-provider.jar > ./environment-provider.jar")
-    exit(1)
     run("docker build -t %s ." % play_image_tag)
   end
 
   run("docker push %s" % play_image_tag)
 ensure
-  run("rm -f #{tmp_dir}")
+  run("rm -rf #{tmp_dir}")
 end
 
 puts ""
