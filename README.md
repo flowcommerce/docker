@@ -10,9 +10,11 @@ play applications.
 
 To create a new play base image
 
-    /web/tools/bin/tag
+    go run $GOHOME/src/github.com/flowcommerce/tools/dev.go tag --label micro
     cd play
-    ./build
+    ./build-play-base `sem-info tag latest`
+    ./build-play `sem-info tag latest`
+    ./build-update-readme `sem-info tag latest`
 
 This will create a new image using the git tag from this repository,
 build the image, tag w/ latest, and update this README so the example

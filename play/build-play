@@ -1,0 +1,45 @@
+#!/usr/bin/env ruby
+
+tag = ARGV.shift.to_s.strip
+
+if tag == ""
+  puts "ERROR: Missing tag"
+  exit(1)
+end
+
+play_image_tag = "flowdocker/play:%s" % tag
+
+def run(command)
+  puts "  %s" % command
+  system(command)
+end
+
+env_provider = File.expand_path(File.join(File.dirname(__FILE__), '/../../environment-provider'))
+
+if !File.directory?(env_provider)
+  puts "ERROR: Could not find environment provider project. Expected at #{env_provider}"
+end
+
+puts "Fetching latest version number for #{env_provider}"
+env_provider_version = Dir.chdir(env_provider) do
+  #run("git fetch --tags")
+  `sem-info tag latest`.strip
+end
+
+puts "env_provider_version: #{env_provider_version}"
+
+# We need to add version for play-base into Dockerfile.play
+begin
+  dockerfile = "Dockerfile.play.interpolated"
+  File.open(dockerfile, "w") do |out|
+    out << IO.read("Dockerfile.play") % tag
+  end
+
+  run("docker build -f #{dockerfile} -t %s ." % play_image_tag)
+  run("docker push %s" % play_image_tag)
+ensure
+  run("rm -f #{dockerfile}")
+end
+
+puts ""
+puts "Completed build and push of #{play_image_tag}"

@@ -1,3 +1,4 @@
 .sbt
 .ivy2
 play/environment-provider.jar
+play/Dockerfile.play.interpolated

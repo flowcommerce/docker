@@ -1,0 +1,6 @@
+FROM flowdocker/play-base:%s
+
+MAINTAINER tech@flow.io
+
+ADD environment-provider.jar .
+ADD environment-provider-version.txt .

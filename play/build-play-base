@@ -1,0 +1,65 @@
+#!/usr/bin/env ruby
+
+PROJECTS_TO_BUILD = %w(fulfillment user organization delta catalog)
+
+ORG = "flowdocker"
+
+tag = ARGV.shift.to_s.strip
+
+if tag == ""
+  puts "ERROR: Missing tag"
+  exit(1)
+end
+
+play_base_image = "%s/%s" % [ORG, "play_base"]
+play_base_tag = "%s:%s" % [play_base_image, tag]
+
+refresh_build_caches = true
+
+def run(command)
+  puts "  %s" % command
+  system(command)
+end
+
+puts ""
+puts "Starting build of %s" % play_base_tag
+
+if refresh_build_caches
+
+  base_dir = File.expand_path(File.join(File.dirname(__FILE__), '/../../'))
+
+  dirs = PROJECTS_TO_BUILD.map do |project|
+    dir = File.join(base_dir, project)
+    if !File.exists?(dir)
+      puts "ERROR: Could not find local directory[#{dir}]"
+      exit(1)
+    end
+    dir
+  end
+
+  dirs.each do |dir|
+    puts ""
+    puts "Building #{dir}"
+    Dir.chdir(dir) do
+      run("git pull --rebase")
+      run("sbt compile")
+    end
+  end
+
+end
+
+begin
+  run("cp -R $HOME/.ivy2 .")
+  run("rm -f .ivy2/.*")
+  run("cp -R $HOME/.sbt .")
+  run("rm -f .sbt/.*")
+
+  run("docker build -f Dockerfile.base -t %s ." % play_base_tag)
+  run("docker push %s" % play_base_tag)
+ensure
+  run("rm -rf .ivy2")
+  run("rm -rf .sbt")
+end
+
+puts ""
+puts "Completed build of %s" % play_base_tag
