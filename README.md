@@ -13,7 +13,7 @@ To create a new play base image
     go run $GOPATH/src/github.com/flowcommerce/tools/dev.go tag --label micro
     cd play
     ./build-play-base `sem-info tag latest`
-    ./build-play `sem-info tag latest`
+    ./build-play `sem-info tag latest` `sem-info tag latest`
     ./build-update-readme `sem-info tag latest`
 
 This will create a new image using the git tag from this repository,

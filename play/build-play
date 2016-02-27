@@ -1,13 +1,24 @@
 #!/usr/bin/env ruby
 
-tag = ARGV.shift.to_s.strip
+# Ex:
+#
+# ./build-play 0.0.18 0.0.19
 
-if tag == ""
-  puts "ERROR: Missing tag"
+base_tag = ARGV.shift.to_s.strip
+
+if base_tag == ""
+  puts "ERROR: Missing base tag"
   exit(1)
 end
 
-play_image_tag = "flowdocker/play:%s" % tag
+play_tag = ARGV.shift.to_s.strip
+
+if play_tag == ""
+  puts "ERROR: Missing play tag"
+  exit(1)
+end
+
+play_image_tag = "flowdocker/play:%s" % play_tag
 
 def run(command)
   puts "  %s" % command
@@ -35,7 +46,7 @@ begin
   run("mkdir #{tmp_dir}")
   dockerfile = "#{tmp_dir}/Dockerfile"
   File.open(dockerfile, "w") do |out|
-    out << IO.read("Dockerfile.play") % tag
+    out << IO.read("Dockerfile.play") % base_tag
   end
 
   Dir.chdir(tmp_dir) do
