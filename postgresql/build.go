@@ -5,29 +5,22 @@ import (
 	"os/exec"
 	"strings"
 
+	"github.com/flowcommerce/tools/executor"
 	"github.com/flowcommerce/tools/util"
 )
 
 func main() {
+	executor := executor.Create("docker-postgresql")
 	image := fmt.Sprintf("flowdocker/postgresql:%s", latestTag())
-	fmt.Printf("Building docker image: %s\n", image)
 
-	runDocker(fmt.Sprintf("docker build -t %s .", image))
-	fmt.Printf("Built docker image: %s\n", image)
+	executor = executor.Add(fmt.Sprintf("docker build -t %s .", image))
+	executor = executor.Add(fmt.Sprintf("docker push %s", image))
 
-	runDocker(fmt.Sprintf("docker push %s", image))
-	fmt.Printf("Pushed docker image: %s\n", image)
+	executor.Run()
 }
 
 func latestTag() string {
 	tag, err := exec.Command("sem-info", "tag", "latest").Output()
-	if err != nil {
-		panic(err)
-	}
+	util.ExitIfError(err, fmt.Sprintf("Error running sem-info tag latest"))	
 	return strings.TrimSpace(string(tag))
-}
-
-func runDocker(cmdStr string) string {
-	fmt.Printf("%s\n", cmdStr)
-	return string(util.RunCmd(exec.Command("/bin/sh", "-c", cmdStr), false))
 }
