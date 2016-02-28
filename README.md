@@ -31,4 +31,4 @@ postgresql applications.
 To create a new postgresql base image
 
     cd postgresql
-    go build.go
+    go run build.go
