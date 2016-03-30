@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-PROJECTS_TO_BUILD = %w(fulfillment user organization delta catalog)
+PROJECTS_TO_BUILD = %w(fulfillment user organization delta catalog email harmonization dependency registry splashpage reference token www)
 
 ORG = "flowdocker"
 
