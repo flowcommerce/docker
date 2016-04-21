@@ -57,3 +57,6 @@ RUN ln -s /etc/postgresql/9.5/main/postgresql.conf
 
 VOLUME /var/lib/postgresql/9.5/base
 EXPOSE 5432
+
+# see - https://github.com/nimiq/docker-postgresql93/pull/4/files
+RUN mkdir /etc/ssl/private-copy; mv /etc/ssl/private/* /etc/ssl/private-copy/; rm -r /etc/ssl/private; mv /etc/ssl/private-copy /etc/ssl/private; chmod -R 0700 /etc/ssl/private; chown -R postgres /etc/ssl/private
