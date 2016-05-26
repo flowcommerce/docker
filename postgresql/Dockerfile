@@ -39,7 +39,7 @@ WORKDIR /opt
 RUN git clone git://github.com/mbryzek/schema-evolution-manager.git
 WORKDIR /opt/schema-evolution-manager
 RUN ls
-RUN git checkout 0.9.29
+RUN git checkout 0.9.31
 RUN ruby ./configure.rb --prefix /usr/local
 RUN ./install.rb
 
