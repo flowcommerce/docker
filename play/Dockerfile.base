@@ -7,7 +7,6 @@ RUN apt-get update
 
 # install minimal tools for debugging
 RUN apt-get install -y --no-install-recommends curl
-RUN apt-get install -y --no-install-recommends vi
 RUN apt-get install -y --no-install-recommends unzip
 
 RUN apt-get install -y --no-install-recommends ca-certificates wget
