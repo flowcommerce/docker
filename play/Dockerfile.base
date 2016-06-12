@@ -5,6 +5,11 @@ MAINTAINER tech@flow.io
 # need to run to make sure the apt-get installs work
 RUN apt-get update
 
+# install minimal tools for debugging
+RUN apt-get install -y --no-install-recommends curl
+RUN apt-get install -y --no-install-recommends vi
+RUN apt-get install -y --no-install-recommends unzip
+
 RUN apt-get install -y --no-install-recommends ca-certificates wget
 RUN apt-get install -y --no-install-recommends ca-certificates software-properties-common
 RUN echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections
