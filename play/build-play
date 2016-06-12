@@ -46,7 +46,7 @@ begin
   run("mkdir #{tmp_dir}")
   dockerfile = "#{tmp_dir}/Dockerfile"
   File.open(dockerfile, "w") do |out|
-    out << IO.read("Dockerfile.play") % base_tag
+    out << IO.read("Dockerfile.play").strip % base_tag
   end
 
   Dir.chdir(tmp_dir) do

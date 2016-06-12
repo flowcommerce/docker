@@ -1,0 +1,10 @@
+FROM flowdocker/play:%s
+
+MAINTAINER tech@flow.io
+
+# download Java Cryptography Extension
+RUN cd /tmp/ && \
+    curl -LO "http://download.oracle.com/otn-pub/java/jce/8/jce_policy-8.zip" -H 'Cookie: oraclelicense=accept-securebackup-cookie' && \
+    unzip jce_policy-8.zip && \
+    rm -f jce_policy-8.zip && \
+    yes |cp -v /tmp/UnlimitedJCEPolicyJDK8/*.jar /usr/lib/jvm/java-8-oracle/jre/lib/security
