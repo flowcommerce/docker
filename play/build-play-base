@@ -41,8 +41,10 @@ if refresh_build_caches
     puts ""
     puts "Building #{dir}"
     Dir.chdir(dir) do
+      run("git stash")
       run("git pull --rebase")
       run("sbt compile")
+      run("git stash pop")
     end
   end
 
