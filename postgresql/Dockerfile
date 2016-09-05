@@ -35,6 +35,8 @@ RUN apt-get install -y --force-yes --no-install-recommends ca-certificates postg
 RUN apt-get install -y --no-install-recommends ca-certificates git
 RUN apt-get install -y --no-install-recommends ca-certificates ruby
 
+RUN apt-get install -y --no-install-recommends curl
+
 WORKDIR /opt
 RUN git clone git://github.com/mbryzek/schema-evolution-manager.git
 WORKDIR /opt/schema-evolution-manager
