@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-PROJECTS_TO_BUILD = %w(fulfillment user organization delta catalog email harmonization dependency registry splashpage reference token www)
+PROJECTS_TO_BUILD = %w(flowcommerce/fulfillment flowcommerce/user flowcommerce/organization flowcommerce/delta flowcommerce/catalog flowcommerce/email flowcommerce/harmonization flowcommerce/dependency flowcommerce/registry flowcommerce/splashpage flowcommerce/reference flowcommerce/token flowvaultpayment)
 
 ORG = "flowdocker"
 
@@ -26,25 +26,22 @@ puts "Starting build of %s" % play_base_tag
 
 if refresh_build_caches
 
-  base_dir = File.expand_path(File.join(File.dirname(__FILE__), '/../../'))
+  base_dir = File.expand_path(File.join(File.dirname(__FILE__), '/../../docker-build-play-base.tmp'))
+  run("rm -rf #{base_dir}")
+  run("mkdir -p #{base_dir}")
 
-  dirs = PROJECTS_TO_BUILD.map do |project|
+  PROJECTS_TO_BUILD.map do |pair|
+    repo, project = pair.split("/")
     dir = File.join(base_dir, project)
-    if !File.exists?(dir)
-      puts "ERROR: Could not find local directory[#{dir}]"
-      exit(1)
-    end
-    dir
-  end
 
-  dirs.each do |dir|
     puts ""
-    puts "Building #{dir}"
+    puts "Building #{pair} in #{dir}"
+    Dir.chdir(base_dir) do
+      run("git clone --depth 1 git@github.com:#{pair}")
+    end
+
     Dir.chdir(dir) do
-      run("git stash")
-      run("git pull --rebase")
       run("sbt compile")
-      run("git stash pop")
     end
   end
 
