@@ -6,7 +6,7 @@ Central place for dockerfiles and other utilities to support docker at flow
 templates/play/Dockerfile defines a base image that we can use when building our
 play applications.
 
-    FROM flowdocker/play:0.0.66
+    FROM flowdocker/play:0.0.67
 
 To create a new play base image
 
