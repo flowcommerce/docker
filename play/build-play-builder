@@ -26,7 +26,7 @@ puts "Starting build of %s" % play_builder_tag
 
 if refresh_build_caches
 
-  base_dir = File.expand_path(File.join(File.dirname(__FILE__), '/../../docker-build-play-base.tmp'))
+  base_dir = File.expand_path(File.join(File.dirname(__FILE__), '/../../docker-build-play-builder.tmp'))
   run("rm -rf #{base_dir}")
   run("mkdir -p #{base_dir}")
 
