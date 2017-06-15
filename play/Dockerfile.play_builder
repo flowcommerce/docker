@@ -1,0 +1,10 @@
+FROM flowdocker/play_crypto:%s
+
+MAINTAINER tech@flow.io
+
+# add .sbt and .ivy2 to root directory
+WORKDIR /root
+RUN mkdir .sbt/
+RUN mkdir .ivy2/
+ADD .sbt/ .sbt/.
+ADD .ivy2 .ivy2/.

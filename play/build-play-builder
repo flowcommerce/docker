@@ -1,0 +1,67 @@
+#!/usr/bin/env ruby
+
+PROJECTS_TO_BUILD = %w(flowvault/payment flowcommerce/fulfillment flowcommerce/user flowcommerce/organization flowcommerce/delta flowcommerce/catalog flowcommerce/email flowcommerce/harmonization flowcommerce/dependency flowcommerce/registry flowcommerce/splashpage flowcommerce/reference flowcommerce/token)
+
+ORG = "flowdocker"
+
+tag = ARGV.shift.to_s.strip
+
+if tag == ""
+  puts "ERROR: Missing tag"
+  exit(1)
+end
+
+play_builder_image = "%s/%s" % [ORG, "play_builder"]
+play_builder_tag = "%s:%s" % [play_builder_image, tag]
+
+refresh_build_caches = true
+
+def run(command)
+  puts "  %s" % command
+  system(command)
+end
+
+puts ""
+puts "Starting build of %s" % play_builder_tag
+
+if refresh_build_caches
+
+  base_dir = File.expand_path(File.join(File.dirname(__FILE__), '/../../docker-build-play-base.tmp'))
+  run("rm -rf #{base_dir}")
+  run("mkdir -p #{base_dir}")
+
+  PROJECTS_TO_BUILD.map do |pair|
+    repo, project = pair.split("/", 2)
+    if project.nil?
+      raise "Project[%s] could not be parsed" % pair
+    end
+    dir = File.join(base_dir, project)
+
+    puts ""
+    puts "Building #{pair} in #{dir}"
+    Dir.chdir(base_dir) do
+      run("git clone --depth 1 git@github.com:#{pair}")
+    end
+
+    Dir.chdir(dir) do
+      run("sbt compile")
+    end
+  end
+
+end
+
+begin
+  run("cp -R $HOME/.ivy2 .")
+  run("rm -f .ivy2/.*")
+  run("cp -R $HOME/.sbt .")
+  run("rm -f .sbt/.*")
+
+  run("docker build -f Dockerfile.base -t %s ." % play_builder_tag)
+  run("docker push %s" % play_builder_tag)
+ensure
+  run("rm -rf .ivy2")
+  run("rm -rf .sbt")
+end
+
+puts ""
+puts "Completed build of %s" % play_builder_tag
