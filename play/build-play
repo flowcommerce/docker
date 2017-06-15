@@ -55,7 +55,7 @@ begin
     run("docker build -t %s ." % play_image_tag)
   end
 
-  #run("docker push %s" % play_image_tag)
+  run("docker push %s" % play_image_tag)
 ensure
   run("rm -rf #{tmp_dir}")
 end
