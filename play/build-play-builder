@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-PROJECTS_TO_BUILD = %w(flowvault/payment flowcommerce/fulfillment flowcommerce/user flowcommerce/organization flowcommerce/delta flowcommerce/catalog flowcommerce/email flowcommerce/harmonization flowcommerce/dependency flowcommerce/registry flowcommerce/splashpage flowcommerce/reference flowcommerce/token)
+PROJECTS_TO_BUILD = %w(flowcommerce/fulfillment flowcommerce/user flowcommerce/organization flowcommerce/delta flowcommerce/catalog flowcommerce/email flowcommerce/harmonization flowcommerce/dependency flowcommerce/registry flowcommerce/splashpage flowcommerce/reference flowcommerce/token)
 
 ORG = "flowdocker"
 
