@@ -50,17 +50,27 @@ if refresh_build_caches
 
 end
 
+# Build in a tmp directory to avoid adding anything unnecessary into
+# the context.
+tmp_dir = "/tmp/docker.play.#{Process.pid}"
 begin
-  run("cp -R $HOME/.ivy2 .")
-  run("rm -f .ivy2/.*")
-  run("cp -R $HOME/.sbt .")
-  run("rm -f .sbt/.*")
+  run("mkdir #{tmp_dir}")
+  dockerfile = "#{tmp_dir}/Dockerfile"
+  File.open(dockerfile, "w") do |out|
+    out << IO.read("Dockerfile.play_builder").strip % tag
+  end
 
-  run("docker build -f Dockerfile.base -t %s ." % play_builder_tag)
+  Dir.chdir(tmp_dir) do
+    run("cp -R $HOME/.ivy2 .")
+    run("rm -f .ivy2/.*")
+    run("cp -R $HOME/.sbt .")
+    run("rm -f .sbt/.*")
+    run("docker build -t %s ." % play_builder_tag)
+  end
+
   run("docker push %s" % play_builder_tag)
 ensure
-  run("rm -rf .ivy2")
-  run("rm -rf .sbt")
+  run("rm -rf #{tmp_dir}")
 end
 
 puts ""

@@ -2,14 +2,7 @@
 
 # Ex:
 #
-# ./build-play 0.0.18 0.0.19
-
-base_tag = ARGV.shift.to_s.strip
-
-if base_tag == ""
-  puts "ERROR: Missing base tag"
-  exit(1)
-end
+# ./build-play 0.0.19
 
 play_tag = ARGV.shift.to_s.strip
 
@@ -44,10 +37,7 @@ puts "env_provider_version: #{env_provider_version}"
 tmp_dir = "/tmp/docker.play.#{Process.pid}"
 begin
   run("mkdir #{tmp_dir}")
-  dockerfile = "#{tmp_dir}/Dockerfile"
-  File.open(dockerfile, "w") do |out|
-    out << IO.read("Dockerfile.play").strip % base_tag
-  end
+  run("cp Dockerfile.play #{tmp_dir}/Dockerfile")
 
   Dir.chdir(tmp_dir) do
     run("echo '#{env_provider_version}' > environment-provider-version.txt")
