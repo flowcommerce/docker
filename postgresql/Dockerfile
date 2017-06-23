@@ -1,4 +1,4 @@
-FROM ubuntu:15.10
+FROM ubuntu:16.04
 
 # This is a common docker file for flow that is used to create
 # containers running specific versions of an applications schema. This
@@ -25,12 +25,12 @@ FROM ubuntu:15.10
 MAINTAINER tech@flow.io
 
 RUN apt-get update
-RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main 9.5' >> /etc/apt/sources.list.d/postgresql.list
+RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main 9.6' >> /etc/apt/sources.list.d/postgresql.list
 RUN apt-get install -y --no-install-recommends ca-certificates wget sudo
 RUN wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | sudo apt-key add -
 
 RUN apt-get update
-RUN apt-get install -y --force-yes --no-install-recommends ca-certificates postgresql-9.5
+RUN apt-get install -y --force-yes --no-install-recommends ca-certificates postgresql-9.6
 
 RUN apt-get install -y --no-install-recommends ca-certificates git
 RUN apt-get install -y --no-install-recommends ca-certificates ruby
@@ -41,23 +41,23 @@ WORKDIR /opt
 RUN git clone git://github.com/mbryzek/schema-evolution-manager.git
 WORKDIR /opt/schema-evolution-manager
 RUN ls
-RUN git checkout 0.9.32
+RUN git checkout 0.9.34
 RUN ruby ./configure.rb --prefix /usr/local
 RUN ./install.rb
 
-RUN sed -i 's/peer/trust/' /etc/postgresql/9.5/main/pg_hba.conf
-RUN sed -i 's/md5/trust/' /etc/postgresql/9.5/main/pg_hba.conf
-RUN sed -i 's/127.0.0.1\/32/0.0.0.0\/0/' /etc/postgresql/9.5/main/pg_hba.conf
-RUN cat /etc/postgresql/9.5/main/pg_hba.conf
+RUN sed -i 's/peer/trust/' /etc/postgresql/9.6/main/pg_hba.conf
+RUN sed -i 's/md5/trust/' /etc/postgresql/9.6/main/pg_hba.conf
+RUN sed -i 's/127.0.0.1\/32/0.0.0.0\/0/' /etc/postgresql/9.6/main/pg_hba.conf
+RUN cat /etc/postgresql/9.6/main/pg_hba.conf
 
 RUN cat "/etc/init.d/postgresql"
 
 RUN mkdir -p /var/run/postgresql && chown -R postgres /var/run/postgresql
 
-WORKDIR /var/lib/postgresql/9.5/main
-RUN ln -s /etc/postgresql/9.5/main/postgresql.conf
+WORKDIR /var/lib/postgresql/9.6/main
+RUN ln -s /etc/postgresql/9.6/main/postgresql.conf
 
-VOLUME /var/lib/postgresql/9.5/base
+VOLUME /var/lib/postgresql/9.6/base
 EXPOSE 5432
 
 # see - https://github.com/nimiq/docker-postgresql93/pull/4/files
