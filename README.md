@@ -23,7 +23,7 @@ is the latest version of the play image.
 templates/postgresql/Dockerfile defines a base image that we can use when building our
 postgresql applications.
 
-    FROM flowdocker/postgresql:0.0.9
+    FROM flowdocker/postgresql:0.0.71
 
 To create a new postgresql base image
 
