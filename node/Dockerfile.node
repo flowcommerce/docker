@@ -1,0 +1,60 @@
+FROM ubuntu:16.04
+
+MAINTAINER tech@flow.io
+
+# refresh list of packages
+RUN apt-get update
+
+# upgrade existing packages
+RUN apt-get upgrade -y
+
+# install support packages
+RUN apt-get install -y --no-install-recommends \
+  ca-certificates apt-transport-https software-properties-common \
+  curl wget unzip git && \
+  apt-get clean
+
+# install java - needed for environment-provider.jar
+RUN echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
+    echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections && \
+    add-apt-repository -y ppa:webupd8team/java && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends oracle-java8-installer && \
+    /bin/rm -fr /var/cache/oracle-jdk8-installer && \
+    javac -version # test
+
+# download Java Cryptography Extension
+RUN cd /tmp/ && \
+    curl -LO "http://download.oracle.com/otn-pub/java/jce/8/jce_policy-8.zip" -H 'Cookie: oraclelicense=accept-securebackup-cookie' && \
+    unzip jce_policy-8.zip && \
+    rm -f jce_policy-8.zip && \
+    yes |cp -v /tmp/UnlimitedJCEPolicyJDK8/*.jar /usr/lib/jvm/java-8-oracle/jre/lib/security
+
+WORKDIR /root
+ADD environment-provider.jar .
+ADD environment-provider-version.txt .
+
+# Install nvm with node and npm
+ENV NVM_DIR /root/.nvm
+ENV NVM_VERSION 0.33.2
+ENV NODE_VERSION 6.10.3
+ENV NODE_ENV production
+
+RUN curl https://raw.githubusercontent.com/creationix/nvm/v$NVM_VERSION/install.sh | /bin/bash \
+    && \. "$NVM_DIR/nvm.sh" \
+    && nvm install $NODE_VERSION \
+    && nvm alias default $NODE_VERSION \
+    && nvm use default
+
+ENV NODE_PATH $NVM_DIR/versions/node/v$NODE_VERSION/lib/node_modules
+ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+
+# Global NPM Binaries
+RUN npm install -g forever
+
+# Setup /opt/node
+RUN mkdir -p /opt/node
+
+ADD .npmrc /opt/node/.npmrc
+
+WORKDIR /opt/node

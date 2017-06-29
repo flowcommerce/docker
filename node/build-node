@@ -1,0 +1,55 @@
+#!/usr/bin/env ruby
+
+# Ex:
+#
+# ./build-node 0.0.19
+
+node_tag = ARGV.shift.to_s.strip
+
+if node_tag == ""
+  puts "ERROR: Missing node tag"
+  exit(1)
+end
+
+node_image_tag = "flowdocker/node:%s" % node_tag
+
+def run(command)
+  puts "  %s" % command
+  system(command)
+end
+
+env_provider = File.expand_path(File.join(File.dirname(__FILE__), '/../../environment-provider'))
+
+if !File.directory?(env_provider)
+  puts "ERROR: Could not find environment provider project. Expected at #{env_provider}"
+end
+
+puts "Fetching latest version number for #{env_provider}"
+env_provider_version = Dir.chdir(env_provider) do
+  run("git fetch --tags")
+  `sem-info tag latest`.strip
+end
+
+puts "env_provider_version: #{env_provider_version}"
+
+# Build in a tmp directory to avoid adding anything unnecessary into
+# the context.
+tmp_dir = "/tmp/docker.node.#{Process.pid}"
+begin
+  run("mkdir #{tmp_dir}")
+  run("cp Dockerfile.node #{tmp_dir}/Dockerfile")
+
+  Dir.chdir(tmp_dir) do
+    run("echo '#{env_provider_version}' > environment-provider-version.txt")
+    run("curl https://s3.amazonaws.com/io.flow.aws-s3-public/util/environment-provider/environment-provider.jar > ./environment-provider.jar")
+    run("aws s3 cp s3://io.flow.infra/npm/flownpmreadonly.npmrc ./.npmrc")
+    run("docker build -t %s ." % node_image_tag)
+  end
+
+  run("docker push %s" % node_image_tag)
+ensure
+  run("rm -rf #{tmp_dir}")
+end
+
+puts ""
+puts "Completed build and push of #{node_image_tag}"
