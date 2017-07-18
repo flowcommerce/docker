@@ -11,7 +11,7 @@ RUN apt-get upgrade -y
 # install support packages
 RUN apt-get install -y --no-install-recommends \
   ca-certificates apt-transport-https software-properties-common \
-  curl wget unzip git && \
+  curl wget unzip bzip2 git && \
   apt-get clean
 
 # install java - needed for environment-provider.jar
@@ -53,7 +53,7 @@ ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 RUN npm install -g forever
 
 # Setup /opt/node
-RUN mkdir -p /opt/node
+RUN mkdir -p /opt/node/log
 
 ADD .npmrc /opt/node/.npmrc
 
