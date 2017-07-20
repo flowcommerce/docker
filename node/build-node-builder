@@ -1,0 +1,37 @@
+#!/usr/bin/env ruby
+
+node_tag = ARGV.shift.to_s.strip
+
+if node_tag == ""
+  puts "ERROR: Missing node tag"
+  exit(1)
+end
+
+node_image_tag = "flowdocker/node_builder:%s" % node_tag
+
+def run(command)
+  puts "  %s" % command
+  system(command)
+end
+
+puts ""
+puts "Starting build of %s" % node_image_tag
+
+# Build in a tmp directory to avoid adding anything unnecessary into
+# the context.
+tmp_dir = "/tmp/docker.node.#{Process.pid}"
+begin
+  run("mkdir #{tmp_dir}")
+  run("cp DockerFile.node_builder #{tmp_dir}/Dockerfile")
+
+  Dir.chdir(tmp_dir) do
+    run("docker build -t %s ." % node_image_tag)
+  end
+
+  run("docker push %s" % node_image_tag)
+ensure
+  run("rm -rf #{tmp_dir}")
+end
+
+puts ""
+puts "Completed build of %s" % play_builder_tag
