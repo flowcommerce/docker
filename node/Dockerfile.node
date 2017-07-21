@@ -51,7 +51,6 @@ ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 
 # Global NPM Binaries
 RUN npm install -g forever
-RUN npm install -g npm-cli-login
 
 # Install AWS CLI
 RUN apt-get install -y python-pip python-dev build-essential && \
