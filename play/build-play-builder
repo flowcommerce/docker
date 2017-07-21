@@ -65,7 +65,7 @@ begin
     run("rm -f .ivy2/.*")
     run("cp -R $HOME/.sbt .")
     run("rm -f .sbt/.*")
-    run("docker build -t %s ." % play_builder_tag)
+    run("docker build --no-cache -t %s ." % play_builder_tag)
   end
 
   run("docker push %s" % play_builder_tag)
