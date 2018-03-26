@@ -25,39 +25,37 @@ FROM ubuntu:16.04
 MAINTAINER tech@flow.io
 
 RUN apt-get update
-RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main 9.6' >> /etc/apt/sources.list.d/postgresql.list
+RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main' >> /etc/apt/sources.list.d/postgresql.list
 RUN apt-get install -y --no-install-recommends ca-certificates wget sudo
-RUN wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | sudo apt-key add -
+RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
 
 RUN apt-get update
-RUN apt-get install -y --force-yes --no-install-recommends ca-certificates postgresql-9.6
-
-RUN apt-get install -y --no-install-recommends ca-certificates git
-RUN apt-get install -y --no-install-recommends ca-certificates ruby
-
+RUN apt-get install -y postgresql-10
+RUN apt-get install -y --no-install-recommends git
+RUN apt-get install -y --no-install-recommends ruby
 RUN apt-get install -y --no-install-recommends curl
 
 WORKDIR /opt
 RUN git clone git://github.com/mbryzek/schema-evolution-manager.git
 WORKDIR /opt/schema-evolution-manager
 RUN ls
-RUN git checkout 0.9.34
+RUN git checkout 0.9.35
 RUN ruby ./configure.rb --prefix /usr/local
 RUN ./install.rb
 
-RUN sed -i 's/peer/trust/' /etc/postgresql/9.6/main/pg_hba.conf
-RUN sed -i 's/md5/trust/' /etc/postgresql/9.6/main/pg_hba.conf
-RUN sed -i 's/127.0.0.1\/32/0.0.0.0\/0/' /etc/postgresql/9.6/main/pg_hba.conf
-RUN cat /etc/postgresql/9.6/main/pg_hba.conf
+RUN sed -i 's/peer/trust/' /etc/postgresql/10/main/pg_hba.conf
+RUN sed -i 's/md5/trust/' /etc/postgresql/10/main/pg_hba.conf
+RUN sed -i 's/127.0.0.1\/32/0.0.0.0\/0/' /etc/postgresql/10/main/pg_hba.conf
+RUN cat /etc/postgresql/10/main/pg_hba.conf
 
 RUN cat "/etc/init.d/postgresql"
 
 RUN mkdir -p /var/run/postgresql && chown -R postgres /var/run/postgresql
 
-WORKDIR /var/lib/postgresql/9.6/main
-RUN ln -s /etc/postgresql/9.6/main/postgresql.conf
+WORKDIR /var/lib/postgresql/10/main
+RUN ln -s /etc/postgresql/10/main/postgresql.conf
 
-VOLUME /var/lib/postgresql/9.6/base
+VOLUME /var/lib/postgresql/10/base
 EXPOSE 5432
 
 # see - https://github.com/nimiq/docker-postgresql93/pull/4/files
