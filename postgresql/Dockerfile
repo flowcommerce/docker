@@ -55,6 +55,8 @@ RUN mkdir -p /var/run/postgresql && chown -R postgres /var/run/postgresql
 WORKDIR /var/lib/postgresql/10/main
 RUN ln -s /etc/postgresql/10/main/postgresql.conf
 
+RUN sed -i 's/include_dir/#include_dir/' /etc/postgresql/10/main/postgresql.conf
+
 VOLUME /var/lib/postgresql/10/base
 EXPOSE 5432
 
