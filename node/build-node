@@ -42,7 +42,7 @@ begin
   Dir.chdir(tmp_dir) do
     run("echo '#{env_provider_version}' > environment-provider-version.txt")
     run("curl https://s3.amazonaws.com/io.flow.aws-s3-public/util/environment-provider/environment-provider.jar > ./environment-provider.jar")
-    run("aws s3 cp s3://io.flow.infra/npm/flownpmreadonly.npmrc ./.npmrc")
+    run("aws s3 cp s3://io.flow.infra/npm/flowtech.npmrc ./.npmrc")
     run("docker build --no-cache -t %s ." % node_image_tag)
   end
 
