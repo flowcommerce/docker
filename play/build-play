@@ -41,7 +41,7 @@ begin
 
   Dir.chdir(tmp_dir) do
     run("echo '#{env_provider_version}' > environment-provider-version.txt")
-    run("curl https://s3.amazonaws.com/io.flow.aws-s3-public/util/environment-provider/environment-provider.jar > ./environment-provider.jar")
+    run("curl https://cdn.flow.io/util/environment-provider/environment-provider.jar > ./environment-provider.jar")
     run("docker build --no-cache -t %s ." % play_image_tag)
   end
 
