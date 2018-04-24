@@ -53,10 +53,21 @@ ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 RUN npm install -g forever
 
 # Install AWS CLI
-RUN apt-get install -y python-pip python-dev build-essential && \
-    pip install --upgrade pip && \
-    pip install --upgrade virtualenv && \
-    pip install --upgrade awscli
+RUN apt-get install -y awscli
+
+# Install dev tools
+RUN mkdir -p /root/go
+ENV GOPATH /root/go
+ENV GOBIN $GOPATH/bin
+ENV PATH $PATH:$GOBIN
+RUN mkdir -p $GOPATH/src/github.com/flowcommerce/tools/
+RUN mkdir -p $GOPATH/src/github.com/flowcommerce/apidoc/
+ADD tools $GOPATH/src/github.com/flowcommerce/tools/.
+ADD apidoc $GOPATH/src/github.com/flowcommerce/apidoc/.
+RUN apt-get install -y golang-go
+WORKDIR $GOPATH/src/github.com/flowcommerce/tools/
+RUN go get ./...
+RUN go install dev.go
 
 # Setup /opt/node
 RUN mkdir -p /opt/node/log
