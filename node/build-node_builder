@@ -37,7 +37,7 @@ puts "env_provider_version: #{env_provider_version}"
 tmp_dir = "/tmp/docker.node_builder.#{Process.pid}"
 begin
   run("mkdir #{tmp_dir}")
-  run("cp Dockerfile.node_buidler #{tmp_dir}/Dockerfile")
+  run("cp Dockerfile.node_builder #{tmp_dir}/Dockerfile")
 
   Dir.chdir(tmp_dir) do
     run("echo '#{env_provider_version}' > environment-provider-version.txt")
