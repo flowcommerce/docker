@@ -9,6 +9,7 @@ func main() {
 
 	executor = executor.Add("dev tag")
 	executor = executor.Add("./build-node `sem-info tag latest`")
+	executor = executor.Add("./build-node_builder `sem-info tag latest`")
 
 	executor.Run()
 }
