@@ -2,7 +2,7 @@
 
 # Ex:
 #
-# ./build-node 0.0.19
+# ./build-node_builder 0.0.19
 
 node_tag = ARGV.shift.to_s.strip
 
