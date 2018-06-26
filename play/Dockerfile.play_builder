@@ -1,16 +1,23 @@
-FROM flowdocker/play:%s
+FROM openjdk:8-jdk-alpine
 
 MAINTAINER tech@flow.io
 
-# install sbt
-RUN echo "deb https://dl.bintray.com/sbt/debian /" | tee -a /etc/apt/sources.list.d/sbt.list
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 642AC823
-RUN apt-get update
-RUN apt-get install -y --no-install-recommends sbt=0.13.16
+ENV SBT_VERSION 0.13.17
 
-# add .sbt and .ivy2 to root directory
 WORKDIR /root
-RUN mkdir -p .sbt/
-RUN mkdir -p .ivy2/
-ADD .sbt/ .sbt/.
-ADD .ivy2 .ivy2/.
+
+# Install SBT
+RUN apk add --no-cache --update bash && \
+    apk add --no-cache --virtual=build-dependencies curl && \
+    curl -sL "https://github.com/sbt/sbt/releases/download/v$SBT_VERSION/sbt-$SBT_VERSION.tgz" | gunzip | tar -x -C /usr/local && \
+    ln -s /usr/local/sbt/bin/sbt /usr/local/bin/sbt && \
+    chmod 0755 /usr/local/bin/sbt && \
+    apk del build-dependencies && \
+    mkdir -p .sbt/ && \
+    mkdir -p .ivy2/
+
+COPY environment-provider.jar .
+COPY environment-provider-version.txt .
+
+COPY .sbt/ .sbt/.
+COPY .ivy2 .ivy2/.
