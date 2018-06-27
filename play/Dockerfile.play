@@ -4,5 +4,7 @@ MAINTAINER tech@flow.io
 
 WORKDIR /root
 
+RUN apk add --no-cache --update bash
+
 COPY environment-provider.jar .
 COPY environment-provider-version.txt .
