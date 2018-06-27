@@ -4,5 +4,8 @@ MAINTAINER tech@flow.io
 
 WORKDIR /root
 
+# install stuff
+RUN apk add --no-cache --virtual=build-dependencies curl bash
+
 COPY environment-provider.jar .
 COPY environment-provider-version.txt .
