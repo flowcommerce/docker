@@ -16,5 +16,5 @@ RUN apk add --no-cache --update bash && \
     mkdir -p .sbt/ && \
     mkdir -p .ivy2/
 
-COPY .sbt/ .sbt/.
-COPY .ivy2 .ivy2/.
+COPY .sbt .
+COPY .ivy2 .
