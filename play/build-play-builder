@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-PROJECTS_TO_BUILD = %w(flowcommerce/experience flowcommerce/catalog flowcommerce/fulfillment flowcommerce/label flowcommerce/shopify)
+PROJECTS_TO_BUILD = %w(flowcommerce/experience flowcommerce/catalog flowcommerce/label flowcommerce/shopify flowcommerce/webhook)
 
 ORG = "flowdocker"
 
