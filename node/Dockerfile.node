@@ -30,7 +30,7 @@ COPY environment-provider.jar .
 COPY environment-provider-version.txt .
 
 RUN npm install -g forever && \
-    apk add --no-cache --update ca-certificates && \
+    apk add --no-cache --update ca-certificates curl && \
     rm /var/cache/apk/* && \
     mkdir -p /opt/node/log
 
