@@ -11,7 +11,7 @@ import (
 
 func main() {
 	executor := executor.Create("docker-postgresql")
-	image := fmt.Sprintf("479720515435.dkr.ecr.us-east-1.amazonaws.com/docker-postgresql/postgresql:%s", latestTag())
+	image := fmt.Sprintf("flowdocker/postgresql:%s", latestTag())
 
 	executor = executor.Add(fmt.Sprintf("docker build -t %s .", image))
 	executor = executor.Add(fmt.Sprintf("docker push %s", image))

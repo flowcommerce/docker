@@ -11,7 +11,7 @@ if play_tag == ""
   exit(1)
 end
 
-play_image_tag = "479720515435.dkr.ecr.us-east-1.amazonaws.com/play:%s" % play_tag
+play_image_tag = "flowdocker/play:%s" % play_tag
 
 def run(command)
   puts "  %s" % command
