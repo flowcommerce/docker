@@ -42,6 +42,7 @@ begin
   Dir.chdir(tmp_dir) do
     run("echo '#{env_provider_version}' > environment-provider-version.txt")
     run("curl https://cdn.flow.io/util/environment-provider/environment-provider.jar > ./environment-provider.jar")
+    run("eval $(aws ecr get-login --no-include-email)")
     run("docker build --no-cache -t %s ." % play_image_tag)
   end
 
