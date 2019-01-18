@@ -2,7 +2,7 @@
 
 PROJECTS_TO_BUILD = %w(flowvault/payment flowcommerce/experience flowcommerce/catalog flowcommerce/label flowcommerce/shopify flowcommerce/webhook)
 
-ORG = "flowdocker"
+ORG = "479720515435.dkr.ecr.us-east-1.amazonaws.com"
 
 tag = ARGV.shift.to_s.strip
 
@@ -68,6 +68,7 @@ begin
     run("docker build --no-cache -t %s ." % play_builder_tag)
   end
 
+  run("eval $(aws ecr get-login --no-include-email)")
   run("docker push %s" % play_builder_tag)
 ensure
   run("rm -rf #{tmp_dir}")
