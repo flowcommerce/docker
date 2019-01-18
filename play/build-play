@@ -11,7 +11,7 @@ if play_tag == ""
   exit(1)
 end
 
-play_image_tag = "flowdocker/play:%s" % play_tag
+play_image_tag = "479720515435.dkr.ecr.us-east-1.amazonaws.com/play:%s" % play_tag
 
 def run(command)
   puts "  %s" % command
@@ -39,10 +39,11 @@ begin
   run("mkdir #{tmp_dir}")
   run("cp Dockerfile.play #{tmp_dir}/Dockerfile")
 
+  run("eval $(aws ecr get-login --no-include-email)")
+  
   Dir.chdir(tmp_dir) do
     run("echo '#{env_provider_version}' > environment-provider-version.txt")
     run("curl https://cdn.flow.io/util/environment-provider/environment-provider.jar > ./environment-provider.jar")
-    run("eval $(aws ecr get-login --no-include-email)")
     run("docker build --no-cache -t %s ." % play_image_tag)
   end
 

@@ -1,4 +1,4 @@
-FROM flowdocker/postgresql:0.0.61
+FROM 479720515435.dkr.ecr.us-east-1.amazonaws.com/postgresql:0.0.61
 
 ADD . /opt/schema
 WORKDIR /opt/schema

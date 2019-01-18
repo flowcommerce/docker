@@ -11,7 +11,7 @@ if rails_tag == ""
   exit(1)
 end
 
-rails_image_tag = "flowdocker/rails:%s" % rails_tag
+rails_image_tag = "479720515435.dkr.ecr.us-east-1.amazonaws.com/rails:%s" % rails_tag
 
 def run(command)
   puts "  %s" % command
@@ -38,6 +38,8 @@ tmp_dir = "/tmp/docker.rails.#{Process.pid}"
 begin
   run("mkdir #{tmp_dir}")
   run("cp Dockerfile.rails #{tmp_dir}/Dockerfile")
+
+  run("eval $(aws ecr get-login --no-include-email)") 
 
   Dir.chdir(tmp_dir) do
     run("echo '#{env_provider_version}' > environment-provider-version.txt")

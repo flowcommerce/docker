@@ -2,7 +2,7 @@
 
 PROJECTS_TO_BUILD = %w(flowvault/payment flowcommerce/experience flowcommerce/catalog flowcommerce/label flowcommerce/shopify flowcommerce/webhook)
 
-ORG = "flowdocker"
+ORG = "479720515435.dkr.ecr.us-east-1.amazonaws.com"
 
 tag = ARGV.shift.to_s.strip
 
@@ -59,6 +59,8 @@ begin
   File.open(dockerfile, "w") do |out|
     out << IO.read("Dockerfile.play_builder").strip % tag
   end
+
+  run("eval $(aws ecr get-login --no-include-email)") 
 
   Dir.chdir(tmp_dir) do
     run("cp -R $HOME/.ivy2 .")
