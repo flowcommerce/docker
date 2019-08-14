@@ -47,7 +47,6 @@ WORKDIR $GOPATH/src/github.com/flowcommerce/tools/
 
 #RUN dep ensure
 #RUN make install
-RUN go get -u github.com/jteeuwen/go-bindata/...
 RUN make build
 mkdir -p /opt/node/log
 
