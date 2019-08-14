@@ -6,8 +6,8 @@ MAINTAINER tech@flow.io
 ENV LANG C.UTF-8
 
 ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk/jre
-ENV JAVA_VERSION 8u171
-ENV JAVA_ALPINE_VERSION 8.171.11-r0
+ENV JAVA_VERSION 8u212
+ENV JAVA_ALPINE_VERSION 8.212.04-r1
 ENV GOLANG_VERSION 1.10.3
 ENV NODE_ENV production
 ENV GOPATH /root/go
@@ -33,10 +33,9 @@ COPY environment-provider.jar .
 COPY environment-provider-version.txt .
 
 RUN npm install -g forever && \
-    apk add --no-cache --update python py-pip ca-certificates musl-dev git go && \
+    apk add --no-cache --update python py-pip ca-certificates musl-dev git go make dep && \
     pip install --upgrade awscli && \
     apk -v --purge del py-pip && \
-    rm /var/cache/apk/* && \
     mkdir -p /root/go && \
     mkdir -p $GOPATH/src/github.com/flowcommerce/tools/ && \
     mkdir -p $GOPATH/src/github.com/flowcommerce/apidoc/
@@ -46,9 +45,9 @@ COPY apidoc $GOPATH/src/github.com/flowcommerce/apidoc/.
 
 WORKDIR $GOPATH/src/github.com/flowcommerce/tools/
 
-RUN go get ./... && \
-  go install dev.go && \
-  mkdir -p /opt/node/log
+#RUN dep ensure
+RUN make install
+RUN mkdir -p /opt/node/log
 
 COPY .npmrc /opt/node/.npmrc
 
