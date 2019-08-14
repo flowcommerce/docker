@@ -18,7 +18,7 @@ def run(command)
   system(command)
 end
 
-env_provider = File.expand_path(File.join(File.dirname(__FILE__), '/vault/environment-provider'))
+env_provider = File.expand_path(File.join(File.dirname(__FILE__), '/../../environment-provider'))
 
 if !File.directory?(env_provider)
   puts "ERROR: Could not find environment provider project. Expected at #{env_provider}"
