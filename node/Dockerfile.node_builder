@@ -45,12 +45,9 @@ COPY apidoc $GOPATH/src/github.com/flowcommerce/apidoc/.
 
 WORKDIR $GOPATH/src/github.com/flowcommerce/tools/
 
-#RUN dep ensure
-#RUN make install
-RUN go get -u github.com/jteeuwen/go-bindata/...
-RUN make build
+RUN dep ensure
+RUN make install
 RUN mkdir -p /opt/node/log
-
 COPY .npmrc /opt/node/.npmrc
 
 WORKDIR /opt/node
