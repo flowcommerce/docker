@@ -44,7 +44,7 @@ if refresh_build_caches
     end
 
     Dir.chdir(dir) do
-      run("sbt compile")
+      run("sbt -mem 8000 compile")
     end
   end
 
