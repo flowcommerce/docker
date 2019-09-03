@@ -18,3 +18,4 @@ RUN apk add --no-cache --update bash && \
 
 COPY .sbt/ .sbt/.
 COPY .ivy2 .ivy2/.
+COPY .coursier/ .cache/coursier/v1/.
