@@ -6,8 +6,5 @@ RUN sed -i s/#networkaddress.cache.ttl=-1/networkaddress.cache.ttl=10/ $JAVA_HOM
 
 WORKDIR /root
 
-ADD utils /java-utils
 COPY environment-provider.jar .
 COPY environment-provider-version.txt .
-
-ENV PATH ${PATH}:/java-utils
