@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk
+FROM openjdk:13-jdk
 
 MAINTAINER tech@flow.io
 
