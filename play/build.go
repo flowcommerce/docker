@@ -8,9 +8,10 @@ func main() {
 	executor := executor.Create("docker-play")
 
 	executor = executor.Add("dev tag")
-	executor = executor.Add("./build-play `sem-info tag latest` `sem-info tag latest`")
-	executor = executor.Add("./build-play-builder `sem-info tag latest` `sem-info tag latest`")
-	executor = executor.Add("./build-update-readme `sem-info tag latest`")
+	executor = executor.Add("./build-play `sem-info tag latest` 8")
+	executor = executor.Add("./build-play `sem-info tag latest` 13")
+	executor = executor.Add("./build-play-builder `sem-info tag latest` 8")
+	executor = executor.Add("./build-play-builder `sem-info tag latest` 13")
 
 	executor.Run()
 }

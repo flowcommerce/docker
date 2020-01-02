@@ -1,0 +1,10 @@
+FROM openjdk:13-jdk
+
+MAINTAINER tech@flow.io
+
+RUN sed -i s/#networkaddress.cache.ttl=-1/networkaddress.cache.ttl=10/ $JAVA_HOME/conf/security/java.security
+
+WORKDIR /root
+
+COPY environment-provider.jar .
+COPY environment-provider-version.txt .
