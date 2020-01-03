@@ -11,7 +11,7 @@ java_tag = ARGV.shift.to_s.strip
 
 if play_tag == "" || java_tag == ""
   puts "Usage: ./build-play $(sem-info tag latest) <8 or 13>"
-  puts "ERROR: Missing play tag or java_tag."
+  puts "ERROR: Missing play tag or java tag."
   exit(1)
 end
 
