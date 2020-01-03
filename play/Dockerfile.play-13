@@ -1,4 +1,4 @@
-FROM openjdk:13-jdk
+FROM openjdk:13-jdk-buster
 
 MAINTAINER tech@flow.io
 
