@@ -2,16 +2,21 @@
 
 # Ex:
 #
-# ./build-play 0.0.19
+# ./build-play 0.0.19 13
+# builds flowdocker/play:0.0.19-java13
+# aka flowdocker/play:latest-java13
 
 play_tag = ARGV.shift.to_s.strip
+java_tag = ARGV.shift.to_s.strip
 
-if play_tag == ""
-  puts "ERROR: Missing play tag"
+if play_tag == "" || java_tag == ""
+  puts "Usage: ./build-play $(sem-info tag latest) <8 or 13>"
+  puts "ERROR: Missing play tag or java tag."
   exit(1)
 end
 
-play_image_tag = "flowdocker/play:%s" % play_tag
+play_image_tag = "flowdocker/play:#{play_tag}-java#{java_tag}"
+play_image_latest = "flowdocker/play:latest-java#{java_tag}"
 
 def run(command)
   puts "  %s" % command
@@ -37,16 +42,17 @@ puts "env_provider_version: #{env_provider_version}"
 tmp_dir = "/tmp/docker.play.#{Process.pid}"
 begin
   run("mkdir #{tmp_dir}")
-  run("cp Dockerfile.play #{tmp_dir}/Dockerfile")
-  run("cp -R utils #{tmp_dir}/utils")
+  run("cp Dockerfile.play-#{java_tag} #{tmp_dir}/Dockerfile")
 
   Dir.chdir(tmp_dir) do
     run("echo '#{env_provider_version}' > environment-provider-version.txt")
     run("curl https://cdn.flow.io/util/environment-provider/environment-provider.jar > ./environment-provider.jar")
-    run("docker build --no-cache -t %s ." % play_image_tag)
+    run("docker build --no-cache -t #{play_image_tag} .")
   end
 
-  run("docker push %s" % play_image_tag)
+  run("docker tag #{play_image_tag} #{play_image_latest}")
+  run("docker push #{play_image_tag}")
+  run("docker push #{play_image_latest}")
 ensure
   run("rm -rf #{tmp_dir}")
 end

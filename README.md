@@ -3,10 +3,8 @@ Central place for dockerfiles and other utilities to support docker at flow
 
 ## play
 
-templates/play/Dockerfile defines a base image that we can use when building our
+[templates/play/Dockerfile](templates/play/Dockerfile) defines a base image that we can use when building our
 play applications.
-
-    FROM flowdocker/play:0.1.62
 
 To create a new play base image
 
@@ -14,8 +12,7 @@ To create a new play base image
     go run build.go
 
 This will create a new image using the git tag from this repository,
-build the image, tag w/ latest, and update this README so the example
-is the latest version of the play image.
+build the image, and tag w/ latest.
 
 
 ## postgresql

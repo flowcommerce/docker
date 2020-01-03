@@ -2,17 +2,17 @@
 
 PROJECTS_TO_BUILD = %w(flowvault/payment flowcommerce/experience flowcommerce/catalog flowcommerce/label flowcommerce/shopify flowcommerce/webhook)
 
-ORG = "flowdocker"
+play_tag = ARGV.shift.to_s.strip
+java_tag = ARGV.shift.to_s.strip
 
-tag = ARGV.shift.to_s.strip
-
-if tag == ""
-  puts "ERROR: Missing tag"
+if play_tag == "" || java_tag == ""
+  puts "Usage: ./build-play-builder $(sem-info tag latest) <8 or 13>"
+  puts "ERROR: Missing play tag or java tag."
   exit(1)
 end
 
-play_builder_image = "%s/%s" % [ORG, "play_builder"]
-play_builder_tag = "%s:%s" % [play_builder_image, tag]
+play_builder_image_tag = "flowdocker/play_builder:#{play_tag}-java#{java_tag}"
+play_builder_image_latest = "flowdocker/play_builder:latest-java#{java_tag}"
 
 refresh_build_caches = true
 
@@ -22,7 +22,7 @@ def run(command)
 end
 
 puts ""
-puts "Starting build of %s" % play_builder_tag
+puts "Starting build of %s" % play_builder_image_tag
 
 if refresh_build_caches
 
@@ -55,10 +55,7 @@ end
 tmp_dir = "/tmp/docker.play.#{Process.pid}"
 begin
   run("mkdir #{tmp_dir}")
-  dockerfile = "#{tmp_dir}/Dockerfile"
-  File.open(dockerfile, "w") do |out|
-    out << IO.read("Dockerfile.play_builder").strip % tag
-  end
+  run("cp Dockerfile.play_builder-#{java_tag} #{tmp_dir}/Dockerfile")
 
   Dir.chdir(tmp_dir) do
     run("cp -R $HOME/.ivy2 .")
@@ -66,13 +63,15 @@ begin
     run("cp -R $HOME/.sbt .")
     run("rm -f .sbt/.*")
     run("cp -R $HOME/Library/Caches/Coursier/v1 ./.coursier")
-    run("docker build --no-cache -t %s ." % play_builder_tag)
+    run("docker build --no-cache -t %s ." % play_builder_image_tag)
   end
 
-  run("docker push %s" % play_builder_tag)
+  run("docker tag #{play_builder_image_tag} #{play_builder_image_latest}")
+  run("docker push #{play_builder_image_tag}")
+  run("docker push #{play_builder_image_latest}")
 ensure
   run("rm -rf #{tmp_dir}")
 end
 
 puts ""
-puts "Completed build of %s" % play_builder_tag
+puts "Completed build of %s" % play_builder_image_tag
