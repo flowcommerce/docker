@@ -1,6 +1,6 @@
 FROM node:12-alpine
 
-MAINTAINER tech@flow.io
+LABEL maintainer="tech@flow.io"
 
 # Default to UTF-8 file.encoding
 ENV LANG C.UTF-8
@@ -8,11 +8,13 @@ ENV LANG C.UTF-8
 ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk/jre
 ENV JAVA_VERSION 8u222
 ENV JAVA_ALPINE_VERSION 8.222.10-r0
-ENV GOLANG_VERSION 1.13.3
+ENV GOLANG_VERSION 1.12.12
 ENV NODE_ENV production
 ENV GOPATH /root/go
 ENV GOBIN $GOPATH/bin
 ENV PATH $PATH:/usr/lib/jvm/java-1.8-openjdk/jre/bin:/usr/lib/jvm/java-1.8-openjdk/bin:$GOBIN
+
+ARG GITHUB_TOKEN
 
 # add a simple script that can auto-detect the appropriate JAVA_HOME value
 # based on whether the JDK or only the JRE is installed
@@ -27,6 +29,8 @@ RUN { \
 	apk add --no-cache --update openjdk8-jre="$JAVA_ALPINE_VERSION" && \
 	[ "$JAVA_HOME" = "$(docker-java-home)" ]
 
+ENV FLOW_GOPATH $GOPATH/src/github.com/flowcommerce
+
 WORKDIR /root
 
 COPY environment-provider.jar .
@@ -37,17 +41,21 @@ RUN npm install -g forever && \
     pip install --upgrade awscli && \
     apk -v --purge del py-pip && \
     mkdir -p /root/go && \
-    mkdir -p $GOPATH/src/github.com/flowcommerce/tools/ && \
-    mkdir -p $GOPATH/src/github.com/flowcommerce/apidoc/
+    mkdir -p $FLOW_GOPATH/tools/ && \
+    mkdir -p $FLOW_GOPATH/apidoc/ && \
+		git config --global url."https://$GITHUB_TOKEN:x-oauth-basic@github.com/".insteadOf "git@github.com:" && \
+		git config --add --global url."https://$GITHUB_TOKEN:x-oauth-basic@github.com/".insteadOf "https://github.com/"
 
-COPY tools $GOPATH/src/github.com/flowcommerce/tools/.
-COPY apidoc $GOPATH/src/github.com/flowcommerce/apidoc/.
+COPY tools $FLOW_GOPATH/tools/.
+COPY apidoc $FLOW_GOPATH/apidoc/.
 
-WORKDIR $GOPATH/src/github.com/flowcommerce/tools/
+WORKDIR $FLOW_GOPATH/tools/
 
-RUN dep ensure
+RUN dep ensure -v
 RUN make install
 RUN mkdir -p /opt/node/log
 COPY .npmrc /opt/node/.npmrc
+# Remove git token from config used by dep ensure
+RUN git config --global --unset-all url."https://$GITHUB_TOKEN:x-oauth-basic@github.com/".insteadOf
 
 WORKDIR /opt/node

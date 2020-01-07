@@ -1,6 +1,6 @@
 FROM node:12-alpine
 
-MAINTAINER tech@flow.io
+LABEL maintainer="tech@flow.io"
 
 # Default to UTF-8 file.encoding
 ENV LANG C.UTF-8

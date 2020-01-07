@@ -2,7 +2,11 @@
 
 # Ex:
 #
-# ./build-node 0.0.19
+# ./build-node <docker_image_version>
+#
+# ./build-node 0.2.0
+
+require "./helpers.rb"
 
 node_tag = ARGV.shift.to_s.strip
 
@@ -13,16 +17,7 @@ end
 
 node_image_tag = "flowdocker/node:%s" % node_tag
 
-def run(command)
-  puts "  %s" % command
-  system(command)
-end
-
-env_provider = File.expand_path(File.join(File.dirname(__FILE__), '/../../environment-provider'))
-
-if !File.directory?(env_provider)
-  puts "ERROR: Could not find environment provider project. Expected at #{env_provider}"
-end
+env_provider = get_env_providor_location
 
 puts "Fetching latest version number for #{env_provider}"
 env_provider_version = Dir.chdir(env_provider) do
@@ -43,15 +38,14 @@ begin
     run("echo '#{env_provider_version}' > environment-provider-version.txt")
     run("curl https://cdn.flow.io/util/environment-provider/environment-provider_2.12-#{env_provider_version}-one-jar.jar > ./environment-provider.jar")
     run("aws s3 cp s3://io.flow.infra/npm/flowtech.npmrc ./.npmrc")
-    run("git clone git@github.com:flowcommerce/apidoc.git")
-    run("git clone git@github.com:flowcommerce/tools.git")
-    run("docker build --no-cache -t %s ." % node_image_tag)
+    run("docker build --no-cache -t %s ." % node_image_tag, true)
   end
 
   run("docker push %s" % node_image_tag)
+  puts ""
+  puts "Completed build and push of #{node_image_tag}"
+rescue StandardError => e
+  puts e.message
 ensure
   run("rm -rf #{tmp_dir}")
 end
-
-puts ""
-puts "Completed build and push of #{node_image_tag}"

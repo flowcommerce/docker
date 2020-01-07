@@ -2,27 +2,41 @@
 
 # Ex:
 #
-# ./build-node_builder 0.0.19
+# ./build-node_builder <docker_image_version>
+#
+# ./build-node_builder 0.2.0
+
+require "./helpers.rb"
+
+
+def usage()
+  puts ""
+  puts "Usage:"
+  puts ""
+  puts "./build-node_docker <docker_image_version>"
+  puts ""
+  puts "Example:  ./build-node_docker 0.2.0"
+  puts ""
+end
 
 node_tag = ARGV.shift.to_s.strip
+github_token_var_name = "GITHUB_TOKEN"
 
 if node_tag == ""
   puts "ERROR: Missing node tag"
+  usage
+  exit(1)
+end
+
+if ENV[github_token_var_name] == nil
+  # GITHUB_TOKEN is required to pull dependencies for building Flow `dev` tool
+  puts "ERROR: Required environment variable '#{github_token_var_name}' is missing"
   exit(1)
 end
 
 node_image_tag = "flowdocker/node_builder:%s" % node_tag
 
-def run(command)
-  puts "  %s" % command
-  system(command)
-end
-
-env_provider = File.expand_path(File.join(File.dirname(__FILE__), '/../../environment-provider'))
-
-if !File.directory?(env_provider)
-  puts "ERROR: Could not find environment provider project. Expected at #{env_provider}"
-end
+env_provider = get_env_providor_location
 
 puts "Fetching latest version number for #{env_provider}"
 env_provider_version = Dir.chdir(env_provider) do
@@ -45,13 +59,14 @@ begin
     run("aws s3 cp s3://io.flow.infra/npm/flowtech.npmrc ./.npmrc")
     run("git clone git@github.com:flowcommerce/apidoc.git")
     run("git clone git@github.com:flowcommerce/tools.git")
-    run("docker build --no-cache -t %s ." % node_image_tag)
+    run("docker build --no-cache --build-arg GITHUB_TOKEN=#{ENV[github_token_var_name]} -t %s ." % node_image_tag)
   end
 
   run("docker push %s" % node_image_tag)
+  puts ""
+  puts "Completed build and push of #{node_image_tag}"
+rescue StandardError => e
+  puts e.message
 ensure
   run("rm -rf #{tmp_dir}")
 end
-
-puts ""
-puts "Completed build and push of #{node_image_tag}"
