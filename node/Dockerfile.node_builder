@@ -29,8 +29,6 @@ RUN { \
 	apk add --no-cache --update openjdk8-jre="$JAVA_ALPINE_VERSION" && \
 	[ "$JAVA_HOME" = "$(docker-java-home)" ]
 
-ENV FLOW_GOPATH $GOPATH/src/github.com/flowcommerce
-
 WORKDIR /root
 
 COPY environment-provider.jar .
@@ -41,15 +39,15 @@ RUN npm install -g forever && \
     pip install --upgrade awscli && \
     apk -v --purge del py-pip && \
     mkdir -p /root/go && \
-    mkdir -p $FLOW_GOPATH/tools/ && \
-    mkdir -p $FLOW_GOPATH/apidoc/ && \
+    mkdir -p $GOPATH/src/github.com/flowcommerce/tools/ && \
+    mkdir -p $GOPATH/src/github.com/flowcommerce/apidoc/ && \
 		git config --global url."https://$GITHUB_TOKEN:x-oauth-basic@github.com/".insteadOf "git@github.com:" && \
 		git config --add --global url."https://$GITHUB_TOKEN:x-oauth-basic@github.com/".insteadOf "https://github.com/"
 
-COPY tools $FLOW_GOPATH/tools/.
-COPY apidoc $FLOW_GOPATH/apidoc/.
+COPY tools $GOPATH/src/github.com/flowcommerce/tools/.
+COPY apidoc $GOPATH/src/github.com/flowcommerce/apidoc/.
 
-WORKDIR $FLOW_GOPATH/tools/
+WORKDIR $GOPATH/src/github.com/flowcommerce/tools/
 
 RUN dep ensure -v
 RUN make install
