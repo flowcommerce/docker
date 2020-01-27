@@ -35,7 +35,7 @@ COPY environment-provider.jar .
 COPY environment-provider-version.txt .
 
 RUN npm install -g forever && \
-    apk add --no-cache --update python py-pip ca-certificates musl-dev git go dep make && \
+    apk add --no-cache --update python py-pip ca-certificates musl-dev git go dep make build-base && \
     pip install --upgrade awscli && \
     apk -v --purge del py-pip && \
     mkdir -p /root/go && \
