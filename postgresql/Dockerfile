@@ -30,7 +30,7 @@ RUN apt-get install -y --no-install-recommends ca-certificates wget sudo
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
 
 RUN apt-get update
-RUN apt-get install -y postgresql-10
+RUN apt-get install -y postgresql-11
 RUN apt-get install -y --no-install-recommends git
 RUN apt-get install -y --no-install-recommends ruby
 RUN apt-get install -y --no-install-recommends curl
@@ -43,21 +43,21 @@ RUN git checkout 0.9.35
 RUN ruby ./configure.rb --prefix /usr/local
 RUN ./install.rb
 
-RUN sed -i 's/peer/trust/' /etc/postgresql/10/main/pg_hba.conf
-RUN sed -i 's/md5/trust/' /etc/postgresql/10/main/pg_hba.conf
-RUN sed -i 's/127.0.0.1\/32/0.0.0.0\/0/' /etc/postgresql/10/main/pg_hba.conf
-RUN cat /etc/postgresql/10/main/pg_hba.conf
+RUN sed -i 's/peer/trust/' /etc/postgresql/11/main/pg_hba.conf
+RUN sed -i 's/md5/trust/' /etc/postgresql/11/main/pg_hba.conf
+RUN sed -i 's/127.0.0.1\/32/0.0.0.0\/0/' /etc/postgresql/11/main/pg_hba.conf
+RUN cat /etc/postgresql/11/main/pg_hba.conf
 
 RUN cat "/etc/init.d/postgresql"
 
 RUN mkdir -p /var/run/postgresql && chown -R postgres /var/run/postgresql
 
-WORKDIR /var/lib/postgresql/10/main
-RUN ln -s /etc/postgresql/10/main/postgresql.conf
+WORKDIR /var/lib/postgresql/11/main
+RUN ln -s /etc/postgresql/11/main/postgresql.conf
 
-RUN sed -i 's/include_dir/#include_dir/' /etc/postgresql/10/main/postgresql.conf
+RUN sed -i 's/include_dir/#include_dir/' /etc/postgresql/11/main/postgresql.conf
 
-VOLUME /var/lib/postgresql/10/base
+VOLUME /var/lib/postgresql/11/base
 EXPOSE 5432
 
 # see - https://github.com/nimiq/docker-postgresql93/pull/4/files
