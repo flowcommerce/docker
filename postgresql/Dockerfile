@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 
 # This is a common docker file for flow that is used to create
 # containers running specific versions of an applications schema. This
@@ -26,7 +26,7 @@ MAINTAINER tech@flow.io
 
 RUN apt-get update
 RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main' >> /etc/apt/sources.list.d/postgresql.list
-RUN apt-get install -y --no-install-recommends ca-certificates wget sudo
+RUN apt-get install -y --no-install-recommends ca-certificates wget sudo gnupg
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
 
 RUN apt-get update
