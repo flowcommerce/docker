@@ -25,7 +25,19 @@ FROM ubuntu:18.04
 MAINTAINER tech@flow.io
 
 RUN apt-get update
-RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main' >> /etc/apt/sources.list.d/postgresql.list
+RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main' >> /etc/apt/sources.list.d/postgresql.list
+
+# see: https://serverfault.com/questions/949991/how-to-install-tzdata-on-a-ubuntu-docker-image
+# set noninteractive installation
+RUN export DEBIAN_FRONTEND=noninteractive
+
+# install tzdata package
+RUN apt-get install -y tzdata
+
+# set your timezone
+RUN ln -fs /usr/share/zoneinfo/UTC /etc/localtime
+RUN dpkg-reconfigure --frontend noninteractive tzdata
+
 RUN apt-get install -y --no-install-recommends ca-certificates wget sudo gnupg
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
 
