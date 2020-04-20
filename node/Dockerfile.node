@@ -28,6 +28,7 @@ WORKDIR /root
 
 COPY environment-provider.jar .
 COPY environment-provider-version.txt .
+COPY run.sh .
 
 RUN npm install -g forever && \
     apk add --no-cache --update ca-certificates curl && \

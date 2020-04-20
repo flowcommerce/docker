@@ -43,6 +43,7 @@ tmp_dir = "/tmp/docker.play.#{Process.pid}"
 begin
   run("mkdir #{tmp_dir}")
   run("cp Dockerfile.play-#{java_tag} #{tmp_dir}/Dockerfile")
+  run("cp ../scripts/run.sh #{tmp_dir}")
 
   Dir.chdir(tmp_dir) do
     run("echo '#{env_provider_version}' > environment-provider-version.txt")

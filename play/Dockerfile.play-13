@@ -8,3 +8,4 @@ WORKDIR /root
 
 COPY environment-provider.jar .
 COPY environment-provider-version.txt .
+COPY run.sh .
