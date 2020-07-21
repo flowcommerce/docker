@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-PROJECTS_TO_BUILD = %w(flowvault/payment flowcommerce/experience flowcommerce/catalog flowcommerce/label flowcommerce/shopify flowcommerce/webhook)
+PROJECTS_TO_BUILD = %w(flowvault/payment flowcommerce/experience flowcommerce/catalog flowcommerce/label flowcommerce/shopify flowcommerce/webhook flowcommerce/demandware flowcommerce/harmonization flowcommerce/tax flowcommerce/order-messenger flowcommerce/bundle flowcommerce/metric)
 
 play_tag = ARGV.shift.to_s.strip
 java_tag = ARGV.shift.to_s.strip
@@ -28,6 +28,12 @@ if refresh_build_caches
 
   base_dir = File.expand_path(File.join(File.dirname(__FILE__), '/../../docker-build-play-builder.tmp'))
   run("rm -rf #{base_dir}")
+
+  run("rm -rf $HOME/.ivy2")
+  run("rm -rf $HOME/.sbt")
+  run("rm -rf $HOME/.coursier/cache/v1")
+  run("rm -rf $HOME/Library/Caches/Coursier/v1/")
+  
   run("mkdir -p #{base_dir}")
 
   PROJECTS_TO_BUILD.map do |pair|
@@ -38,13 +44,13 @@ if refresh_build_caches
     dir = File.join(base_dir, project)
 
     puts ""
-    puts "Building #{pair} in #{dir}"
+    puts "Getting depedencies #{pair} in #{dir}"
     Dir.chdir(base_dir) do
       run("git clone --depth 1 git@github.com:#{pair}")
     end
 
     Dir.chdir(dir) do
-      run("sbt -mem 8000 compile")
+      run("sbt update")
     end
   end
 
@@ -59,9 +65,7 @@ begin
 
   Dir.chdir(tmp_dir) do
     run("cp -R $HOME/.ivy2 .")
-    run("rm -f .ivy2/.*")
     run("cp -R $HOME/.sbt .")
-    run("rm -f .sbt/.*")
     run("cp -R $HOME/Library/Caches/Coursier/v1 ./.coursier")
     run("docker build --no-cache -t %s ." % play_builder_image_tag)
   end
@@ -70,7 +74,7 @@ begin
   run("docker push #{play_builder_image_tag}")
   run("docker push #{play_builder_image_latest}")
 ensure
-  run("rm -rf #{tmp_dir}")
+  #run("rm -rf #{tmp_dir}")
 end
 
 puts ""
