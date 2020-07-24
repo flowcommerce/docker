@@ -66,7 +66,7 @@ begin
   Dir.chdir(tmp_dir) do
     run("cp -R $HOME/.ivy2 .")
     run("cp -R $HOME/.sbt .")
-    run("cp -R $HOME/Library/Caches/Coursier/v1 ./.coursier")
+    run("cp -R $HOME/Library/Caches/Coursier ./.coursier")
     run("docker build --no-cache -t %s ." % play_builder_image_tag)
   end
 
