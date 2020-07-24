@@ -14,9 +14,8 @@ RUN apk add --no-cache --update bash && \
     chmod 0755 /usr/local/bin/sbt && \
     apk del build-dependencies && \
     mkdir -p .sbt/ && \
-    mkdir -p .ivy2/ && \
-    sbt -version
+    mkdir -p .ivy2/ 
 
 COPY .sbt/ .sbt/.
 COPY .ivy2 .ivy2/.
-COPY .coursier/ .coursier/.
+COPY .coursier/ .cache/coursier/v1/.

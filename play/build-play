@@ -54,7 +54,7 @@ begin
   run("docker push #{play_image_tag}")
   run("docker push #{play_image_latest}")
 ensure
-  #run("rm -rf #{tmp_dir}")
+  run("rm -rf #{tmp_dir}")
 end
 
 puts ""
