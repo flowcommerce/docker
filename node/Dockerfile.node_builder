@@ -17,23 +17,15 @@ WORKDIR /root
 RUN npm install -g forever && \
     apk add --no-cache --update python py-pip ca-certificates musl-dev git go dep make build-base && \
     pip install --upgrade awscli && \
-    apk -v --purge del py-pip && \
-    mkdir -p /root/go && \
-    mkdir -p $GOPATH/src/github.com/flowcommerce/tools/ && \
-    mkdir -p $GOPATH/src/github.com/flowcommerce/apidoc/ && \
-		git config --global url."https://$GITHUB_TOKEN:x-oauth-basic@github.com/".insteadOf "git@github.com:" && \
-		git config --add --global url."https://$GITHUB_TOKEN:x-oauth-basic@github.com/".insteadOf "https://github.com/"
+    apk -v --purge del py-pip
 
-COPY tools $GOPATH/src/github.com/flowcommerce/tools/.
-COPY apidoc $GOPATH/src/github.com/flowcommerce/apidoc/.
+RUN git clone "https://$GITHUB_TOKEN@github.com/flowcommerce/tools" -b modules && \
+    cd tools && \
+    make install && \
+    cd .. && \
+    rm -rf tools # to remove the token
 
-WORKDIR $GOPATH/src/github.com/flowcommerce/tools/
-
-RUN dep ensure -v
-RUN make install
 RUN mkdir -p /opt/node/log
 COPY .npmrc /opt/node/.npmrc
-# Remove git token from config used by dep ensure
-RUN git config --global --unset-all url."https://$GITHUB_TOKEN:x-oauth-basic@github.com/".insteadOf
 
 WORKDIR /opt/node
