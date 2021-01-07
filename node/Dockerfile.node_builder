@@ -15,7 +15,7 @@ ARG GITHUB_TOKEN
 WORKDIR /root
 
 RUN npm install -g forever && \
-    apk add --no-cache --update python py-pip ca-certificates musl-dev git go dep make build-base && \
+    apk add --no-cache --update python py-pip ca-certificates musl-dev git go make build-base && \
     pip install --upgrade awscli && \
     apk -v --purge del py-pip
 
