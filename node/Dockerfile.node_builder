@@ -19,7 +19,7 @@ RUN npm install -g forever && \
     pip install --upgrade awscli && \
     apk -v --purge del py-pip
 
-RUN git clone "https://$GITHUB_TOKEN@github.com/flowcommerce/tools" -b modules && \
+RUN git clone "https://$GITHUB_TOKEN@github.com/flowcommerce/tools" && \
     cd tools && \
     make install && \
     cd .. && \
