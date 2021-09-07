@@ -5,7 +5,6 @@ LABEL maintainer="tech@flow.io"
 # Default to UTF-8 file.encoding
 ENV LANG C.UTF-8
 
-ENV NODE_ENV production
 ENV GOPATH /root/go
 ENV GOBIN $GOPATH/bin
 ENV PATH $PATH:$GOBIN
