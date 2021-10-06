@@ -8,7 +8,6 @@
 
 require "./helpers.rb"
 
-
 def usage()
   puts ""
   puts "Usage:"
@@ -60,9 +59,14 @@ begin
     run("docker build --no-cache --build-arg GITHUB_TOKEN=#{ENV[github_token_var_name]} -t %s ." % node_image_tag)
   end
 
-  run("docker push %s" % node_image_tag)
   puts ""
-  puts "Completed build and push of #{node_image_tag}"
+  puts "Completed build of #{node_image_tag}"
+
+  if confirm("Enter 'Y' to push this image (%s) to Docker hub" % node_image_tag)
+    run("docker push %s" % node_image_tag)
+    puts ""
+    puts "Completed push of #{node_image_tag}"
+  end
 rescue StandardError => e
   puts e.message
 ensure
