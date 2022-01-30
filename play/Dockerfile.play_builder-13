@@ -1,6 +1,6 @@
 FROM openjdk:13-jdk-alpine
 
-MAINTAINER tech@flow.io
+LABEL maintainer="tech@flow.io"
 
 ENV SBT_VERSION 1.3.10
 

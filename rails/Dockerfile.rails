@@ -1,6 +1,6 @@
 FROM ubuntu:16.04
 
-MAINTAINER tech@flow.io
+LABEL maintainer="tech@flow.io"
 
 # refresh list of packages
 RUN apt-get update
