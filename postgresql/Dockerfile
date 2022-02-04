@@ -22,7 +22,7 @@ FROM ubuntu:18.04
 #  psql -U api -h 192.168.99.100 -p 5100 splashpagedb
 #
 
-MAINTAINER tech@flow.io
+LABEL maintainer="tech@flow.io"
 
 RUN apt-get update
 RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main' >> /etc/apt/sources.list.d/postgresql.list
