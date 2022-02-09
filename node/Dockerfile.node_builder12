@@ -1,0 +1,31 @@
+FROM node:12-alpine
+
+LABEL maintainer="tech@flow.io"
+
+# Default to UTF-8 file.encoding
+ENV LANG C.UTF-8
+
+ENV NODE_ENV production
+ENV GOPATH /root/go
+ENV GOBIN $GOPATH/bin
+ENV PATH $PATH:$GOBIN
+
+ARG GITHUB_TOKEN
+
+WORKDIR /root
+
+RUN npm install -g forever && \
+    apk add --no-cache --update python3 py-pip ca-certificates musl-dev git go make build-base && \
+    pip install --upgrade awscli && \
+    apk -v --purge del py-pip
+
+RUN git clone "https://$GITHUB_TOKEN@github.com/flowcommerce/tools" && \
+    cd tools && \
+    make install && \
+    cd .. && \
+    rm -rf tools # to remove the token
+
+RUN mkdir -p /opt/node/log
+COPY .npmrc /opt/node/.npmrc
+
+WORKDIR /opt/node
