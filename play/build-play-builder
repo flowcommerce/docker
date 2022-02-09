@@ -64,7 +64,11 @@ begin
 
   Dir.chdir(tmp_dir) do
     run("cp -R $HOME/.sbt .")
-    run("cp -R $HOME/Library/Caches/Coursier/v1 ./.coursier")
+    if File.directory?(ENV["HOME"]+"/Library/Caches/Coursier/v1")
+      run("cp -R $HOME/Library/Caches/Coursier/v1 ./.coursier")
+    elsif File.directory?(ENV["HOME"]+"/.cache/coursier/v1")
+      run("cp -R $HOME/Library/Caches/Coursier/v1 ./.coursier")
+    end
     run("docker build --no-cache -t %s ." % play_builder_image_tag)
   end
 
