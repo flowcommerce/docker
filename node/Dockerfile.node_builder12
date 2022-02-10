@@ -16,8 +16,7 @@ WORKDIR /root
 
 RUN npm install -g forever && \
     apk add --no-cache --update python3 py-pip ca-certificates musl-dev git go make build-base && \
-    pip install --upgrade awscli && \
-    apk -v --purge del py-pip
+    pip install --upgrade awscli
 
 RUN git clone "https://$GITHUB_TOKEN@github.com/flowcommerce/tools" && \
     cd tools && \
