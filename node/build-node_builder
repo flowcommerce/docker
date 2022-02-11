@@ -69,11 +69,10 @@ begin
   puts ""
   puts "Completed build of #{node_image_tag}"
 
-  if confirm("Enter 'Y' to push this image (%s) to Docker hub" % node_image_tag)
-    run("docker push %s" % node_image_tag)
-    puts ""
-    puts "Completed push of #{node_image_tag}"
-  end
+  run("docker push %s" % node_image_tag)
+  puts ""
+  puts "Completed push of #{node_image_tag}"
+
 rescue StandardError => e
   puts e.message
 ensure

@@ -46,11 +46,11 @@ begin
     run("aws s3 cp s3://io.flow.infra/npm/flowtech.npmrc ./.npmrc")
     run("docker build --platform linux/amd64 --no-cache -t %s ." % node_image_tag, true)
   end
-  if confirm("Enter 'Y' to push this image (%s) to Docker hub" % node_image_tag)
-    run("docker push %s" % node_image_tag)
-    puts ""
-    puts "Completed push of #{node_image_tag}"
-  end
+
+  run("docker push %s" % node_image_tag)
+  puts ""
+  puts "Completed push of #{node_image_tag}"
+
 rescue StandardError => e
   puts e.message
 ensure
