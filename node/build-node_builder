@@ -12,17 +12,24 @@ def usage()
   puts ""
   puts "Usage:"
   puts ""
-  puts "./build-node_docker <docker_image_version>"
+  puts "./build-node_docker <docker_image_version> <node_version>"
   puts ""
-  puts "Example:  ./build-node_docker 0.2.0"
+  puts "Example:  ./build-node_docker 0.2.0 16"
   puts ""
 end
 
 node_tag = ARGV.shift.to_s.strip
+node_version = ARGV.shift.to_s.strip
 github_token_var_name = "GITHUB_TOKEN"
 
 if node_tag == ""
   puts "ERROR: Missing node tag"
+  usage
+  exit(1)
+end
+
+if node_version == ""
+  puts "ERROR: Missing node version"
   usage
   exit(1)
 end
@@ -33,7 +40,7 @@ if ENV[github_token_var_name] == nil
   exit(1)
 end
 
-node_image_tag = "flowdocker/node_builder:%s" % node_tag
+node_image_tag = "flowdocker/node%s_builder:%s" % [node_version, node_tag]
 
 env_provider = get_env_providor_location
 
@@ -47,10 +54,10 @@ puts "env_provider_version: #{env_provider_version}"
 
 # Build in a tmp directory to avoid adding anything unnecessary into
 # the context.
-tmp_dir = "/tmp/docker.node_builder.#{Process.pid}"
+tmp_dir = "/tmp/docker.node_builder#{node_version}.#{Process.pid}"
 begin
   run("mkdir #{tmp_dir}")
-  run("cp Dockerfile.node_builder #{tmp_dir}/Dockerfile")
+  run("cp Dockerfile.node_builder#{node_version} #{tmp_dir}/Dockerfile")
 
   Dir.chdir(tmp_dir) do
     run("echo '#{env_provider_version}' > environment-provider-version.txt")
@@ -62,11 +69,10 @@ begin
   puts ""
   puts "Completed build of #{node_image_tag}"
 
-  if confirm("Enter 'Y' to push this image (%s) to Docker hub" % node_image_tag)
-    run("docker push %s" % node_image_tag)
-    puts ""
-    puts "Completed push of #{node_image_tag}"
-  end
+  run("docker push %s" % node_image_tag)
+  puts ""
+  puts "Completed push of #{node_image_tag}"
+
 rescue StandardError => e
   puts e.message
 ensure

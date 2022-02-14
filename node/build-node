@@ -9,13 +9,19 @@
 require "./helpers.rb"
 
 node_tag = ARGV.shift.to_s.strip
+node_version = ARGV.shift.to_s.strip
 
 if node_tag == ""
   puts "ERROR: Missing node tag"
   exit(1)
 end
 
-node_image_tag = "flowdocker/node:%s" % node_tag
+if node_version == ""
+  puts "ERROR: Missing node version"
+  exit(1)
+end
+
+node_image_tag = "flowdocker/node%s:%s" % [node_version, node_tag]
 
 env_provider = get_env_providor_location
 
@@ -29,10 +35,10 @@ puts "env_provider_version: #{env_provider_version}"
 
 # Build in a tmp directory to avoid adding anything unnecessary into
 # the context.
-tmp_dir = "/tmp/docker.node.#{Process.pid}"
+tmp_dir = "/tmp/docker.node#{node_version}.#{Process.pid}"
 begin
   run("mkdir #{tmp_dir}")
-  run("cp Dockerfile.node #{tmp_dir}/Dockerfile")
+  run("cp Dockerfile.node#{node_version} #{tmp_dir}/Dockerfile")
 
   Dir.chdir(tmp_dir) do
     run("echo '#{env_provider_version}' > environment-provider-version.txt")
@@ -40,11 +46,11 @@ begin
     run("aws s3 cp s3://io.flow.infra/npm/flowtech.npmrc ./.npmrc")
     run("docker build --platform linux/amd64 --no-cache -t %s ." % node_image_tag, true)
   end
-  if confirm("Enter 'Y' to push this image (%s) to Docker hub" % node_image_tag)
-    run("docker push %s" % node_image_tag)
-    puts ""
-    puts "Completed push of #{node_image_tag}"
-  end
+
+  run("docker push %s" % node_image_tag)
+  puts ""
+  puts "Completed push of #{node_image_tag}"
+
 rescue StandardError => e
   puts e.message
 ensure

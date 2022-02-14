@@ -25,9 +25,3 @@ def get_env_providor_location()
   puts "Found environment-provider repo at: [#{found_path}]"
   found_path
 end
-
-def confirm(message)
-  puts message
-  input = gets.chomp
-  input.casecmp('y') == 0
-end
