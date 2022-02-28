@@ -2,6 +2,8 @@ FROM openjdk:13-jdk-buster
 
 LABEL maintainer="tech@flow.io"
 
+RUN apt update && apt upgrade -y
+
 RUN sed -i s/#networkaddress.cache.ttl=-1/networkaddress.cache.ttl=10/ $JAVA_HOME/conf/security/java.security
 
 WORKDIR /root
