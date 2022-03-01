@@ -14,9 +14,9 @@ ARG GITHUB_TOKEN
 
 WORKDIR /root
 
-RUN npm install -g forever && \
-    apk update && apk upgrade && \
+RUN apk update && apk upgrade && \
     apk add --no-cache --update python3 py-pip ca-certificates musl-dev git go make build-base && \
+    npm install -g forever && \
     pip install --upgrade awscli
 
 RUN git clone "https://$GITHUB_TOKEN@github.com/flowcommerce/tools" && \
