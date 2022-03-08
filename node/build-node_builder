@@ -41,7 +41,7 @@ if ENV[github_token_var_name] == nil
 end
 
 node_image_tag = "flowdocker/node%s_builder:%s" % [node_version, node_tag]
-node_image_latest = "flowdocker/node%s_builder:latest-node" % node_version
+node_image_latest = "flowdocker/node%s_builder:latest" % node_version
 
 env_provider = get_env_providor_location
 

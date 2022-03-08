@@ -22,7 +22,7 @@ if node_version == ""
 end
 
 node_image_tag = "flowdocker/node%s:%s" % [node_version, node_tag]
-node_image_latest = "flowdocker/node%s:latest-node" % node_version
+node_image_latest = "flowdocker/node%s:latest" % node_version
 
 env_provider = get_env_providor_location
 
