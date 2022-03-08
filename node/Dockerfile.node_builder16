@@ -16,7 +16,7 @@ WORKDIR /root
 
 RUN apk update && apk upgrade && \
     npm install -g forever && \
-    apk add --no-cache --update python3 py-pip ca-certificates musl-dev git go make build-base && \
+    apk add --no-cache --update python3 py-pip ca-certificates musl-dev git go make build-base curl && \
     pip install --upgrade awscli
 
 RUN git clone "https://$GITHUB_TOKEN@github.com/flowcommerce/tools" && \
