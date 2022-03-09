@@ -22,6 +22,7 @@ if node_version == ""
 end
 
 node_image_tag = "flowdocker/node%s:%s" % [node_version, node_tag]
+node_image_latest = "flowdocker/node%s:latest" % node_version
 
 env_provider = get_env_providor_location
 
@@ -47,9 +48,11 @@ begin
     run("docker build --platform linux/amd64 --no-cache -t %s ." % node_image_tag, true)
   end
 
+  run("docker tag #{node_image_tag} #{node_image_latest}")
   run("docker push %s" % node_image_tag)
+  run("docker push %s" % node_image_latest)
   puts ""
-  puts "Completed push of #{node_image_tag}"
+  puts "Completed push of #{node_image_tag} and #{node_image_latest}"
 
 rescue StandardError => e
   puts e.message
