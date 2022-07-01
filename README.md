@@ -27,3 +27,8 @@ To create a new postgresql base image
     cd postgresql
     go run $GOPATH/src/github.com/flowcommerce/tools/dev.go tag
     go run build.go
+
+
+## node
+
+See [node README.md](node/README.md) for details.

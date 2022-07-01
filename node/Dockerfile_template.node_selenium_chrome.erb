@@ -1,0 +1,6 @@
+FROM selenium/standalone-chrome:<%= ENV['SELENIUM_STANDALONE_CHROME_VERSION'] %>
+
+RUN curl -fsSL https://deb.nodesource.com/setup_<%= ENV['NODE_MAJOR_VERSION'] %>.x | sudo -E bash - && \
+  sudo apt-get install -y nodejs
+
+WORKDIR /opt/node
