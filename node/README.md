@@ -32,14 +32,3 @@ requirements
 ```
 ./build-node_docker <docker_image_version_tag> <node_major_version>
 ```
-
-### 'flowdocker/node*_selenium_chrome' images
-
-This image uses the `selenium/standalone-chrome` image as it's base and installs the latest version
-of node specified byt the <node_major_version> parameter.
-
-#### build
-
-```
-./build-node_selenium_chrome <docker_image_version_tag> <node_major_version> <selenium_standalone_chrome_version>
-```
