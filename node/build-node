@@ -1,23 +1,30 @@
 #!/usr/bin/env ruby
 
-# Ex:
-#
-# ./build-node <docker_image_version>
-#
-# ./build-node 0.2.0
-
 require "./helpers.rb"
+require "erb"
+
+def usage()
+  puts ""
+  puts "Usage:"
+  puts ""
+  puts "./build-node <docker_image_version> <node_major_version>"
+  puts ""
+  puts "Example:  ./build-node 0.2.0 16"
+  puts ""
+end
 
 node_tag = ARGV.shift.to_s.strip
 node_version = ARGV.shift.to_s.strip
 
 if node_tag == ""
   puts "ERROR: Missing node tag"
+  usage
   exit(1)
 end
 
 if node_version == ""
   puts "ERROR: Missing node version"
+  usage
   exit(1)
 end
 
@@ -39,7 +46,8 @@ puts "env_provider_version: #{env_provider_version}"
 tmp_dir = "/tmp/docker.node#{node_version}.#{Process.pid}"
 begin
   run("mkdir #{tmp_dir}")
-  run("cp Dockerfile.node#{node_version} #{tmp_dir}/Dockerfile")
+  template = File.read('Dockerfile_template.node.erb')
+  File.write("#{tmp_dir}/Dockerfile", ERB.new(template).result(binding))
 
   Dir.chdir(tmp_dir) do
     run("echo '#{env_provider_version}' > environment-provider-version.txt")
