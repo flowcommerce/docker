@@ -12,6 +12,8 @@ func main() {
 	executor = executor.Add("./build-node_builder `sem-info tag latest` 12")
 	executor = executor.Add("./build-node `sem-info tag latest` 16")
 	executor = executor.Add("./build-node_builder `sem-info tag latest` 16")
+	executor = executor.Add("./build-node `sem-info tag latest` 18")
+	executor = executor.Add("./build-node_builder `sem-info tag latest` 18")
 
 	executor.Run()
 }
