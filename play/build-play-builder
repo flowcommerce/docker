@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+require "./helpers.rb"
+
 PROJECTS_TO_BUILD = %w(flowvault/payment flowcommerce/experience flowcommerce/catalog flowcommerce/label flowcommerce/shopify flowcommerce/webhook flowcommerce/demandware flowcommerce/harmonization flowcommerce/tax flowcommerce/order-messenger flowcommerce/bundle flowcommerce/metric)
 
 play_tag = ARGV.shift.to_s.strip
@@ -15,11 +17,6 @@ play_builder_image_tag = "flowdocker/play_builder:#{play_tag}-java#{java_tag}"
 play_builder_image_latest = "flowdocker/play_builder:latest-java#{java_tag}"
 
 refresh_build_caches = true
-
-def run(command)
-  puts "  %s" % command
-  system(command)
-end
 
 puts ""
 puts "Starting build of %s" % play_builder_image_tag
