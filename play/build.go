@@ -7,7 +7,7 @@ import (
 func main() {
 	executor := executor.Create("docker-play")
 
-	executor = executor.Add("dev tag")
+	executor = executor.Add("dev tag --force")
 	executor = executor.Add("./build-play `sem-info tag latest` 13")
 	executor = executor.Add("./build-play-builder `sem-info tag latest` 13")
 
