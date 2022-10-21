@@ -33,7 +33,7 @@ pipeline {
     }
 
     stage('Upgrade node docker image') {
-      when { branch 'FDTN-78' }
+      when { branch 'FDTN-78' } 
       steps {
         container('golang') {
           script {
@@ -46,7 +46,7 @@ pipeline {
     }
 
     stage('Upgrade play docker image') {
-      when { branch 'FDTN-78' }
+      when { branch 'FDTN-78' } 
       steps {
         container('golang') {
           script {
