@@ -50,6 +50,7 @@ pipeline {
             sh'''
               cd play
               ls
+            '''
           }
         }
       }
