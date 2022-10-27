@@ -34,9 +34,9 @@ pipeline {
         container('golang') {
           script {
             sh '''
-               pwd
                cd node
                ls
+               go run build.go
             '''
           }
         }
@@ -47,7 +47,9 @@ pipeline {
       steps {
         container('golang') {
           script {
-            sh('pwd')
+            sh'''
+              cd play
+              ls
           }
         }
       }
