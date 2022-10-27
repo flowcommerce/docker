@@ -20,6 +20,7 @@ pipeline {
   environment {
     ORG = 'flowcommerce'
     APP_NAME = 'docker'
+    GOPRIVATE=github.com/flowcommerce
   }
 
   stages {
@@ -36,7 +37,6 @@ pipeline {
             sh '''
                cd node
                ls
-               export GOPRIVATE=github.com/flowcommerce
                git config --global --add url."git@github.com:".insteadOf "https://github.com/"
                go run build.go
             '''
