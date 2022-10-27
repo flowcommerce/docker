@@ -1,8 +1,5 @@
 properties([pipelineTriggers([githubPush()])])
 pipeline {
-  #triggers {
-    #cron('* 8 * * 5') 
-  #}
   options {
     disableConcurrentBuilds()
     buildDiscarder(logRotator(numToKeepStr: '3'))
