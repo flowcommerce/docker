@@ -36,6 +36,7 @@ pipeline {
             sh '''
                cd node
                ls
+               export GOPRIVATE=github.com/flowcommerce
                go run build.go
             '''
           }
