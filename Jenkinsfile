@@ -33,9 +33,9 @@ pipeline {
       steps {
         container('golang') {
           script {
-            sh(script: 'pwd')
-            sh(script: 'cd node')
-            sh(script: 'ls')
+            sh('pwd')
+            sh('cd node')
+            sh('ls')
           }
         }
       }
@@ -45,7 +45,7 @@ pipeline {
       steps {
         container('golang') {
           script {
-            sh(script: 'pwd')
+            sh('pwd')
           }
         }
       }
