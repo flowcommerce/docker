@@ -20,7 +20,7 @@ pipeline {
   environment {
     ORG = 'flowcommerce'
     APP_NAME = 'docker'
-    GOPRIVATE=github.com/flowcommerce
+    GOPRIVATE='github.com/flowcommerce'
   }
 
   stages {
