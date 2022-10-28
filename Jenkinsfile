@@ -35,14 +35,14 @@ pipeline {
         container('ruby') {
           script {
             sh '''
-               cd node
+               "cd node"
                ls
                "./build-node `sem-info tag latest` 12"
-               ./build-node_builder `sem-info tag latest` 12
-               ./build-node `sem-info tag latest` 16
-               ./build-node_builder `sem-info tag latest` 16
-               ./build-node `sem-info tag latest` 18
-               ./build-node_builder `sem-info tag latest` 18
+               "./build-node_builder `sem-info tag latest` 12"
+               "./build-node `sem-info tag latest` 16"
+               "./build-node_builder `sem-info tag latest` 16"
+               "./build-node `sem-info tag latest` 18"
+               "./build-node_builder `sem-info tag latest` 18"
             '''
           }
         }
