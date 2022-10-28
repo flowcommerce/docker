@@ -40,12 +40,10 @@ pipeline {
     stage('Upgrade play docker image') {
       steps {
         container('ruby') {
-          sh """
-          
-          cd play
-          ./build-play ${params.SEM_INFO} ${params.VERSION13}
-          ./play/build-play-builder ${params.SEM_INFO} ${params.VERSION13
-          
+          sh """      
+              cd play
+              ./build-play ${params.SEM_INFO} ${params.VERSION13}
+              ./build-play-builder ${params.SEM_INFO} ${params.VERSION13 
           """
         }
       }
