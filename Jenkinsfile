@@ -40,13 +40,13 @@ pipeline {
       steps {
         container('ruby') {
           sh '''
-             "cd node"
-             "./node/build-node ${params.SEM_INFO} ${params.VERSION12}"
-             "./build-node_builder ${params.SEM_INFO} ${params.VERSION12}"
-             "./build-node ${params.SEM_INFO} ${params.VERSION16}"
-             "./build-node_builder ${params.SEM_INFO} ${params.VERSION16}"
-             "./build-node ${params.SEM_INFO} ${params.VERSION18}"
-             "./build-node_builder ${params.SEM_INFO} ${params.VERSION18}"
+             cd node
+             ./build-node ${params.SEM_INFO} ${params.VERSION12}
+             ./build-node_builder ${params.SEM_INFO} ${params.VERSION12}
+             ./build-node ${params.SEM_INFO} ${params.VERSION16}
+             ./build-node_builder ${params.SEM_INFO} ${params.VERSION16}
+             ./build-node ${params.SEM_INFO} ${params.VERSION18}
+             ./build-node_builder ${params.SEM_INFO} ${params.VERSION18}
           '''
         }
       }
