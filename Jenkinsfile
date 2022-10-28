@@ -51,7 +51,7 @@ pipeline {
       steps {
         container('ruby') {
           sh "ls"
-          sh "gem install ./helpers.rb && ./node/build-node ${params.SEM_INFO} ${params.VERSION12}"
+          sh "./node/build-node ${params.SEM_INFO} ${params.VERSION12} && gem install ./helpers.rb"
           sh "./node/build-node_builder ${params.SEM_INFO} ${params.VERSION12}"
           sh "./node/build-node ${params.SEM_INFO} ${params.VERSION16}"
           sh "./node/build-node_builder ${params.SEM_INFO} ${params.VERSION16}"
