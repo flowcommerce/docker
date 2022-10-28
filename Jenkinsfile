@@ -19,7 +19,7 @@ pipeline {
       inheritFrom 'default'
 
       containerTemplates([
-        containerTemplate(name: 'ruby', image: 'bitnami/ruby', ttyEnabled: true, command: 'cat')
+        containerTemplate(name: 'ruby', image: 'ruby', ttyEnabled: true, command: 'cat')
       ])
     }
   }
