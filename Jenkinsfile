@@ -34,7 +34,7 @@ pipeline {
       steps {
         container('ruby') {
             sh "cd node"
-            sh "./build-node `sem-info tag latest` 12"
+            sh "./node/build-node `sem-info tag latest` 12"
             sh "./build-node_builder `sem-info tag latest` 12"
             sh "./build-node `sem-info tag latest` 16"
             sh "./build-node_builder `sem-info tag latest` 16"
