@@ -12,7 +12,7 @@ pipeline {
       inheritFrom 'default'
 
       containerTemplates([
-        containerTemplate(name: 'golang', image: 'golang:1.12.5', ttyEnabled: true, command: 'cat')
+        containerTemplate(name: 'ruby', image: 'bitnami/ruby', ttyEnabled: true, command: 'cat')
       ])
     }
   }
@@ -32,7 +32,7 @@ pipeline {
 
     stage('Upgrade node docker image') {
       steps {
-        container('golang') {
+        container('ruby') {
           script {
             sh '''
                cd node
@@ -51,7 +51,7 @@ pipeline {
 
     stage('Upgrade play docker image') {
       steps {
-        container('golang') {
+        container('ruby') {
           script {
             sh'''
               cd play
