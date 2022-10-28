@@ -34,14 +34,30 @@ pipeline {
     stage('Checkout') {
       steps {
         checkoutWithTags scm
+
+        script {
+          VERSION = new flowSemver().calculateSemver() //requires checkout
+        }
+      }
+    }
+
+    stage('Commit SemVer tag') {
+      when { branch 'main' }
+      steps {
+        script {
+          new flowSemver().commitSemver(VERSION)
+        }
       }
     }
 
     stage('Upgrade play docker image') {
       steps {
         container('ruby') {
-          sh "cd play && ./build-play ${params.SEM_INFO} ${params.VERSION13}"
-          sh "cd play && ./play/build-play-builder ${params.SEM_INFO} ${params.VERSION13}"
+          sh '''
+              cd play
+              ./build-play ${params.SEM_INFO} ${params.VERSION13}
+              ./play/build-play-builder ${params.SEM_INFO} ${params.VERSION13}
+             '''
         }
       }
     }
@@ -49,12 +65,14 @@ pipeline {
     stage('Upgrade node docker image') {
       steps {
         container('ruby') {
-          sh "./node/build-node ${params.SEM_INFO} ${params.VERSION12}"
-          sh "./node/build-node_builder ${params.SEM_INFO} ${params.VERSION12}"
-          sh "./node/build-node ${params.SEM_INFO} ${params.VERSION16}"
-          sh "./node/build-node_builder ${params.SEM_INFO} ${params.VERSION16}"
-          sh "./node/build-node ${params.SEM_INFO} ${params.VERSION18}"
-          sh "./node/build-node_builder ${params.SEM_INFO} ${params.VERSION18}"
+          sh '''
+              ./node/build-node ${params.SEM_INFO} ${params.VERSION12}
+              ./node/build-node_builder ${params.SEM_INFO} ${params.VERSION12}
+              ./node/build-node ${params.SEM_INFO} ${params.VERSION16}
+              ./node/build-node_builder ${params.SEM_INFO} ${params.VERSION16}
+              ./node/build-node ${params.SEM_INFO} ${params.VERSION18}
+              ./node/build-node_builder ${params.SEM_INFO} ${params.VERSION18}
+             '''
         }
       }
     }
