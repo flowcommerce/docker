@@ -37,7 +37,7 @@ pipeline {
             sh '''
                cd node
                ls
-               ruby ./build-node `sem-info tag latest` 12
+               "ruby ./build-node `sem-info tag latest` 12"
                ./build-node_builder `sem-info tag latest` 12
                ./build-node `sem-info tag latest` 16
                ./build-node_builder `sem-info tag latest` 16
