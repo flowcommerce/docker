@@ -20,16 +20,6 @@ end
 play_image_tag = "flowdocker/play:#{play_tag}-java#{java_tag}"
 play_image_latest = "flowdocker/play:latest-java#{java_tag}"
 
-env_provider = get_env_providor_location
-
-puts "Fetching latest version number for #{env_provider}"
-env_provider_version = Dir.chdir(env_provider) do
-  run("git fetch --tags")
-  `sem-info tag latest`.strip
-end
-
-puts "env_provider_version: #{env_provider_version}"
-
 # Build in a tmp directory to avoid adding anything unnecessary into
 # the context.
 tmp_dir = "/tmp/docker.play.#{Process.pid}"
@@ -38,7 +28,7 @@ begin
   run("cp Dockerfile.play-#{java_tag} #{tmp_dir}/Dockerfile")
 
   Dir.chdir(tmp_dir) do
-    run("echo '#{env_provider_version}' > environment-provider-version.txt")
+    run("curl https://cdn.flow.io/util/environment-provider/environment-provider-version.txt > environment-provider-version.txt")
     run("curl https://cdn.flow.io/util/environment-provider/environment-provider.jar > ./environment-provider.jar")
     run("docker build --pull --no-cache -t #{play_image_tag} .")
   end
