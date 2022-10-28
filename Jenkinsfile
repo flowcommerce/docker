@@ -41,7 +41,7 @@ pipeline {
       steps {
         container('ruby') {
           sh "ls"
-          sh "gem install ./node/helpers.rb && ./play//build-play ${params.SEM_INFO} ${params.VERSION13}"
+          sh "gem install bundler && ./play//build-play ${params.SEM_INFO} ${params.VERSION13}"
           sh "./play/build-play-builder ${params.SEM_INFO} ${params.VERSION13}"
         }
       }
