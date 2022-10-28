@@ -7,9 +7,9 @@ pipeline {
   }
   parameters {
      string(name: 'SEM_INFO', defaultValue: 'sem-info tag latest', description: 'SEM-INFO ')
-     string(name: 'DB_NAME', defaultValue: 'xyz', description: 'Enter the database that needs to be created')
      string(name: 'VERSION12', defaultValue: '12', description: 'version')
-     choice(name: 'RUN', choices: 'Migrate Data', description: 'Data migration')
+     string(name: 'VERSION16', defaultValue: '16', description: 'version')
+     string(name: 'VERSION18', defaultValue: '18', description: 'version')
   }
 
   agent {
@@ -40,12 +40,12 @@ pipeline {
       steps {
         container('ruby') {
             sh "cd node"
-            sh "./node/build-node `sem-info tag latest` 12"
-            sh "./build-node_builder `sem-info tag latest` 12"
-            sh "./build-node `sem-info tag latest` 16"
-            sh "./build-node_builder `sem-info tag latest` 16"
-            sh "./build-node `sem-info tag latest` 18"
-            sh "./build-node_builder `sem-info tag latest` 18"
+            sh "./node/build-node ${params.SEM_INFO} ${params.VERSION12}"
+            sh "./build-node_builder ${params.SEM_INFO} ${params.VERSION12}"
+            sh "./build-node ${params.SEM_INFO} ${params.VERSION16}"
+            sh "./build-node_builder ${params.SEM_INFO} ${params.VERSION16}"
+            sh "./build-node ${params.SEM_INFO} ${params.VERSION18}"
+            sh "./build-node_builder ${params.SEM_INFO} ${params.VERSION18}"
         }
       }
     }
