@@ -38,16 +38,6 @@ end
 node_image_tag = "flowdocker/node%s_builder:%s" % [node_version, node_tag]
 node_image_latest = "flowdocker/node%s_builder:latest" % node_version
 
-env_provider = get_env_providor_location
-
-puts "Fetching latest version number for #{env_provider}"
-env_provider_version = Dir.chdir(env_provider) do
-  run("git fetch --tags")
-  `sem-info tag latest`.strip
-end
-
-puts "env_provider_version: #{env_provider_version}"
-
 # Build in a tmp directory to avoid adding anything unnecessary into
 # the context.
 tmp_dir = "/tmp/docker.node_builder#{node_version}.#{Process.pid}"
@@ -57,8 +47,6 @@ begin
   File.write("#{tmp_dir}/Dockerfile", ERB.new(template).result(binding))
 
   Dir.chdir(tmp_dir) do
-    run("echo '#{env_provider_version}' > environment-provider-version.txt")
-    run("curl https://cdn.flow.io/util/environment-provider/environment-provider.jar > ./environment-provider.jar")
     run("aws s3 cp s3://io.flow.infra/npm/flowtech.npmrc ./.npmrc")
     run("docker build --platform linux/amd64 --pull --no-cache --build-arg GITHUB_TOKEN=#{ENV[github_token_var_name]} -t %s ." % node_image_tag)
   end
