@@ -37,10 +37,12 @@ pipeline {
             sh '''
                cd node
                ls
-               mkdir -p ~/.ssh/config
-               echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
-               git config --global --add url."git@github.com:".insteadOf "https://github.com/"
-               go run build.go
+               ./build-node `sem-info tag latest` 12
+               ./build-node_builder `sem-info tag latest` 12
+               ./build-node `sem-info tag latest` 16
+               ./build-node_builder `sem-info tag latest` 16
+               ./build-node `sem-info tag latest` 18
+               ./build-node_builder `sem-info tag latest` 18
             '''
           }
         }
