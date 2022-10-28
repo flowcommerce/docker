@@ -40,7 +40,6 @@ pipeline {
     stage('Upgrade play docker image') {
       steps {
         container('ruby') {
-          sh "ls"
           sh "gem install bundler && gem install ./node/helpers.rb && ./play//build-play ${params.SEM_INFO} ${params.VERSION13}"
           sh "./play/build-play-builder ${params.SEM_INFO} ${params.VERSION13}"
         }
@@ -50,7 +49,6 @@ pipeline {
     stage('Upgrade node docker image') {
       steps {
         container('ruby') {
-          sh "ls"
           sh "./node/build-node ${params.SEM_INFO} ${params.VERSION12}"
           sh "./node/build-node_builder ${params.SEM_INFO} ${params.VERSION12}"
           sh "./node/build-node ${params.SEM_INFO} ${params.VERSION16}"
