@@ -39,7 +39,7 @@ pipeline {
     stage('Upgrade node docker image') {
       steps {
         container('ruby') {
-          sh '''
+          sh """
              cd node
              ./build-node ${params.SEM_INFO} ${params.VERSION12}
              ./build-node_builder ${params.SEM_INFO} ${params.VERSION12}
@@ -47,7 +47,7 @@ pipeline {
              ./build-node_builder ${params.SEM_INFO} ${params.VERSION16}
              ./build-node ${params.SEM_INFO} ${params.VERSION18}
              ./build-node_builder ${params.SEM_INFO} ${params.VERSION18}
-          '''
+          """
         }
       }
     }
