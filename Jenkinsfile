@@ -5,6 +5,12 @@ pipeline {
     buildDiscarder(logRotator(numToKeepStr: '3'))
     timeout(time: 30, unit: 'MINUTES')
   }
+  parameters {
+     string(name: 'SEM_INFO', defaultValue: 'sem-info tag latest', description: 'SEM-INFO ')
+     string(name: 'DB_NAME', defaultValue: 'xyz', description: 'Enter the database that needs to be created')
+     string(name: 'VERSION12', defaultValue: '12', description: 'version')
+     choice(name: 'RUN', choices: 'Migrate Data', description: 'Data migration')
+  }
 
   agent {
     kubernetes {
