@@ -54,6 +54,9 @@ pipeline {
     stage('Upgrade node docker image') {
       steps {
         container('ruby') {
+           withCredentials([
+             usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')
+           ]) {
           sh """
                cd node
                ./build-node ${params.SEM_INFO} ${params.VERSION12}
@@ -63,6 +66,7 @@ pipeline {
                ./build-node ${params.SEM_INFO} ${params.VERSION18}
                ./build-node_builder ${params.SEM_INFO} ${params.VERSION18}
             """
+           }
         }
       }
     }
