@@ -58,12 +58,12 @@ pipeline {
            withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
              sh """
                   cd node
-                  ./build-node ${params.VERSION} ${params.VERSION12}
-                  ./build-node_builder ${params.VERSION} ${params.VERSION12}
-                  ./build-node ${params.VERSION} ${params.VERSION16}
-                  ./build-node_builder ${params.VERSION} ${params.VERSION16}
-                  ./build-node ${params.VERSION} ${params.VERSION18}
-                  ./build-node_builder ${params.VERSION} ${params.VERSION18}
+                  ./build-node ${VERSION.printable()} ${params.VERSION12}
+                  ./build-node_builder ${VERSION.printable()} ${params.VERSION12}
+                  ./build-node ${VERSION.printable()} ${params.VERSION16}
+                  ./build-node_builder ${VERSION.printable()} ${params.VERSION16}
+                  ./build-node ${VERSION.printable()} ${params.VERSION18}
+                  ./build-node_builder ${VERSION.printable()} ${params.VERSION18}
                """
               }
              }
