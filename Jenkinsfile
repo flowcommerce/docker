@@ -15,7 +15,6 @@ pipeline {
 
   agent {
     kubernetes {
-      label 'worker-docker'
       inheritFrom 'default'
 
       containerTemplates([
@@ -53,10 +52,11 @@ pipeline {
     stage('Upgrade node docker image') {
       steps {
         container('docker') {
-          sh "apk update && apk add ruby curl"
+          sh "apk update && apk add ruby curl aws-cli"
 
           withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
             withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
+              sh "aws sts get-caller-identity"
               sh """
                   cd node
                   ./build-node ${VERSION.printable()} ${params.VERSION12}
@@ -74,7 +74,7 @@ pipeline {
     stage('Upgrade play docker image') {
       steps {
         container('docker') {
-          sh "apk update && apk add ruby curl"
+          sh "apk update && apk add ruby curl aws-cli"
           sh "cd play && ./build-play ${VERSION.printable()} ${params.VERSION13} && ./play/build-play-builder ${VERSION.printable()} ${params.VERSION13}"
         }
       }
