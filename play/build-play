@@ -24,6 +24,7 @@ play_image_latest = "flowdocker/play:latest-java#{java_tag}"
 # the context.
 tmp_dir = "/tmp/docker.play.#{Process.pid}"
 begin
+  run("ls")
   run("mkdir #{tmp_dir}")
   run("cp Dockerfile.play-#{java_tag} #{tmp_dir}/Dockerfile")
 
