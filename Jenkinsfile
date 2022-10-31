@@ -55,7 +55,7 @@ pipeline {
       steps {
         container('ruby') {
            withCredentials([
-             usernamePassword(credentialsId: 'jenkins-x-github', variable: 'GITHUB_TOKEN')
+             usernamePassword(credentialsId: 'jenkins-x-github', GITHUB_TOKEN: 'GITHUB_TOKEN')
            ]) {
           sh """
                cd node
