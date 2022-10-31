@@ -30,5 +30,4 @@ To create a new postgresql base image
 
 
 ## node
-
 See [node README.md](node/README.md) for details.
