@@ -53,7 +53,7 @@ pipeline {
     stage('Upgrade node docker image') {
       steps {
         container('docker') {
-          sh "apk update && apk add ruby"
+          sh "apk update && apk add ruby curl"
 
           withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
             withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
@@ -74,7 +74,7 @@ pipeline {
     stage('Upgrade play docker image') {
       steps {
         container('docker') {
-          sh "apk update && apk add ruby"
+          sh "apk update && apk add ruby curl"
           sh "cd play && ./build-play ${VERSION.printable()} ${params.VERSION13} && ./play/build-play-builder ${VERSION.printable()} ${params.VERSION13}"
         }
       }
