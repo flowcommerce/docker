@@ -6,7 +6,7 @@ pipeline {
     timeout(time: 30, unit: 'MINUTES')
   }
   parameters {
-     string(name: 'SEM_INFO', defaultValue: 'sem-info tag latest', description: 'SEM-INFO ')
+     string(name: 'VERSION', defaultValue: 'VERSION.printable()', description: 'VERSION.printable()')
      string(name: 'VERSION12', defaultValue: '12', description: 'version')
      string(name: 'VERSION13', defaultValue: '13', description: 'version')
      string(name: 'VERSION16', defaultValue: '16', description: 'version')
@@ -55,19 +55,21 @@ pipeline {
       steps {
         container('ruby') {
          withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
-          sh """
-               cd node
-               ./build-node ${params.SEM_INFO} ${params.VERSION12}
-               ./build-node_builder ${params.SEM_INFO} ${params.VERSION12}
-               ./build-node ${params.SEM_INFO} ${params.VERSION16}
-               ./build-node_builder ${params.SEM_INFO} ${params.VERSION16}
-               ./build-node ${params.SEM_INFO} ${params.VERSION18}
-               ./build-node_builder ${params.SEM_INFO} ${params.VERSION18}
-            """
+           withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
+             sh """
+                  cd node
+                  ./build-node ${params.SEM_INFO} ${params.VERSION12}
+                  ./build-node_builder ${params.SEM_INFO} ${params.VERSION12}
+                  ./build-node ${params.SEM_INFO} ${params.VERSION16}
+                  ./build-node_builder ${params.SEM_INFO} ${params.VERSION16}
+                  ./build-node ${params.SEM_INFO} ${params.VERSION18}
+                  ./build-node_builder ${params.SEM_INFO} ${params.VERSION18}
+               """
+              }
+             }
            }
-        }
-      }
-    }
+         }
+       }
     stage('Upgrade play docker image') {
       steps {
         container('ruby') {
