@@ -60,8 +60,6 @@ begin
   puts ""
   puts "Completed push of #{node_image_tag} and #{node_image_latest}"
 
-rescue StandardError => e
-  puts e.message
 ensure
   run("rm -rf #{tmp_dir}")
 end
