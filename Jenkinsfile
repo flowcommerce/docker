@@ -58,12 +58,12 @@ pipeline {
            withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
              sh """
                   cd node
-                  ./build-node ${params.SEM_INFO} ${params.VERSION12}
-                  ./build-node_builder ${params.SEM_INFO} ${params.VERSION12}
-                  ./build-node ${params.SEM_INFO} ${params.VERSION16}
-                  ./build-node_builder ${params.SEM_INFO} ${params.VERSION16}
-                  ./build-node ${params.SEM_INFO} ${params.VERSION18}
-                  ./build-node_builder ${params.SEM_INFO} ${params.VERSION18}
+                  ./build-node ${params.VERSION} ${params.VERSION12}
+                  ./build-node_builder ${params.VERSION} ${params.VERSION12}
+                  ./build-node ${params.VERSION} ${params.VERSION16}
+                  ./build-node_builder ${params.VERSION} ${params.VERSION16}
+                  ./build-node ${params.VERSION} ${params.VERSION18}
+                  ./build-node_builder ${params.VERSION} ${params.VERSION18}
                """
               }
              }
@@ -73,7 +73,7 @@ pipeline {
     stage('Upgrade play docker image') {
       steps {
         container('ruby') {
-          sh "cd play && ./build-play ${params.SEM_INFO} ${params.VERSION13} && ./play/build-play-builder ${params.SEM_INFO} ${params.VERSION13}"
+          sh "cd play && ./build-play ${VERSION.printable()} ${params.VERSION13} && ./play/build-play-builder ${VERSION.printable()} ${params.VERSION13}"
         }
       }
     }
