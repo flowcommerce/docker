@@ -55,7 +55,7 @@ pipeline {
       steps {
         container('ruby') {
           sh """
-               cd node"
+               cd node
                ./build-node ${params.SEM_INFO} ${params.VERSION12}
                ./build-node_builder ${params.SEM_INFO} ${params.VERSION12}
                ./build-node ${params.SEM_INFO} ${params.VERSION16}
