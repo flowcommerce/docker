@@ -31,7 +31,7 @@ begin
   Dir.chdir(tmp_dir) do
     run("curl https://cdn.flow.io/util/environment-provider/environment-provider-version.txt > environment-provider-version.txt")
     run("curl https://cdn.flow.io/util/environment-provider/environment-provider.jar > ./environment-provider.jar")
-    run("docker build --pull --no-cache -t #{play_image_tag} .")
+    run("docker build --network=host --platform linux/amd64 --pull --no-cache -t #{play_image_tag} .")
   end
 
   run("docker tag #{play_image_tag} #{play_image_latest}")
