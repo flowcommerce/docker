@@ -50,25 +50,25 @@ pipeline {
       }
     }
 
-    stage('Upgrade play docker image') {
-      steps {
-        container('ruby') {
-          sh "cd play && ./build-play ${params.SEM_INFO} ${params.VERSION13} && ./play/build-play-builder ${params.SEM_INFO} ${params.VERSION13}"
-        }
-      }
-    }
 
     stage('Upgrade node docker image') {
       steps {
         container('ruby') {
           sh '''
-              ./node/build-node ${params.SEM_INFO} ${params.VERSION12}
-              ./node/build-node_builder ${params.SEM_INFO} ${params.VERSION12}
-              ./node/build-node ${params.SEM_INFO} ${params.VERSION16}
-              ./node/build-node_builder ${params.SEM_INFO} ${params.VERSION16}
-              ./node/build-node ${params.SEM_INFO} ${params.VERSION18}
-              ./node/build-node_builder ${params.SEM_INFO} ${params.VERSION18}
-             '''
+               ./node/build-node ${params.SEM_INFO} ${params.VERSION12}
+               ./node/build-node_builder ${params.SEM_INFO} ${params.VERSION12}
+               ./node/build-node ${params.SEM_INFO} ${params.VERSION16}
+               ./node/build-node_builder ${params.SEM_INFO} ${params.VERSION16}
+               ./node/build-node ${params.SEM_INFO} ${params.VERSION18}
+               ./node/build-node_builder ${params.SEM_INFO} ${params.VERSION18}
+            '''
+        }
+      }
+    }
+    stage('Upgrade play docker image') {
+      steps {
+        container('ruby') {
+          sh "cd play && ./build-play ${params.SEM_INFO} ${params.VERSION13} && ./play/build-play-builder ${params.SEM_INFO} ${params.VERSION13}"
         }
       }
     }
