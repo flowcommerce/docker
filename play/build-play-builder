@@ -50,7 +50,11 @@ if refresh_build_caches
     end
 
     Dir.chdir(dir) do
-      run("sbt update")
+      begin
+        run("sbt update")
+      rescue
+        puts "can't find repo to run sbt update"
+      end
     end
   end
 
