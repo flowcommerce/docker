@@ -48,16 +48,14 @@ if refresh_build_caches
         puts "Can't clone the repo"
       end
     end
-
-    Dir.chdir(dir) do
       begin
-        run("sbt update")
+        Dir.chdir(dir) do
+          run("sbt update")
       rescue
-        puts "can't find repo to run sbt update"
+      puts "can't find repo to run sbt update"
       end
     end
   end
-
 end
 
 # Build in a tmp directory to avoid adding anything unnecessary into
