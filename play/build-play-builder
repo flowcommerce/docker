@@ -46,7 +46,6 @@ if refresh_build_caches
         run("git clone --depth 1 git@github.com:#{pair}",fail=true)
       rescue
         puts "Can't clone the repo"
-        next
     end
 
     Dir.chdir(dir) do
