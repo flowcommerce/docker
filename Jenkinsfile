@@ -51,7 +51,7 @@ pipeline {
                 script{
                   sh "apk update && apk add ruby curl aws-cli"
       
-                  withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
+                  //withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
                     withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
                       docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
                         sh "aws sts get-caller-identity"
@@ -64,7 +64,7 @@ pipeline {
                             ./build-node ${VERSION.printable()} 18
                             ./build-node_builder ${VERSION.printable()} 18
                           """
-                      }
+                    //  }
                     }
                   }
                 }
