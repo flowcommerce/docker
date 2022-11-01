@@ -75,7 +75,7 @@ pipeline {
           script{
             docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
               sh "apk update && apk add ruby curl aws-cli"
-              sh "cd play && ./build-play ${VERSION.printable()} 13 && ./play/build-play-builder ${VERSION.printable()} 13"
+              sh "cd play && ./build-play ${VERSION.printable()} 13 && ./build-play-builder ${VERSION.printable()} 13"
             }
           }
         }
