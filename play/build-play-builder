@@ -42,20 +42,14 @@ if refresh_build_caches
     puts ""
     puts "Getting depedencies #{pair} in #{dir}"
     Dir.chdir(base_dir) do
-      begin
-        run("git clone --depth 1 git@github.com:#{pair}")
-      rescue
-        puts "Can't clone the repo"
-      end
+      run("git clone --depth 1 git@github.com:#{pair}")
     end
-      begin
-        Dir.chdir(dir) do
-          run("sbt update")
-      rescue
-      puts "can't find repo to run sbt update"
-      end
+
+    Dir.chdir(dir) do
+      run("sbt update")
     end
   end
+
 end
 
 # Build in a tmp directory to avoid adding anything unnecessary into
