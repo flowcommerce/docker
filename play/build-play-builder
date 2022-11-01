@@ -43,7 +43,7 @@ if refresh_build_caches
     puts "Getting depedencies #{pair} in #{dir}"
     Dir.chdir(base_dir) do
       begin
-        run("git clone --depth 1 git@github.com:#{pair}",fail=true)
+        run("git clone --depth 1 git@github.com:#{pair}")
       rescue
         puts "Can't clone the repo"
     end
