@@ -43,6 +43,7 @@ pipeline {
 
 
     stage('Upgrade node docker image') {
+      when { branch 'main' }
       steps {
         container('docker') {
           script{
