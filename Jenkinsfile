@@ -52,6 +52,7 @@ pipeline {
     stage('Upgrade node docker image') {
       steps {
         container('docker') {
+          script{
           sh "apk update && apk add ruby curl aws-cli"
 
           withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
@@ -67,6 +68,7 @@ pipeline {
                   ./build-node ${VERSION.printable()} ${params.VERSION18}
                   ./build-node_builder ${VERSION.printable()} ${params.VERSION18}
                """
+               }
               }
             }
           }
