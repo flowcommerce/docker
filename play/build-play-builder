@@ -2,7 +2,7 @@
 
 require "./helpers.rb"
 
-PROJECTS_TO_BUILD = %w(flowvault/payment flowcommerce/experience flowcommerce/catalog flowcommerce/label flowcommerce/shopify flowcommerce/webhook flowcommerce/demandware flowcommerce/harmonization flowcommerce/tax flowcommerce/order-messenger flowcommerce/bundle flowcommerce/metric)
+PROJECTS_TO_BUILD = %w(flowcommerce/experience flowcommerce/catalog flowcommerce/label flowcommerce/shopify flowcommerce/webhook flowcommerce/demandware flowcommerce/harmonization flowcommerce/tax flowcommerce/order-messenger flowcommerce/bundle flowcommerce/metric)
 
 play_tag = ARGV.shift.to_s.strip
 java_tag = ARGV.shift.to_s.strip
