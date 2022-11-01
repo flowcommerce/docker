@@ -3,7 +3,8 @@ def run(command, quiet=false, fail=true)
     puts "  %s" % command
   end
   if fail == false
-    puts "exception rescued"
+    puts ""
+  end
   result = system(command)
   if result != true
     raise "COMMAND FAILED:  %s" % command
