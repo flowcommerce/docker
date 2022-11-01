@@ -78,6 +78,7 @@ pipeline {
                 docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
                   sh """
                       apk update
+                      apk add --no-cache git
                       apk add ruby curl aws-cli
                       cd play 
                       ./build-play ${VERSION.printable()} 13 
