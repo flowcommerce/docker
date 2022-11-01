@@ -73,9 +73,11 @@ pipeline {
       steps {
         container('docker') {
           script{
-            docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
-              sh "apk update && apk add ruby curl aws-cli"
-              sh "cd play && ./build-play ${VERSION.printable()} 13 && ./build-play-builder ${VERSION.printable()} 13"
+            withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
+              docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
+                sh "apk update && apk add ruby curl aws-cli"
+                sh "cd play && ./build-play ${VERSION.printable()} 13 && ./build-play-builder ${VERSION.printable()} 13"
+              }
             }
           }
         }
