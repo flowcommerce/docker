@@ -45,7 +45,7 @@ pipeline {
     stage('Docker image builds') {
       parallel {
           stage('Upgrade node docker image') {
-            when { branch 'main' }
+            //when { branch 'main' }
             steps {
               container('docker') {
                 script{
