@@ -98,7 +98,7 @@ pipeline {
                             curl -s https://get.sdkman.io | bash
                             cd /root
                             ls -a
-                            . "root/.sdkman/bin/sdkman-init.sh"
+                            . ".sdkman/bin/sdkman-init.sh"
                             sdk install sbt
                             cd play 
                             ./build-play ${VERSION.printable()} 13 
