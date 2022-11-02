@@ -85,21 +85,15 @@ pipeline {
                         sh """
                             mkdir /root/.ssh && chmod 0700 /root/.ssh 
                             ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+
                             apt-get update
-                            apt-get install -y git
-                            apt-get install -y ruby
-                            apt-get install -y curl
-                            apt-get install -y python2.7
-                            apt-get install -y zip
-                            apt-get install -y unzip
-                            curl -O https://bootstrap.pypa.io/pip/2.7/get-pip.py
-                            python2.7 get-pip.py
-                            pip install awscli
-                            curl -s https://get.sdkman.io | bash
-                            cd /root
-                            alias source=.
-                            . ".sdkman/bin/sdkman-init.sh"
-                            sdk install sbt
+                            apt-get install apt-transport-https curl gnupg -yqq git ruby
+                            echo "deb https://repo.scala-sbt.org/scalasbt/debian all main" | tee /etc/apt/sources.list.d/sbt.list
+                            echo "deb https://repo.scala-sbt.org/scalasbt/debian /" | tee /etc/apt/sources.list.d/sbt_old.list
+                            curl -sL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x2EE0EA64E40A89B84B2DF73499E82A75642AC823" | gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/scalasbt-release.gpg --import
+                            chmod 644 /etc/apt/trusted.gpg.d/scalasbt-release.gpg
+                            apt-get update
+                            apt-get install sbt -y
                             cd play 
                             ./build-play ${VERSION.printable()} 13 
                             ./build-play-builder ${VERSION.printable()} 13
