@@ -97,7 +97,7 @@ pipeline {
                             pip install awscli
                             curl -s https://get.sdkman.io | bash
                             cd /root
-                            ls -a
+                            alias source=.
                             . ".sdkman/bin/sdkman-init.sh"
                             sdk install sbt
                             cd play 
