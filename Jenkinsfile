@@ -84,6 +84,7 @@ pipeline {
                             mkdir /root/.ssh && chmod 0700 /root/.ssh 
                             ssh-keyscan -H github.com >> ~/.ssh/known_hosts
                             apt-get update
+                            apt-get install -y docker.io
                             apt-get install -y git
                             apt-get install -y ruby
                             apt-get install -y curl
