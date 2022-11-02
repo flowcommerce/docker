@@ -33,7 +33,7 @@ if refresh_build_caches
   run("mkdir -p #{base_dir}")
 
   PROJECTS_TO_BUILD.map do |pair|
-    repo, project = pair.split("", 2)
+    repo, project = pair.split("/", 2)
     if project.nil?
       raise "Project[%s] could not be parsed" % pair
     end
