@@ -47,7 +47,6 @@ pipeline {
     stage('Docker image builds') {
       parallel {
           stage('Upgrade node docker image') {
-            when { branch 'main' }
             steps {
               container('docker') {
                 script{
@@ -77,7 +76,7 @@ pipeline {
             steps {
               container('ubuntu') {
                 script{
-                  sh"apt-get update"
+                  sh "apt-get update"
                   sh "apt-get install -y docker.io"
                   withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]){
                     withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
