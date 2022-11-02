@@ -12,6 +12,8 @@ pipeline {
 
       containerTemplates([
         containerTemplate(name: 'docker', image: 'docker:20', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true)
+        containerTemplate(name: 'ubuntu', image: 'ubuntu', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true)
+
       ])
     }
   }
@@ -73,7 +75,7 @@ pipeline {
           }
           stage('Upgrade play docker image') {
             steps {
-              container('docker') {
+              container('ubuntu') {
                 script{
                   withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]){
                     withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
@@ -81,9 +83,18 @@ pipeline {
                         sh """
                             mkdir /root/.ssh && chmod 0700 /root/.ssh 
                             ssh-keyscan -H github.com >> ~/.ssh/known_hosts
-                            apk update
-                            apk add --no-cache git
-                            apk add ruby curl aws-cli
+                            apt-get update
+                            apt-get install -y git
+                            apt-get install -y ruby
+                            apt-get install -y curl
+                            apt-get install -y python2.7
+                            curl -O https://bootstrap.pypa.io/pip/2.7/get-pip.py
+                            python2.7 get-pip.py
+                            pip install awscli
+                            curl -s https://get.sdkman.io | bash
+                            source "$HOME/.sdkman/bin/sdkman-init.sh"
+                            sdk install java $(sdk list java | grep -o "\b8\.[0-9]*\.[0-9]*\-tem" | head -1)
+                            sdk install sbt
                             cd play 
                             ./build-play ${VERSION.printable()} 13 
                             ./build-play-builder ${VERSION.printable()} 13
