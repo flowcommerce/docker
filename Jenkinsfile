@@ -87,6 +87,7 @@ pipeline {
                             ssh-keyscan -H github.com >> ~/.ssh/known_hosts
 
                             apt-get update
+                            apt-get install openjdk-8-jdk
                             apt-get install apt-transport-https curl gnupg -yqq git ruby
                             echo "deb https://repo.scala-sbt.org/scalasbt/debian all main" | tee /etc/apt/sources.list.d/sbt.list
                             echo "deb https://repo.scala-sbt.org/scalasbt/debian /" | tee /etc/apt/sources.list.d/sbt_old.list
