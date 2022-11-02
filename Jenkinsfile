@@ -79,6 +79,7 @@ pipeline {
                 script{
                   sh"apt-get update"
                   sh "apt-get install -y docker.io"
+                  sh "echo $SHELL"
                   withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]){
                     withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
                       docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
@@ -95,7 +96,6 @@ pipeline {
                             curl -O https://bootstrap.pypa.io/pip/2.7/get-pip.py
                             python2.7 get-pip.py
                             pip install awscli
-                            ps -p $$
                             curl -s https://get.sdkman.io | bash
                             ls
                             . "root/.sdkman/bin/sdkman-init.sh"
