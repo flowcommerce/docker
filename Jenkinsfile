@@ -96,6 +96,7 @@ pipeline {
                             python2.7 get-pip.py
                             pip install awscli
                             curl -s https://get.sdkman.io | bash
+                            cd /root
                             ls
                             . "root/.sdkman/bin/sdkman-init.sh"
                             sdk install sbt
