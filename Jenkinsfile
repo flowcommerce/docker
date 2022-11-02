@@ -84,13 +84,6 @@ pipeline {
                             apk update
                             apk add --no-cache git
                             apk add ruby curl aws-cli
-                            cd /tmp && \
-                            curl -fsSOL https://piccolo.link/sbt-1.7.0.tgz && \
-                            tar -xvzf sbt-1.7.0.tgz && \
-                            mv /tmp/sbt /usr/lib && \
-                            rm /tmp/sbt-1.7.0.tgz && \
-                            ln -s /usr/lib/sbt/bin/* /usr/local/bin && \
-                            sbt sbtVersion
                             cd play 
                             ./build-play ${VERSION.printable()} 13 
                             ./build-play-builder ${VERSION.printable()} 13
