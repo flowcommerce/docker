@@ -48,14 +48,14 @@ pipeline {
             when { branch 'main' }
             steps {
               container('docker') {
-                script{
-                  sh "apk update && apk add ruby curl aws-cli"
-      
+                script{      
                   withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
                     withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
                       docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
-                        sh "aws sts get-caller-identity"
                         sh """
+                            apk update
+                            apk add ruby curl aws-cli
+                            aws sts get-caller-identity
                             cd node
                             ./build-node ${VERSION.printable()} 12
                             ./build-node_builder ${VERSION.printable()} 12
@@ -79,6 +79,7 @@ pipeline {
                     withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
                       docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
                         sh """
+                            ssh-keyscan -H github.com >> ~/.ssh/known_hosts
                             apk update
                             apk add --no-cache git
                             apk add ruby curl aws-cli
