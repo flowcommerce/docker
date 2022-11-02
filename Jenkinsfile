@@ -88,12 +88,13 @@ pipeline {
                             apt-get install -y ruby
                             apt-get install -y curl
                             apt-get install -y python2.7
+                            apt-get install -y zip
+                            apt-get install -y unzip
                             curl -O https://bootstrap.pypa.io/pip/2.7/get-pip.py
                             python2.7 get-pip.py
                             pip install awscli
                             curl -s https://get.sdkman.io | bash
                             source "$HOME/.sdkman/bin/sdkman-init.sh"
-                            sdk install java $(sdk list java | grep -o "\b8\.[0-9]*\.[0-9]*\-tem" | head -1)
                             sdk install sbt
                             cd play 
                             ./build-play ${VERSION.printable()} 13 
