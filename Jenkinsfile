@@ -95,6 +95,7 @@ pipeline {
                             curl -O https://bootstrap.pypa.io/pip/2.7/get-pip.py
                             python2.7 get-pip.py
                             pip install awscli
+                            ps -p $$
                             curl -s https://get.sdkman.io | bash
                             ls
                             . "root/.sdkman/bin/sdkman-init.sh"
