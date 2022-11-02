@@ -42,7 +42,7 @@ if refresh_build_caches
     puts ""
     puts "Getting depedencies #{pair} in #{dir}"
     Dir.chdir(base_dir) do
-      run("git clone --depth 1 git@github.com:#{pair}")
+      run("git clone --depth 1 https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${GIT_USERNAME}/#{pair}.git")
     end
 
     Dir.chdir(dir) do
