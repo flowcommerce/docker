@@ -77,6 +77,7 @@ pipeline {
             steps {
               container('ubuntu') {
                 script{
+                  sh "apt-get install -y docker.io"
                   withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]){
                     withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
                       docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
@@ -84,7 +85,6 @@ pipeline {
                             mkdir /root/.ssh && chmod 0700 /root/.ssh 
                             ssh-keyscan -H github.com >> ~/.ssh/known_hosts
                             apt-get update
-                            apt-get install -y docker.io
                             apt-get install -y git
                             apt-get install -y ruby
                             apt-get install -y curl
