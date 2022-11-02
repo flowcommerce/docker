@@ -2,7 +2,7 @@
 
 require "./helpers.rb"
 
-PROJECTS_TO_BUILD = %w(experience catalog label shopify webhook demandware harmonization tax order-messenger bundle metric shopify-markets calculator)
+PROJECTS_TO_BUILD = %w(flowcommerce/experience flowcommerce/catalog flowcommerce/label flowcommerce/shopify flowcommerce/webhook flowcommerce/demandware flowcommerce/harmonization flowcommerce/tax flowcommerce/order-messenger flowcommerce/bundle flowcommerce/metric flowcommerce/shopify-markets flowcommerce/calculator)
 
 play_tag = ARGV.shift.to_s.strip
 java_tag = ARGV.shift.to_s.strip
@@ -33,7 +33,7 @@ if refresh_build_caches
   run("mkdir -p #{base_dir}")
 
   PROJECTS_TO_BUILD.map do |pair|
-    repo, project = pair.split("/", 2)
+    repo, project = pair.split("", 2)
     if project.nil?
       raise "Project[%s] could not be parsed" % pair
     end
@@ -42,7 +42,7 @@ if refresh_build_caches
     puts ""
     puts "Getting depedencies #{pair} in #{dir}"
     Dir.chdir(base_dir) do
-      run("git clone --depth 1 https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${GIT_USERNAME}/#{pair}.git")
+      run("git clone --depth 1 https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/#{pair}.git")
     end
 
     Dir.chdir(dir) do
