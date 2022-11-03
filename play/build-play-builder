@@ -69,7 +69,7 @@ begin
       puts "coursier directory not found. Exiting"
       exit(1)
     end
-    run("docker build -–network host --pull --no-cache -t %s ." % play_builder_image_tag)
+    run("docker build -–network=host --pull --no-cache -t %s ." % play_builder_image_tag)
   end
 
   run("docker tag #{play_builder_image_tag} #{play_builder_image_latest}")
