@@ -60,7 +60,7 @@ pipeline {
                       docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
                         sh """
                             apk update
-                            apk add ruby curl aws-cli
+                            apk add ruby curl
                             cd node
                             ./build-node ${VERSION.printable()} 12
                             ./build-node_builder ${VERSION.printable()} 12
@@ -79,7 +79,7 @@ pipeline {
           stage('Upgrade play docker image') {
             steps {
               container('play-builder') {
-                script{
+                script {
                   sh "apk update && apk add --no-cache docker-cli"
                   withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]){
                     withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
@@ -87,7 +87,7 @@ pipeline {
                         sh """
                             apk update
                             apk add --no-cache openssh
-                            apk add curl -yqq git ruby
+                            apk add curl git ruby
                             mkdir /root/.ssh && chmod 0700 /root/.ssh 
                             ssh-keyscan -H github.com >> ~/.ssh/known_hosts
                             cd play 
