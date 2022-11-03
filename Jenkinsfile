@@ -77,16 +77,15 @@ pipeline {
             steps {
               container('play') {
                 script{
-                  sh "apt-get update"
-                  sh "apt-get install -y docker.io"
+                  apk update && apk add --no-cache docker-cli
                   withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]){
                     withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
                       docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
                         sh """
                             mkdir /root/.ssh && chmod 0700 /root/.ssh 
                             ssh-keyscan -H github.com >> ~/.ssh/known_hosts
-                            apt-get update
-                            apt-get install curl -yqq git ruby
+                            apk update
+                            apk add curl -yqq git ruby
                             cd play 
                             ./build-play ${VERSION.printable()} 13 
                             ./build-play-builder ${VERSION.printable()} 13
