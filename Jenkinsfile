@@ -60,7 +60,7 @@ pipeline {
                       docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
                         sh """
                             apk update
-                            apk add ruby curl
+                            apk add ruby curl aws-cli
                             cd node
                             ./build-node ${VERSION.printable()} 12
                             ./build-node_builder ${VERSION.printable()} 12
@@ -77,6 +77,7 @@ pipeline {
             }
           }
           stage('Upgrade play docker image') {
+            when { branch 'main' }
             steps {
               container('play-builder') {
                 script {
