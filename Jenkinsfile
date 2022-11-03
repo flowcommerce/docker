@@ -59,6 +59,8 @@ pipeline {
                     withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
                       docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
                         sh """
+                            apk update
+                            apk add ruby curl aws-cli
                             cd node
                             ./build-node ${VERSION.printable()} 12
                             ./build-node_builder ${VERSION.printable()} 12
