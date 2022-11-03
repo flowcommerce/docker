@@ -8,7 +8,6 @@ WORKDIR /root
 
 # Install SBT
 RUN apk update && apk upgrade && \
-    echo -e "http://nl.alpinelinux.org/alpine/v3.10/main\nhttp://nl.alpinelinux.org/alpine/v3.10/community" > /etc/apk/repositories && \
     apk add --no-cache --update bash && \
     apk add --no-cache --virtual=build-dependencies curl && \
     curl -sL "https://github.com/sbt/sbt/releases/download/v$SBT_VERSION/sbt-$SBT_VERSION.tgz" | gunzip | tar -x -C /usr/local && \
