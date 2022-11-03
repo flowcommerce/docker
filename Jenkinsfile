@@ -52,7 +52,6 @@ pipeline {
     stage('Docker image builds') {
       parallel {
           stage('Upgrade node docker image') {
-            when { branch 'main' }
             steps {
               container('docker') {
                 script{
@@ -76,7 +75,6 @@ pipeline {
             }
           }
           stage('Upgrade play docker image') {
-            when { branch 'main' }
             steps {
               container('play-builder') {
                 script{
