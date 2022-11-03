@@ -77,7 +77,7 @@ pipeline {
             steps {
               container('play') {
                 script{
-                  apk update && apk add --no-cache docker-cli
+                  sh "apk update && apk add --no-cache docker-cli"
                   withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]){
                     withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
                       docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
