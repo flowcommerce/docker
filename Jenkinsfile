@@ -1,5 +1,10 @@
 properties([pipelineTriggers([githubPush()])])
 pipeline {
+  triggers {
+    // Only trigger the cron build if on main branch and 5pm friday
+    cron(env.BRANCH_NAME == 'main' ? '0 17 * * 5' : '')
+  }
+
   options {
     disableConcurrentBuilds()
     buildDiscarder(logRotator(numToKeepStr: '3'))
@@ -74,6 +79,7 @@ pipeline {
             }
           }
           stage('Upgrade play docker image') {
+            when { branch 'main' }
             steps {
               container('play-builder') {
                 script{
