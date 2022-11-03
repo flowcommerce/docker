@@ -82,11 +82,11 @@ pipeline {
                     withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
                       docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
                         sh """
-                            mkdir /root/.ssh && chmod 0700 /root/.ssh 
-                            ssh-keyscan -H github.com >> ~/.ssh/known_hosts
                             apk update
                             apk add --no-cache openssh
                             apk add curl -yqq git ruby
+                            mkdir /root/.ssh && chmod 0700 /root/.ssh 
+                            ssh-keyscan -H github.com >> ~/.ssh/known_hosts
                             cd play 
                             ./build-play ${VERSION.printable()} 13 
                             ./build-play-builder ${VERSION.printable()} 13
