@@ -17,7 +17,7 @@ pipeline {
 
       containerTemplates([
         containerTemplate(name: 'docker', image: 'docker:20', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true),
-        containerTemplate(name: 'play-builder', image: 'flowdocker/play_builder:0.2.2-java13', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true)
+        containerTemplate(name: 'play-builder', image: 'flowdocker/play_builder:latest-java13', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true)
 
       ])
     }
@@ -60,9 +60,6 @@ pipeline {
                     withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
                       docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
                         sh """
-                            apk update
-                            apk add ruby curl aws-cli
-                            aws sts get-caller-identity
                             cd node
                             ./build-node ${VERSION.printable()} 12
                             ./build-node_builder ${VERSION.printable()} 12
