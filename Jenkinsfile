@@ -72,7 +72,6 @@ pipeline {
             }
           }
           stage('Upgrade play docker image') {
-            when { branch 'main' }
             steps {
               container('play-builder') {
                 script {
