@@ -12,7 +12,7 @@ pipeline {
 
       containerTemplates([
         containerTemplate(name: 'docker', image: 'docker:20', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true),
-        containerTemplate(name: 'play_builder', image: 'flowdocker/play_builder:0.2.2-java13', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true)
+        containerTemplate(name: 'play-builder', image: 'flowdocker/play_builder:0.2.2-java13', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true)
 
       ])
     }
@@ -75,7 +75,7 @@ pipeline {
           }
           stage('Upgrade play docker image') {
             steps {
-              container('play_builder') {
+              container('play-builder') {
                 script{
                   sh "apk update && apk add --no-cache docker-cli"
                   withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]){
