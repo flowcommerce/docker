@@ -1,5 +1,4 @@
 def run(command, quiet=false)
- begin
   if quiet == false
     puts "  %s" % command
   end
