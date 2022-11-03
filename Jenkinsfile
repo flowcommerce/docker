@@ -12,7 +12,7 @@ pipeline {
 
       containerTemplates([
         containerTemplate(name: 'docker', image: 'docker:20', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true),
-        containerTemplate(name: 'ubuntu', image: 'ubuntu', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true)
+        containerTemplate(name: 'play', image: 'flowdocker/play:0.2.2-java13', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true)
 
       ])
     }
@@ -47,6 +47,7 @@ pipeline {
     stage('Docker image builds') {
       parallel {
           stage('Upgrade node docker image') {
+            when { branch 'main' }
             steps {
               container('docker') {
                 script{
@@ -74,7 +75,7 @@ pipeline {
           }
           stage('Upgrade play docker image') {
             steps {
-              container('ubuntu') {
+              container('play') {
                 script{
                   sh "apt-get update"
                   sh "apt-get install -y docker.io"
@@ -84,16 +85,8 @@ pipeline {
                         sh """
                             mkdir /root/.ssh && chmod 0700 /root/.ssh 
                             ssh-keyscan -H github.com >> ~/.ssh/known_hosts
-
                             apt-get update
-                            apt-get install openjdk-8-jdk
-                            apt-get install apt-transport-https curl gnupg -yqq git ruby
-                            echo "deb https://repo.scala-sbt.org/scalasbt/debian all main" | tee /etc/apt/sources.list.d/sbt.list
-                            echo "deb https://repo.scala-sbt.org/scalasbt/debian /" | tee /etc/apt/sources.list.d/sbt_old.list
-                            curl -sL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x2EE0EA64E40A89B84B2DF73499E82A75642AC823" | gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/scalasbt-release.gpg --import
-                            chmod 644 /etc/apt/trusted.gpg.d/scalasbt-release.gpg
-                            apt-get update
-                            apt-get install sbt -y
+                            apt-get install curl -yqq git ruby
                             cd play 
                             ./build-play ${VERSION.printable()} 13 
                             ./build-play-builder ${VERSION.printable()} 13
