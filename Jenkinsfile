@@ -2,7 +2,7 @@ properties([pipelineTriggers([githubPush()])])
 pipeline {
   triggers {
     // Only trigger the cron build if on main branch and 5pm friday
-    cron(env.BRANCH_NAME == 'main' ? '0 17 * * 5' : '')
+    cron(env.BRANCH_NAME == 'main' ? 'TZ=GMT\n0 10 * * 1' : '')
   }
 
   options {
@@ -21,11 +21,6 @@ pipeline {
 
       ])
     }
-  }
-
-  environment {
-    ORG = 'flowcommerce'
-    APP_NAME = 'docker'
   }
 
   stages {
@@ -81,14 +76,11 @@ pipeline {
             steps {
               container('play-builder') {
                 script {
-                  sh "apk update && apk add --no-cache docker-cli"
+                  sh "apk update && apk add --no-cache docker-cli openssh curl git ruby"
                   withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]){
                     withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
                       docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
                         sh """
-                            apk update
-                            apk add --no-cache openssh
-                            apk add curl git ruby
                             mkdir /root/.ssh && chmod 0700 /root/.ssh 
                             ssh-keyscan -H github.com >> ~/.ssh/known_hosts
                             cd play 
