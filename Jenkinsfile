@@ -85,6 +85,7 @@ pipeline {
                             mkdir /root/.ssh && chmod 0700 /root/.ssh 
                             ssh-keyscan -H github.com >> ~/.ssh/known_hosts
                             apk update
+                            apk add --no-cache openssh
                             apk add curl -yqq git ruby
                             cd play 
                             ./build-play ${VERSION.printable()} 13 
