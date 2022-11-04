@@ -48,7 +48,7 @@ begin
 
   Dir.chdir(tmp_dir) do
     run("aws s3 cp s3://io.flow.infra/npm/flowtech.npmrc ./.npmrc")
-    run("docker build --platform linux/amd64 --pull --no-cache --build-arg GITHUB_TOKEN=#{ENV[github_token_var_name]} -t %s ." % node_image_tag)
+    run("docker build --network=host --platform linux/amd64 --pull --no-cache --build-arg GITHUB_TOKEN=#{ENV[github_token_var_name]} -t %s ." % node_image_tag)
   end
 
   run("docker tag #{node_image_tag} #{node_image_latest}")

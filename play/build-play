@@ -24,13 +24,14 @@ play_image_latest = "flowdocker/play:latest-java#{java_tag}"
 # the context.
 tmp_dir = "/tmp/docker.play.#{Process.pid}"
 begin
+  run("ls")
   run("mkdir #{tmp_dir}")
   run("cp Dockerfile.play-#{java_tag} #{tmp_dir}/Dockerfile")
 
   Dir.chdir(tmp_dir) do
     run("curl https://cdn.flow.io/util/environment-provider/environment-provider-version.txt > environment-provider-version.txt")
     run("curl https://cdn.flow.io/util/environment-provider/environment-provider.jar > ./environment-provider.jar")
-    run("docker build --pull --no-cache -t #{play_image_tag} .")
+    run("docker build --network=host --pull --no-cache -t #{play_image_tag} .")
   end
 
   run("docker tag #{play_image_tag} #{play_image_latest}")

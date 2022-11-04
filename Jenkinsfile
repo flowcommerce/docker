@@ -1,33 +1,26 @@
 properties([pipelineTriggers([githubPush()])])
 pipeline {
+  triggers {
+    // Only trigger the cron build if on main branch and 10 AM Monday
+    cron(env.BRANCH_NAME == 'main' ? 'TZ=GMT\n0 10 * * 1' : '')
+  }
+
   options {
     disableConcurrentBuilds()
     buildDiscarder(logRotator(numToKeepStr: '3'))
     timeout(time: 30, unit: 'MINUTES')
   }
-  parameters {
-     string(name: 'SEM_INFO', defaultValue: 'sem-info tag latest', description: 'SEM-INFO ')
-     string(name: 'VERSION12', defaultValue: '12', description: 'version')
-     string(name: 'VERSION13', defaultValue: '13', description: 'version')
-     string(name: 'VERSION16', defaultValue: '16', description: 'version')
-     string(name: 'VERSION18', defaultValue: '18', description: 'version')
-  }
 
   agent {
     kubernetes {
-      label 'worker-docker'
       inheritFrom 'default'
 
       containerTemplates([
-        containerTemplate(name: 'ruby', image: 'ruby', ttyEnabled: true, command: 'cat')
+        containerTemplate(name: 'docker', image: 'docker:20', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true),
+        containerTemplate(name: 'play-builder', image: 'flowdocker/play_builder:latest-java13', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true)
+
       ])
     }
-  }
-
-  environment {
-    ORG = 'flowcommerce'
-    APP_NAME = 'docker'
-    GOPRIVATE='github.com/flowcommerce'
   }
 
   stages {
@@ -50,26 +43,58 @@ pipeline {
       }
     }
 
-    stage('Upgrade play docker image') {
-      steps {
-        container('ruby') {
-          sh "cd play && ./build-play ${params.SEM_INFO} ${params.VERSION13} && ./play/build-play-builder ${params.SEM_INFO} ${params.VERSION13}"
-        }
-      }
-    }
 
-    stage('Upgrade node docker image') {
-      steps {
-        container('ruby') {
-          sh '''
-              ./node/build-node ${params.SEM_INFO} ${params.VERSION12}
-              ./node/build-node_builder ${params.SEM_INFO} ${params.VERSION12}
-              ./node/build-node ${params.SEM_INFO} ${params.VERSION16}
-              ./node/build-node_builder ${params.SEM_INFO} ${params.VERSION16}
-              ./node/build-node ${params.SEM_INFO} ${params.VERSION18}
-              ./node/build-node_builder ${params.SEM_INFO} ${params.VERSION18}
-             '''
-        }
+    stage('Docker image builds') {
+      parallel {
+          stage('Upgrade node docker image') {
+            when { branch 'main' }
+            steps {
+              container('docker') {
+                script{
+                  withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
+                    withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
+                      docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
+                        sh """
+                            apk update
+                            apk add ruby curl aws-cli
+                            cd node
+                            ./build-node ${VERSION.printable()} 12
+                            ./build-node_builder ${VERSION.printable()} 12
+                            ./build-node ${VERSION.printable()} 16
+                            ./build-node_builder ${VERSION.printable()} 16
+                            ./build-node ${VERSION.printable()} 18
+                            ./build-node_builder ${VERSION.printable()} 18
+                          """
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+          stage('Upgrade play docker image') {
+            when { branch 'main' }
+            steps {
+              container('play-builder') {
+                script {
+                  sh "apk update && apk add --no-cache docker-cli openssh curl git ruby"
+                  withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]){
+                    withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
+                      docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
+                        sh """
+                            mkdir /root/.ssh && chmod 0700 /root/.ssh 
+                            ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+                            cd play 
+                            ./build-play ${VERSION.printable()} 13 
+                            ./build-play-builder ${VERSION.printable()} 13
+                        """
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
       }
     }
   }
