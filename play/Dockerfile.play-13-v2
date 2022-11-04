@@ -1,0 +1,16 @@
+FROM adoptopenjdk/openjdk13:jre as jre-build
+
+FROM eclipse-temurin:17-jre
+
+LABEL maintainer="tech@flow.io"
+
+RUN rm -rf /opt/java/openjdk
+COPY --from=jre-build /opt/java/openjdk /opt/java/openjdk
+
+RUN apt update && apt upgrade -y && \
+    sed -i s/#networkaddress.cache.ttl=-1/networkaddress.cache.ttl=10/ $JAVA_HOME/conf/security/java.security
+
+WORKDIR /root
+
+COPY environment-provider.jar .
+COPY environment-provider-version.txt .

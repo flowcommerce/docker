@@ -50,7 +50,7 @@ pipeline {
             when { branch 'main' }
             steps {
               container('docker') {
-                script{
+                script {
                   withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
                     withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
                       docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
@@ -87,6 +87,8 @@ pipeline {
                             cd play 
                             ./build-play ${VERSION.printable()} 13 
                             ./build-play-builder ${VERSION.printable()} 13
+                            ./build-play ${VERSION.printable()} 13-v2 "linux/amd64,linux/arm64"
+                            ./build-play ${VERSION.printable()} 17-v2 "linux/amd64,linux/arm64"
                         """
                       }
                     }

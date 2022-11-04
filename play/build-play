@@ -10,9 +10,10 @@ require "./helpers.rb"
 
 play_tag = ARGV.shift.to_s.strip
 java_tag = ARGV.shift.to_s.strip
+arch = ARGV.shift.to_s.strip
 
 if play_tag == "" || java_tag == ""
-  puts "Usage: ./build-play $(sem-info tag latest) <8 or 13>"
+  puts "Usage: ./build-play $(sem-info tag latest) <13 or 17> [arch]"
   puts "ERROR: Missing play tag or java tag."
   exit(1)
 end
@@ -29,14 +30,19 @@ begin
   run("cp Dockerfile.play-#{java_tag} #{tmp_dir}/Dockerfile")
 
   Dir.chdir(tmp_dir) do
-    run("curl https://cdn.flow.io/util/environment-provider/environment-provider-version.txt > environment-provider-version.txt")
-    run("curl https://cdn.flow.io/util/environment-provider/environment-provider.jar > ./environment-provider.jar")
-    run("docker build --network=host --pull --no-cache -t #{play_image_tag} .")
+    run("curl https://cdn.flow.io/util/environment-provider/environment-provider-version.txt -o environment-provider-version.txt")
+    run("curl https://cdn.flow.io/util/environment-provider/environment-provider.jar -o environment-provider.jar")
+    if arch == ""
+      run("docker build --network=host --pull --no-cache -t #{play_image_tag} .")
+      run("docker tag #{play_image_tag} #{play_image_latest}")
+      run("docker push #{play_image_tag}")
+      run("docker push #{play_image_latest}")
+    else
+      run("docker buildx build --platform=#{arch} --pull --push --no-cache --progress plain -t #{play_image_tag} .")
+      run("docker buildx build --platform=#{arch} --pull --push --no-cache --progress plain -t #{play_image_latest} .")
+    end
   end
 
-  run("docker tag #{play_image_tag} #{play_image_latest}")
-  run("docker push #{play_image_tag}")
-  run("docker push #{play_image_latest}")
 ensure
   run("rm -rf #{tmp_dir}")
 end
