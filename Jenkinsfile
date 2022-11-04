@@ -1,7 +1,7 @@
 properties([pipelineTriggers([githubPush()])])
 pipeline {
   triggers {
-    // Only trigger the cron build if on main branch and 5pm friday
+    // Only trigger the cron build if on main branch and 10 AM Monday
     cron(env.BRANCH_NAME == 'main' ? 'TZ=GMT\n0 10 * * 1' : '')
   }
 
@@ -47,6 +47,7 @@ pipeline {
     stage('Docker image builds') {
       parallel {
           stage('Upgrade node docker image') {
+            when { branch 'main' }
             steps {
               container('docker') {
                 script{
@@ -72,6 +73,7 @@ pipeline {
             }
           }
           stage('Upgrade play docker image') {
+            when { branch 'main' }
             steps {
               container('play-builder') {
                 script {
