@@ -30,8 +30,8 @@ begin
   run("cp Dockerfile.play-#{java_tag} #{tmp_dir}/Dockerfile")
 
   Dir.chdir(tmp_dir) do
-    run("curl https://cdn.flow.io/util/environment-provider/environment-provider-version.txt -o environment-provider-version.txt")
-    run("curl https://cdn.flow.io/util/environment-provider/environment-provider.jar -o environment-provider.jar")
+    run("curl -O https://cdn.flow.io/util/environment-provider/environment-provider-version.txt")
+    run("curl -O https://cdn.flow.io/util/environment-provider/environment-provider.jar")
     if arch == ""
       run("docker build --network=host --pull --no-cache -t #{play_image_tag} .")
       run("docker tag #{play_image_tag} #{play_image_latest}")
