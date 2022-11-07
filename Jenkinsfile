@@ -99,7 +99,7 @@ pipeline {
     }
   }
   post {
-      always {
+      failure {
         withCredentials([string(credentialsId: 'slack-team-foundation-notifications-token', variable: 'slackToken')]) {
           slackSend(
             channel: "#team-foundation-notifications", 
@@ -107,7 +107,7 @@ pipeline {
             baseUrl: 'https://flowio.slack.com/services/hooks/jenkins-ci/',
             token: slackToken,
             color: "#ff0000", 
-            message: "(Just testing!!) Build of base docker images failed, see https://jenkins.flo.pub/blue/organizations/jenkins/flowcommerce%2Fdocker/activity for details."
+            message: "Build of base docker images failed. Please see https://jenkins.flo.pub/blue/organizations/jenkins/flowcommerce%2Fdocker/activity for details."
           )
         }
       }
