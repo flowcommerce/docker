@@ -100,15 +100,7 @@ pipeline {
   }
   post {
       always {
-        def attachments = [
-          [
-            text: '(Just testing!!) Build of base docker images failed',
-            fallback: 'See https://jenkins.flo.pub/blue/organizations/jenkins/flowcommerce%2Fdocker/activity for details.',
-            color: '#ff0000'
-          ]
-        ]
-
-        slackSend(channel: "#team-foundation-notifications", attachments: attachments)
+        slackSend(color: "#ff0000", message: "(Just testing!!) Build of base docker images failed, see https://jenkins.flo.pub/blue/organizations/jenkins/flowcommerce%2Fdocker/activity for details.")
       }
   }
 }
