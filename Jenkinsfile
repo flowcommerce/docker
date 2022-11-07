@@ -100,7 +100,7 @@ pipeline {
   }
   post {
       always {
-        slackSend(color: "#ff0000", message: "(Just testing!!) Build of base docker images failed, see https://jenkins.flo.pub/blue/organizations/jenkins/flowcommerce%2Fdocker/activity for details.")
+        slackSend(channel: "#team-foundation-notifications", color: "#ff0000", message: "(Just testing!!) Build of base docker images failed, see https://jenkins.flo.pub/blue/organizations/jenkins/flowcommerce%2Fdocker/activity for details.")
       }
   }
 }
