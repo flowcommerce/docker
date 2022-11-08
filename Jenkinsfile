@@ -72,7 +72,7 @@ pipeline {
               }
             }
           }
-          stage('Upgrade play docker image') {
+          stage('Upgrade play builder docker image') {
             when { branch 'main' }
             steps {
               container('play-builder') {
@@ -85,10 +85,49 @@ pipeline {
                             mkdir /root/.ssh && chmod 0700 /root/.ssh 
                             ssh-keyscan -H github.com >> ~/.ssh/known_hosts
                             cd play 
-                            ./build-play ${VERSION.printable()} 13 
                             ./build-play-builder ${VERSION.printable()} 13
-                            ./build-play ${VERSION.printable()} 13-v2 "linux/amd64,linux/arm64"
-                            ./build-play ${VERSION.printable()} 17-v2 "linux/amd64,linux/arm64"
+                        """
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+          stage('Upgrade play 13 docker image') {
+            when { branch 'main' }
+            steps {
+              container('docker') {
+                script {
+                  withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]){
+                    withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
+                      docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
+                        sh """
+                            apk update
+                            apk add --no-cache curl ruby
+                            cd play
+                            ./build-play ${VERSION.printable()} 13 "linux/amd64,linux/arm64"
+                        """
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+          stage('Upgrade play 17 docker image') {
+            when { branch 'main' }
+            steps {
+              container('docker') {
+                script {
+                  withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]){
+                    withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
+                      docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
+                        sh """
+                            apk update
+                            apk add --no-cache curl ruby
+                            cd play
+                            ./build-play ${VERSION.printable()} 17 "linux/amd64,linux/arm64"
                         """
                       }
                     }
