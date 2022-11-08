@@ -54,7 +54,7 @@ pipeline {
                   withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
                     withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
                       docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
-                        sh """apk update && apk add --no-cache ruby curl aws-cli"""
+                        sh """apk add --no-cache ruby curl aws-cli"""
                         sh """cd node && ./build-node ${VERSION.printable()} 12"""
                         sh """cd node && ./build-node_builder ${VERSION.printable()} 12"""
                         sh """cd node && ./build-node ${VERSION.printable()} 16"""
@@ -73,15 +73,11 @@ pipeline {
             steps {
               container('docker') {
                 script {
-                  withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]){
-                    withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
-                      docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
-                        sh """apk update && apk add --no-cache curl ruby"""
-                        sh """cd play && ./build-play ${VERSION.printable()} 13"""
-                        sh """cd play && ./build-play ${VERSION.printable()} 13-v2 'linux/amd64,linux/arm64'"""
-                        sh """cd play && ./build-play ${VERSION.printable()} 17-v2 'linux/amd64,linux/arm64'"""
-                      }
-                    }
+                  docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
+                    sh """apk add --no-cache curl ruby"""
+                    sh """cd play && ./build-play ${VERSION.printable()} 13"""
+                    sh """cd play && ./build-play ${VERSION.printable()} 13-v2 'linux/amd64,linux/arm64'"""
+                    sh """cd play && ./build-play ${VERSION.printable()} 17-v2 'linux/amd64,linux/arm64'"""
                   }
                 }
               }
@@ -92,7 +88,7 @@ pipeline {
             steps {
               container('play-builder') {
                 script {
-                  sh "apk update && apk add --no-cache docker-cli openssh curl git ruby"
+                  sh "apk add --no-cache docker-cli openssh curl git ruby"
                   withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]){
                     withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
                       docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
