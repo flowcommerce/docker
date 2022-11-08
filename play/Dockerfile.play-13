@@ -1,6 +1,15 @@
-FROM openjdk:13-jdk-buster
+FROM adoptopenjdk/openjdk13:jre as jre13
+
+FROM eclipse-temurin:17-jre
 
 LABEL maintainer="tech@flow.io"
+
+RUN rm -rf /opt/java/openjdk
+COPY --from=jre13 /opt/java/openjdk /opt/java/openjdk
+
+RUN find "$JAVA_HOME/lib" -name '*.so' -exec dirname '{}' ';' | sort -u > /etc/ld.so.conf.d/docker-openjdk.conf; \
+    ldconfig; \
+    java -Xshare:dump
 
 RUN apt update && apt upgrade -y && \
     sed -i s/#networkaddress.cache.ttl=-1/networkaddress.cache.ttl=10/ $JAVA_HOME/conf/security/java.security
