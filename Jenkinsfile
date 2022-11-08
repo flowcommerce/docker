@@ -14,11 +14,9 @@ pipeline {
   agent {
     kubernetes {
       inheritFrom 'default'
-
       containerTemplates([
         containerTemplate(name: 'docker', image: 'docker:20', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true),
         containerTemplate(name: 'play-builder', image: 'flowdocker/play_builder:latest-java13', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true)
-
       ])
     }
   }
@@ -42,7 +40,6 @@ pipeline {
         }
       }
     }
-
 
     stage('Docker image builds') {
       parallel {
@@ -73,21 +70,16 @@ pipeline {
             }
           }
           stage('Upgrade play docker image') {
-            when { branch 'main' }
             steps {
               container('play-builder') {
                 script {
                   sh "apk update && apk add --no-cache docker-cli openssh curl git ruby"
+                  sh "mkdir /root/.ssh && chmod 0700 /root/.ssh && ssh-keyscan -H github.com >> ~/.ssh/known_hosts && cd play"
                   withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]){
                     withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
                       docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
-                        sh """
-                            mkdir /root/.ssh && chmod 0700 /root/.ssh 
-                            ssh-keyscan -H github.com >> ~/.ssh/known_hosts
-                            cd play 
-                            ./build-play ${VERSION.printable()} 13 
-                            ./build-play-builder ${VERSION.printable()} 13
-                        """
+                        sh "./build-play ${VERSION.printable()} 13"
+                        sh "./build-play-builder ${VERSION.printable()} 13"
                       }
                     }
                   }
