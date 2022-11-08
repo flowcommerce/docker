@@ -39,6 +39,10 @@ pipeline {
       steps {
         script {
           new flowSemver().commitSemver(VERSION)
+          sh """
+            apk update
+            apk add --no-cache docker-cli openssh curl git ruby aws-cli
+          """
         }
       }
     }
@@ -55,8 +59,6 @@ pipeline {
                     withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
                       docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
                         sh """
-                            apk update
-                            apk add ruby curl aws-cli
                             cd node
                             ./build-node ${VERSION.printable()} 12
                             ./build-node_builder ${VERSION.printable()} 12
@@ -77,7 +79,6 @@ pipeline {
             steps {
               container('play-builder') {
                 script {
-                  sh "apk update && apk add --no-cache docker-cli openssh curl git ruby"
                   withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]){
                     withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
                       docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
@@ -103,8 +104,6 @@ pipeline {
                     withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
                       docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
                         sh """
-                            apk update
-                            apk add --no-cache curl ruby
                             cd play
                             ./build-play ${VERSION.printable()} 13 "linux/amd64,linux/arm64"
                         """
@@ -125,7 +124,6 @@ pipeline {
                       docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
                         sh """
                             apk update
-                            apk add --no-cache curl ruby
                             cd play
                             ./build-play ${VERSION.printable()} 17 "linux/amd64,linux/arm64"
                         """
