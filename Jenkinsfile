@@ -16,10 +16,10 @@ pipeline {
       inheritFrom 'default'
 
       containerTemplates([
-        containerTemplate(name: 'node', image: 'docker:20', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true),
-        containerTemplate(name: 'play-jre13', image: 'docker:20', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true),
-        containerTemplate(name: 'play-jre17', image: 'docker:20', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true),
-        containerTemplate(name: 'play-builder', image: 'flowdocker/play_builder:latest-java13', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true)
+        containerTemplate(name: 'node', image: 'docker:20', command: 'cat', ttyEnabled: true),
+        containerTemplate(name: 'play-jre13', image: 'docker:20', command: 'cat', ttyEnabled: true),
+        containerTemplate(name: 'play-jre17', image: 'docker:20', command: 'cat', ttyEnabled: true),
+        containerTemplate(name: 'play-builder', image: 'flowdocker/play_builder:latest-java13', command: 'cat', ttyEnabled: true)
 
       ])
     }
