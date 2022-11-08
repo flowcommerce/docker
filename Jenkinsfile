@@ -78,8 +78,8 @@ pipeline {
                   withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]){
                     withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
                       docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
-                        sh "./build-play ${VERSION.printable()} 13"
-                        sh "./build-play-builder ${VERSION.printable()} 13"
+                        sh "cd play && ./build-play ${VERSION.printable()} 13"
+                        sh "cd play && ./build-play-builder ${VERSION.printable()} 13"
                       }
                     }
                   }
@@ -90,7 +90,7 @@ pipeline {
       }
     }
   }
-  post {
+  /*post {
       failure {
         withCredentials([string(credentialsId: 'slack-team-foundation-notifications-token', variable: 'slackToken')]) {
           slackSend(
@@ -103,5 +103,5 @@ pipeline {
           )
         }
       }
-  }
+  } */
 }
