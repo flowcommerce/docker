@@ -1,9 +1,9 @@
 properties([pipelineTriggers([githubPush()])])
 pipeline {
-  //triggers {
+  triggers {
     // Only trigger the cron build if on main branch and 10 AM Monday
-   // cron(env.BRANCH_NAME == 'main' ? 'TZ=GMT\n0 10 * * 1' : '')
-  //}
+    cron(env.BRANCH_NAME == 'main' ? 'TZ=GMT\n0 10 * * 1' : '')
+  }
 
   options {
     disableConcurrentBuilds()
@@ -44,6 +44,7 @@ pipeline {
     stage('Docker image builds') {
       parallel {
           stage('Upgrade node docker image') {
+            when { branch 'main' }
             steps {
               container('docker') {
                 script{
@@ -65,6 +66,7 @@ pipeline {
             }
           }
           stage('Upgrade play docker image') {
+            when { branch 'main' }
             steps {
               container('play-builder') {
                 script {
@@ -85,7 +87,7 @@ pipeline {
       }
     }
   }
-  /*post {
+  post {
       failure {
         withCredentials([string(credentialsId: 'slack-team-foundation-notifications-token', variable: 'slackToken')]) {
           slackSend(
@@ -98,5 +100,5 @@ pipeline {
           )
         }
       }
-  } */
+  }
 }
