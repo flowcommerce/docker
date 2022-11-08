@@ -16,7 +16,8 @@ pipeline {
       inheritFrom 'default'
 
       containerTemplates([
-        containerTemplate(name: 'docker', image: 'docker:20', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true),
+        containerTemplate(name: 'node', image: 'docker:20', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true),
+        containerTemplate(name: 'play', image: 'docker:20', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true),
         containerTemplate(name: 'play-builder', image: 'flowdocker/play_builder:latest-java13', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true)
 
       ])
@@ -49,7 +50,7 @@ pipeline {
           stage('Upgrade node docker image') {
             when { branch 'main' }
             steps {
-              container('docker') {
+              container('node') {
                 script {
                   withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
                     withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
@@ -71,7 +72,7 @@ pipeline {
           stage('Upgrade play docker image') {
             when { branch 'main' }
             steps {
-              container('docker') {
+              container('play') {
                 script {
                   docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
                     sh """apk add --no-cache curl ruby"""

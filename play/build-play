@@ -38,6 +38,7 @@ begin
       run("docker push #{play_image_tag}")
       run("docker push #{play_image_latest}")
     else
+      run("docker buildx create --use")
       run("docker buildx build --platform=#{arch} --pull --push --no-cache --progress plain -t #{play_image_tag} .")
       run("docker buildx build --platform=#{arch} --pull --push --no-cache --progress plain -t #{play_image_latest} .")
     end
