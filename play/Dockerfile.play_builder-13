@@ -2,7 +2,7 @@ FROM openjdk:13-jdk-alpine
 
 LABEL maintainer="tech@flow.io"
 
-ENV SBT_VERSION 1.6.2
+ENV SBT_VERSION 1.7.3
 
 WORKDIR /root
 
