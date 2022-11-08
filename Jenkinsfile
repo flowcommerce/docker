@@ -19,8 +19,7 @@ pipeline {
         containerTemplate(name: 'node-12', image: 'docker:20', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true),
         containerTemplate(name: 'node-16', image: 'docker:20', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true),
         containerTemplate(name: 'node-18', image: 'docker:20', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true),
-        containerTemplate(name: 'play-jre13', image: 'docker:20', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true),
-        containerTemplate(name: 'play-jre17', image: 'docker:20', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true),
+        containerTemplate(name: 'play', image: 'docker:20', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true),
         containerTemplate(name: 'play-builder', image: 'flowdocker/play_builder:latest-java13', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true)
 
       ])
@@ -104,26 +103,14 @@ pipeline {
               }
             }
           }
-          stage('Upgrade play jre 13 docker image') {
+          stage('Upgrade play docker image') {
             when { branch 'main' }
             steps {
-              container('play-jre13') {
+              container('play') {
                 script {
                   docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
                     sh """apk add --no-cache curl ruby"""
                     sh """cd play && ./build-play ${VERSION.printable()} 13 'linux/amd64,linux/arm64'"""
-                  }
-                }
-              }
-            }
-          }
-          stage('Upgrade play jre 17 docker image') {
-            when { branch 'main' }
-            steps {
-              container('play-jre17') {
-                script {
-                  docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
-                    sh """apk add --no-cache curl ruby"""
                     sh """cd play && ./build-play ${VERSION.printable()} 17 'linux/amd64,linux/arm64'"""
                   }
                 }
