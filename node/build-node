@@ -40,8 +40,8 @@ begin
   File.write("#{tmp_dir}/Dockerfile", ERB.new(template).result(binding))
 
   Dir.chdir(tmp_dir) do
-    run("curl https://cdn.flow.io/util/environment-provider/environment-provider-version.txt > environment-provider-version.txt")
-    run("curl https://cdn.flow.io/util/environment-provider/environment-provider.jar > ./environment-provider.jar")
+    run("curl -O https://cdn.flow.io/util/environment-provider/environment-provider-version.txt")
+    run("curl -O https://cdn.flow.io/util/environment-provider/environment-provider.jar")
     run("aws s3 cp s3://io.flow.infra/npm/flowtech.npmrc ./.npmrc")
     run("docker build --network=host --platform linux/amd64 --pull --no-cache -t %s ." % node_image_tag, true)
   end
