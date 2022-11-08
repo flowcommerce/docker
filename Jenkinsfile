@@ -54,8 +54,7 @@ pipeline {
                   withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
                     withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
                       docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
-                        sh """apk update"""
-                        sh """apk add ruby curl aws-cli"""
+                        sh """apk update && apk add --no-cache ruby curl aws-cli"""
                         sh """cd node && ./build-node ${VERSION.printable()} 12"""
                         sh """cd node && ./build-node_builder ${VERSION.printable()} 12"""
                         sh """cd node && ./build-node ${VERSION.printable()} 16"""
@@ -72,6 +71,25 @@ pipeline {
           stage('Upgrade play docker image') {
             when { branch 'main' }
             steps {
+              container('docker') {
+                script {
+                  withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]){
+                    withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
+                      docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
+                        sh """apk update && apk add --no-cache curl ruby"""
+                        sh """cd play && ./build-play ${VERSION.printable()} 13"""
+                        sh """cd play && ./build-play ${VERSION.printable()} 13-v2 'linux/amd64,linux/arm64'"""
+                        sh """cd play && ./build-play ${VERSION.printable()} 17-v2 'linux/amd64,linux/arm64'"""
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+          stage('Upgrade play builder docker image') {
+            when { branch 'main' }
+            steps {
               container('play-builder') {
                 script {
                   sh "apk update && apk add --no-cache docker-cli openssh curl git ruby"
@@ -80,10 +98,7 @@ pipeline {
                       docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
                         sh """mkdir /root/.ssh && chmod 0700 /root/.ssh"""
                         sh """ssh-keyscan -H github.com >> ~/.ssh/known_hosts"""
-                        sh """cd play && ./build-play ${VERSION.printable()} 13"""
                         sh """cd play && ./build-play-builder ${VERSION.printable()} 13"""
-                        sh """cd play && ./build-play ${VERSION.printable()} 13-v2 'linux/amd64,linux/arm64'"""
-                        sh """cd play && ./build-play ${VERSION.printable()} 17-v2 'linux/amd64,linux/arm64'"""
                       }
                     }
                   }
