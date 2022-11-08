@@ -16,10 +16,9 @@ pipeline {
       inheritFrom 'default'
 
       containerTemplates([
-        containerTemplate(name: 'node-12', image: 'docker:20', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true),
-        containerTemplate(name: 'node-16', image: 'docker:20', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true),
-        containerTemplate(name: 'node-18', image: 'docker:20', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true),
-        containerTemplate(name: 'play', image: 'docker:20', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true),
+        containerTemplate(name: 'node', image: 'docker:20', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true),
+        containerTemplate(name: 'play-jre13', image: 'docker:20', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true),
+        containerTemplate(name: 'play-jre17', image: 'docker:20', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true),
         containerTemplate(name: 'play-builder', image: 'flowdocker/play_builder:latest-java13', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true)
 
       ])
@@ -49,7 +48,7 @@ pipeline {
 
     stage('Docker image builds') {
       parallel {
-          stage('Upgrade node 12 docker image') {
+          stage('Upgrade node docker image') {
             when { branch 'main' }
             steps {
               container('node-12') {
@@ -60,40 +59,8 @@ pipeline {
                         sh """apk add --no-cache ruby curl aws-cli"""
                         sh """cd node && ./build-node ${VERSION.printable()} 12"""
                         sh """cd node && ./build-node_builder ${VERSION.printable()} 12"""
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-          stage('Upgrade node 16 docker image') {
-            when { branch 'main' }
-            steps {
-              container('node-16') {
-                script {
-                  withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
-                    withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
-                      docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
-                        sh """apk add --no-cache ruby curl aws-cli"""
                         sh """cd node && ./build-node ${VERSION.printable()} 16"""
                         sh """cd node && ./build-node_builder ${VERSION.printable()} 16"""
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-          stage('Upgrade node 18 docker image') {
-            when { branch 'main' }
-            steps {
-              container('node-18') {
-                script {
-                  withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
-                    withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
-                      docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
-                        sh """apk add --no-cache ruby curl aws-cli"""
                         sh """cd node && ./build-node ${VERSION.printable()} 18"""
                         sh """cd node && ./build-node_builder ${VERSION.printable()} 18"""
                       }
@@ -103,14 +70,26 @@ pipeline {
               }
             }
           }
-          stage('Upgrade play docker image') {
+          stage('Upgrade play jre 13 docker image') {
             when { branch 'main' }
             steps {
-              container('play') {
+              container('play-jre13') {
                 script {
                   docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
                     sh """apk add --no-cache curl ruby"""
                     sh """cd play && ./build-play ${VERSION.printable()} 13 'linux/amd64,linux/arm64'"""
+                  }
+                }
+              }
+            }
+          }
+          stage('Upgrade play jre 17 docker image') {
+            when { branch 'main' }
+            steps {
+              container('play-jre17') {
+                script {
+                  docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
+                    sh """apk add --no-cache curl ruby"""
                     sh """cd play && ./build-play ${VERSION.printable()} 17 'linux/amd64,linux/arm64'"""
                   }
                 }
