@@ -1,9 +1,9 @@
 properties([pipelineTriggers([githubPush()])])
 pipeline {
-  triggers {
+  //triggers {
     // Only trigger the cron build if on main branch and 10 AM Monday
-    cron(env.BRANCH_NAME == 'main' ? 'TZ=GMT\n0 10 * * 1' : '')
-  }
+   // cron(env.BRANCH_NAME == 'main' ? 'TZ=GMT\n0 10 * * 1' : '')
+  //}
 
   options {
     disableConcurrentBuilds()
