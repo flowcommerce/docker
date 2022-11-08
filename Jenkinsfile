@@ -50,7 +50,7 @@ pipeline {
           stage('Upgrade node docker image') {
             when { branch 'main' }
             steps {
-              container('node-12') {
+              container('node') {
                 script {
                   withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
                     withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
