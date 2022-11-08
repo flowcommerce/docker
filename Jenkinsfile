@@ -48,20 +48,16 @@ pipeline {
             steps {
               container('docker') {
                 script{
+                  sh "apk update && apk add curl ruby aws-cli"
                   withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
                     withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
                       docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
-                        sh """
-                            apk update
-                            apk add ruby curl aws-cli
-                            cd node
-                            ./build-node ${VERSION.printable()} 12
-                            ./build-node_builder ${VERSION.printable()} 12
-                            ./build-node ${VERSION.printable()} 16
-                            ./build-node_builder ${VERSION.printable()} 16
-                            ./build-node ${VERSION.printable()} 18
-                            ./build-node_builder ${VERSION.printable()} 18
-                          """
+                        sh "cd node && ./build-node ${VERSION.printable()} 12"
+                        sh "cd node && ./build-node_builder ${VERSION.printable()} 12"
+                        sh "cd node && ./build-node ${VERSION.printable()} 16"
+                        sh "cd node && ./build-node_builder ${VERSION.printable()} 16"
+                        sh "cd node && ./build-node ${VERSION.printable()} 18"
+                        sh "cd node && ./build-node_builder ${VERSION.printable()} 18"
                       }
                     }
                   }
