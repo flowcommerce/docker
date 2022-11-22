@@ -95,6 +95,7 @@ pipeline {
                         sh """mkdir /root/.ssh && chmod 0700 /root/.ssh"""
                         sh """ssh-keyscan -H github.com >> ~/.ssh/known_hosts"""
                         sh """cd play && ./build-play-builder ${VERSION.printable()} 13"""
+                        sh """cd play && ./build-play-builder ${VERSION.printable()} 17"""
                       }
                     }
                   }
