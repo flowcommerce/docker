@@ -1,4 +1,4 @@
-FROM openjdk:13-jdk-alpine
+FROM eclipse-temurin:17-jdk-alpine
 
 LABEL maintainer="tech@flow.io"
 
@@ -15,7 +15,7 @@ RUN apk update && apk upgrade && \
     chmod 0755 /usr/local/bin/sbt && \
     apk del build-dependencies && \
     mkdir -p .sbt/ && \
-    mkdir -p .ivy2/ 
+    mkdir -p .ivy2/
 
 COPY .sbt/ .sbt/.
 COPY .coursier/ .cache/coursier/v1/.
