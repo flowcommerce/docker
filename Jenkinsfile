@@ -87,14 +87,17 @@ pipeline {
           steps {
             container('play-builder') {
               script {
-                sh "apk add --no-cache docker-cli openssh curl git ruby"
+                semver = VERSION.printable()
+                SBT_VERSION = '1.8.0'
                 withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]){
                   withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
                     docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
-                      sh """mkdir /root/.ssh && chmod 0700 /root/.ssh"""
-                      sh """ssh-keyscan -H github.com >> ~/.ssh/known_hosts"""
-                      sh """cd play && ./build-play-builder ${VERSION.printable()} 13"""
-                      sh """cd play && ./build-play-builder ${VERSION.printable()} 17"""
+                      db = docker.build("flowdocker/play_builder:$semver-java13", "--network=host --build-arg GIT_PASSWORD=$GIT_PASSWORD --build-arg GIT_USERNAME=$GIT_USERNAME --build-arg SBT_VERSION=$SBT_VERSION -f Dockerfile.play_builder-13 .")
+                      db.push()
+                      db.push("latest-java13")
+                      db = docker.build("flowdocker/play_builder:$semver-java17", "--network=host --build-arg GIT_PASSWORD=$GIT_PASSWORD --build-arg GIT_USERNAME=$GIT_USERNAME --build-arg SBT_VERSION=$SBT_VERSION -f Dockerfile.play_builder-17 .")
+                      db.push()
+                      db.push("latest-java17")
                     }
                   }
                 }
