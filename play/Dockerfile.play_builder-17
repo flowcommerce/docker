@@ -1,10 +1,14 @@
 FROM eclipse-temurin:17-jdk-alpine as builder
 
-ARG GITHUB_TOKEN
+ARG GIT_USERNAME
+ARG GIT_PASSWORD
 ARG SBT_VERSION
-ENV GITHUB_TOKEN $GITHUB_TOKEN
+ENV GIT_USERNAME $GIT_USERNAME
+ENV GIT_PASSWORD $GIT_PASSWORD
 ENV SBT_VERSION $SBT_VERSION
+
 ENV PROJECTS_TO_BUILD "experience catalog label shopify webhook demandware harmonization tax order-messenger bundle metric shopify-markets calculator"
+
 WORKDIR /root
 
 RUN apk add --no-cache docker-cli openssh curl git ruby bash && \
@@ -15,7 +19,7 @@ RUN apk add --no-cache docker-cli openssh curl git ruby bash && \
     chmod 0755 /usr/local/bin/sbt
 
 RUN for repo in $PROJECTS_TO_BUILD; do \
-      echo $repo; git clone --depth 1 https://${GITHUB_TOKEN}@github.com/flowcommerce/$repo.git; cd $repo; sbt update; cd -; \
+      echo $repo; git clone --depth 1 https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/flowcommerce/$repo.git; cd $repo; sbt update; cd -; \
     done
 
 FROM eclipse-temurin:17-jdk-alpine
