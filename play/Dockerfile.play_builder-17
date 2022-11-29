@@ -43,5 +43,5 @@ RUN apk update && apk upgrade && \
     mkdir -p .sbt/ && \
     mkdir -p .ivy2/
 
-COPY --from=builder .sbt/ .sbt/.
-COPY --from=builder .cache/ .cache/.
+COPY --from=builder /root/.sbt/ .sbt/.
+COPY --from=builder /root/.cache/ .cache/.
