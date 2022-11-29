@@ -92,10 +92,10 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]){
                   withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
                     docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
-                      db = docker.build("flowdocker/play_builder:$semver-java13", "--network=host --build-arg GIT_PASSWORD=$GIT_PASSWORD --build-arg GIT_USERNAME=$GIT_USERNAME --build-arg SBT_VERSION=$SBT_VERSION -f Dockerfile.play_builder-13 .")
+                      db = docker.build("flowdocker/play_builder:$semver-java13", "--network=host --build-arg GIT_PASSWORD=$GIT_PASSWORD --build-arg GIT_USERNAME=$GIT_USERNAME --build-arg SBT_VERSION=$SBT_VERSION -f play/Dockerfile.play_builder-13 .")
                       db.push()
                       db.push("latest-java13")
-                      db = docker.build("flowdocker/play_builder:$semver-java17", "--network=host --build-arg GIT_PASSWORD=$GIT_PASSWORD --build-arg GIT_USERNAME=$GIT_USERNAME --build-arg SBT_VERSION=$SBT_VERSION -f Dockerfile.play_builder-17 .")
+                      db = docker.build("flowdocker/play_builder:$semver-java17", "--network=host --build-arg GIT_PASSWORD=$GIT_PASSWORD --build-arg GIT_USERNAME=$GIT_USERNAME --build-arg SBT_VERSION=$SBT_VERSION -f play/Dockerfile.play_builder-17 .")
                       db.push()
                       db.push("latest-java17")
                     }
