@@ -1,8 +1,34 @@
+FROM eclipse-temurin:17-jdk-alpine as builder
+
+ARG GIT_USERNAME
+ARG GIT_PASSWORD
+ARG SBT_VERSION
+ENV GIT_USERNAME $GIT_USERNAME
+ENV GIT_PASSWORD $GIT_PASSWORD
+ENV SBT_VERSION $SBT_VERSION
+
+ENV PROJECTS_TO_BUILD "experience catalog label shopify webhook demandware harmonization tax order-messenger bundle metric shopify-markets calculator"
+
+WORKDIR /root
+
+RUN apk add --no-cache docker-cli openssh curl git ruby bash && \
+    mkdir /root/.ssh && chmod 0700 /root/.ssh && \
+    ssh-keyscan -H github.com >> ~/.ssh/known_hosts && \
+    curl -sL "https://github.com/sbt/sbt/releases/download/v$SBT_VERSION/sbt-$SBT_VERSION.tgz" | gunzip | tar -x -C /usr/local && \
+    ln -s /usr/local/sbt/bin/sbt /usr/local/bin/sbt && \
+    chmod 0755 /usr/local/bin/sbt
+
+RUN for repo in $PROJECTS_TO_BUILD; do \
+      echo $repo; git clone --depth 1 https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/flowcommerce/$repo.git; cd $repo; sbt update; cd -; \
+    done
+
 FROM eclipse-temurin:17-jdk-alpine
 
 LABEL maintainer="tech@flow.io"
 
-ENV SBT_VERSION 1.8.0
+ARG SBT_VERSION
+ENV SBT_VERSION $SBT_VERSION
+
 
 WORKDIR /root
 
@@ -17,5 +43,5 @@ RUN apk update && apk upgrade && \
     mkdir -p .sbt/ && \
     mkdir -p .ivy2/
 
-COPY .sbt/ .sbt/.
-COPY .coursier/ .cache/coursier/v1/.
+COPY --from=builder .sbt/ .sbt/.
+COPY --from=builder .cache/ .cache/.
