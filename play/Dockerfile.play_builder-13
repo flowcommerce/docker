@@ -11,7 +11,7 @@ ENV PROJECTS_TO_BUILD "experience catalog label shopify webhook demandware harmo
 
 WORKDIR /root
 
-RUN apk add --no-cache docker-cli openssh curl git ruby bash postgresql-client && \
+RUN apk add --no-cache docker-cli openssh curl git ruby bash && \
     mkdir /root/.ssh && chmod 0700 /root/.ssh && \
     ssh-keyscan -H github.com >> ~/.ssh/known_hosts && \
     curl -sL "https://github.com/sbt/sbt/releases/download/v$SBT_VERSION/sbt-$SBT_VERSION.tgz" | gunzip | tar -x -C /usr/local && \
