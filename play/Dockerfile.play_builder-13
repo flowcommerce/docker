@@ -34,7 +34,7 @@ WORKDIR /root
 
 # Install SBT
 RUN apk update && apk upgrade && \
-    apk add --no-cache --update bash && \
+    apk add --no-cache --update bash postgresql-client && \
     apk add --no-cache --virtual=build-dependencies curl && \
     curl -sL "https://github.com/sbt/sbt/releases/download/v$SBT_VERSION/sbt-$SBT_VERSION.tgz" | gunzip | tar -x -C /usr/local && \
     ln -s /usr/local/sbt/bin/sbt /usr/local/bin/sbt && \
