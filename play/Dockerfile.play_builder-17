@@ -7,7 +7,7 @@ ENV GIT_USERNAME $GIT_USERNAME
 ENV GIT_PASSWORD $GIT_PASSWORD
 ENV SBT_VERSION $SBT_VERSION
 
-ENV PROJECTS_TO_BUILD "experience catalog label shopify webhook demandware harmonization tax order-messenger bundle metric shopify-markets calculator"
+ENV PROJECTS_TO_BUILD "experience catalog label shopify webhook demandware harmonization tax order-messenger bundle metric shopify-markets calculator data-platform"
 
 WORKDIR /root
 
