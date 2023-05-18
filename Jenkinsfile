@@ -88,7 +88,7 @@ pipeline {
             container('play-builder') {
               script {
                 semver = VERSION.printable()
-                SBT_VERSION = '1.8.2'
+                SBT_VERSION = '1.8.3'
                 withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]){
                   withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
                     docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
