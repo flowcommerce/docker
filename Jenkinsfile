@@ -16,9 +16,9 @@ pipeline {
       inheritFrom 'default'
 
       containerTemplates([
-        containerTemplate(name: 'node', image: 'docker:20', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true),
-        containerTemplate(name: 'play', image: 'docker:20', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true),
-        containerTemplate(name: 'play-builder', image: 'docker:20', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true)
+        containerTemplate(name: 'node', image: 'docker:24', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true),
+        containerTemplate(name: 'play', image: 'docker:24', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true),
+        containerTemplate(name: 'play-builder', image: 'docker:24', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true)
       ])
     }
   }
