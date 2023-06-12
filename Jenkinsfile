@@ -75,8 +75,8 @@ pipeline {
               script {
                 docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
                   sh """apk add --no-cache curl ruby"""
-                  sh """cd play && ./build-play ${VERSION.printable()} 13 'linux/amd64,linux/arm64'"""
-                  sh """cd play && ./build-play ${VERSION.printable()} 17 'linux/amd64,linux/arm64'"""
+                  sh """cd play && ./build-play ${VERSION.printable()} 13"""
+                  sh """cd play && ./build-play ${VERSION.printable()} 17"""
                 }
               }
             }
