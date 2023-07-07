@@ -41,7 +41,7 @@ pipeline {
     stage('Docker image builds') {
       parallel {
         stage('Upgrade node docker image') {
-          when { branch 'test-kaniko' }
+          when { branch 'test' }
           steps {
             container('kaniko') {
               script {
