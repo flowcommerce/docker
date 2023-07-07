@@ -1,0 +1,71 @@
+#!/usr/bin/env ruby
+
+require "./helpers.rb"
+require "erb"
+
+def usage()
+  puts ""
+  puts "Usage:"
+  puts ""
+  puts "./build-node <docker_image_version> <node_major_version>"
+  puts ""
+  puts "Example:  ./build-node 0.2.0 16"
+  puts ""
+end
+
+node_tag = ARGV.shift.to_s.strip
+node_version = ARGV.shift.to_s.strip
+
+if node_tag == ""
+  puts "ERROR: Missing node tag"
+  usage
+  exit(1)
+end
+
+if node_version == ""
+  puts "ERROR: Missing node version"
+  usage
+  exit(1)
+end
+
+node_image_tag = "flowdocker/node%s:%s" % [node_version, node_tag]
+node_image_latest = "flowdocker/node%s:latest" % node_version
+
+# Build in a tmp directory to avoid adding anything unnecessary into
+# the context.
+tmp_dir = "/tmp/docker.node#{node_version}.#{Process.pid}"
+begin
+  run("mkdir #{tmp_dir}")
+  template = File.read('Dockerfile_template.node.erb')
+  File.write("#{tmp_dir}/Dockerfile", ERB.new(template).result(binding))
+
+  Dir.chdir(tmp_dir) do
+    run("curl -O https://cdn.flow.io/util/environment-provider/environment-provider-version.txt")
+    run("curl -O https://cdn.flow.io/util/environment-provider/environment-provider.jar")
+    run("aws s3 cp s3://io.flow.infra/npm/flowtech.npmrc ./.npmrc")
+    sh """
+      /kaniko/executor \
+      --dockerfile=`pwd`/Dockerfile \
+      --context=`pwd` \
+      --snapshot-mode=redo \
+      --use-new-run \
+      --custom-platform=linux/amd64 \
+      --destination #{node_image_tag}
+    """
+  end
+
+  sh """
+    /kaniko/executor \
+    --dockerfile=`pwd`/Dockerfile \
+    --context=`pwd` \
+    --snapshot-mode=redo \
+    --use-new-run \
+    --destination #{node_image_latest}
+  """
+
+  puts ""
+  puts "Completed push of #{node_image_tag} and #{node_image_latest}"
+
+ensure
+  run("rm -rf #{tmp_dir}")
+end

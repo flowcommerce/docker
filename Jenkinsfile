@@ -13,13 +13,7 @@ pipeline {
 
   agent {
     kubernetes {
-      inheritFrom 'default'
-
-      containerTemplates([
-        containerTemplate(name: 'node', image: 'docker:24', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true),
-        containerTemplate(name: 'play', image: 'docker:24', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true),
-        containerTemplate(name: 'play-builder', image: 'docker:24', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true)
-      ])
+      inheritFrom 'kaniko-slim'
     }
   }
 
@@ -47,64 +41,58 @@ pipeline {
     stage('Docker image builds') {
       parallel {
         stage('Upgrade node docker image') {
-          when { branch 'main' }
+          when { branch 'test' }
           steps {
-            container('node') {
+            container('kaniko') {
               script {
                 withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
                   withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
-                    docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
                       sh """apk add --no-cache ruby curl aws-cli"""
-                      sh """cd node && ./build-node ${VERSION.printable()} 12"""
-                      sh """cd node && ./build-node_builder ${VERSION.printable()} 12"""
-                      sh """cd node && ./build-node ${VERSION.printable()} 16"""
-                      sh """cd node && ./build-node_builder ${VERSION.printable()} 16"""
-                      sh """cd node && ./build-node ${VERSION.printable()} 18"""
-                      sh """cd node && ./build-node_builder ${VERSION.printable()} 18"""
-                    }
+                      sh """cd node && ./build-node-kaniko test 12"""
+                      sh """cd node && ./build-node_builder-kaniko test 12"""
                   }
                 }
               }
             }
           }
         }
-        stage('Upgrade play jre docker image') {
-          when { branch 'main' }
-          steps {
-            container('play') {
-              script {
-                docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
-                  sh """apk add --no-cache curl ruby"""
-                  sh """cd play && ./build-play ${VERSION.printable()} 13"""
-                  sh """cd play && ./build-play ${VERSION.printable()} 17"""
-                }
-              }
-            }
-          }
-        }
-        stage('Upgrade play builder docker image') {
-          when { branch 'main' }
-          steps {
-            container('play-builder') {
-              script {
-                semver = VERSION.printable()
-                SBT_VERSION = '1.8.3'
-                withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]){
-                  withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
-                    docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
-                      db = docker.build("flowdocker/play_builder:$semver-java13", "--network=host --build-arg GIT_PASSWORD=$GIT_PASSWORD --build-arg GIT_USERNAME=$GIT_USERNAME --build-arg SBT_VERSION=$SBT_VERSION -f play/Dockerfile.play_builder-13 .")
-                      db.push()
-                      db.push("latest-java13")
-                      db = docker.build("flowdocker/play_builder:$semver-java17", "--network=host --build-arg GIT_PASSWORD=$GIT_PASSWORD --build-arg GIT_USERNAME=$GIT_USERNAME --build-arg SBT_VERSION=$SBT_VERSION -f play/Dockerfile.play_builder-17 .")
-                      db.push()
-                      db.push("latest-java17")
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+        // stage('Upgrade play jre docker image') {
+        //   when { branch 'main' }
+        //   steps {
+        //     container('play') {
+        //       script {
+        //         docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
+        //           sh """apk add --no-cache curl ruby"""
+        //           sh """cd play && ./build-play ${VERSION.printable()} 13"""
+        //           sh """cd play && ./build-play ${VERSION.printable()} 17"""
+        //         }
+        //       }
+        //     }
+        //   }
+        // }
+        // stage('Upgrade play builder docker image') {
+        //   when { branch 'main' }
+        //   steps {
+        //     container('play-builder') {
+        //       script {
+        //         semver = VERSION.printable()
+        //         SBT_VERSION = '1.8.3'
+        //         withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]){
+        //           withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
+        //             docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
+        //               db = docker.build("flowdocker/play_builder:$semver-java13", "--network=host --build-arg GIT_PASSWORD=$GIT_PASSWORD --build-arg GIT_USERNAME=$GIT_USERNAME --build-arg SBT_VERSION=$SBT_VERSION -f play/Dockerfile.play_builder-13 .")
+        //               db.push()
+        //               db.push("latest-java13")
+        //               db = docker.build("flowdocker/play_builder:$semver-java17", "--network=host --build-arg GIT_PASSWORD=$GIT_PASSWORD --build-arg GIT_USERNAME=$GIT_USERNAME --build-arg SBT_VERSION=$SBT_VERSION -f play/Dockerfile.play_builder-17 .")
+        //               db.push()
+        //               db.push("latest-java17")
+        //             }
+        //           }
+        //         }
+        //       }
+        //     }
+        //   }
+        // }
       }
     }
   }
