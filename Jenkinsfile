@@ -41,15 +41,14 @@ pipeline {
     stage('Docker image builds') {
       parallel {
         stage('Upgrade node docker image') {
-          when { branch 'test' }
           steps {
             container('kaniko') {
               script {
                 withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
                   withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
                       sh """apk add --no-cache ruby curl aws-cli"""
-                      sh """cd node && ./build-node-kaniko test 12"""
-                      sh """cd node && ./build-node_builder-kaniko test 12"""
+                      sh """cd node && ./build-node-kaniko testtag 12"""
+                      sh """cd node && ./build-node_builder-kaniko testtag 12"""
                   }
                 }
               }
