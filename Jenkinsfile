@@ -57,12 +57,12 @@ pipeline {
           steps {
             container('kaniko') {
               script {
-                sh """cp node/docker/Dockerfile-12 ./Dockerfile-12 \
+                sh """cp node/dockerfiles/Dockerfile-12 ./Dockerfile-12 \
                   && /kaniko/executor -f `pwd`/Dockerfile-12 -c `pwd` \
                   --snapshot-mode=redo --use-new-run  \
                   --destination flowdocker/node12:testag
                 """
-                //sh """cp node/docker/Dockerfile-12 ./Dockerfile \
+                //sh """cp node/dockerfiles/Dockerfile-12 ./Dockerfile \
                 //  && /kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
                 //  --snapshot-mode=redo --use-new-run  \
                 //  --destination flowdocker/node12:latest
@@ -77,12 +77,12 @@ pipeline {
               script {
                 withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
                   withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
-                    sh """cp node/docker/Dockerfile-builder-12 ./Dockerfile-builder-12 \
+                    sh """cp node/dockerfiles/Dockerfile-builder-12 ./Dockerfile-builder-12 \
                       && /kaniko/executor -f `pwd`/Dockerfile-builder-12 -c `pwd` \
                       --snapshot-mode=redo --use-new-run  \
                       --destination flowdocker/node12_builder:testag
                     """
-                    //sh """cp node/docker/Dockerfile-12 ./Dockerfile \
+                    //sh """cp node/dockerfiles/Dockerfile-12 ./Dockerfile \
                     //  && /kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
                     //  --snapshot-mode=redo --use-new-run  \
                     //  --destination flowdocker/node12:latest
@@ -97,12 +97,12 @@ pipeline {
 //          steps {
 //            container('kaniko') {
 //              script {
-//                sh """cp node/docker/Dockerfile-16 ./Dockerfile \
+//                sh """cp node/dockerfiles/Dockerfile-16 ./Dockerfile \
 //                  && /kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
 //                  --snapshot-mode=redo --use-new-run  \
 //                  --destination flowdocker/node16:testag
 //                """
-//                //sh """cp node/docker/Dockerfile-16 ./Dockerfile \
+//                //sh """cp node/dockerfiles/Dockerfile-16 ./Dockerfile \
 //                //  && /kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
 //                //  --snapshot-mode=redo --use-new-run  \
 //                //  --destination flowdocker/node16:latest
@@ -115,12 +115,12 @@ pipeline {
 //          steps {
 //            container('kaniko') {
 //              script {
-//                sh """cp node/docker/Dockerfile-18 ./Dockerfile \
+//                sh """cp node/dockerfiles/Dockerfile-18 ./Dockerfile \
 //                  && /kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
 //                  --snapshot-mode=redo --use-new-run  \
 //                  --destination flowdocker/node18:testag
 //                """
-//                //sh """cp node/docker/Dockerfile-18 ./Dockerfile \
+//                //sh """cp node/dockerfiles/Dockerfile-18 ./Dockerfile \
 //                //  && /kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
 //                //  --snapshot-mode=redo --use-new-run  \
 //                //  --destination flowdocker/node18:latest
