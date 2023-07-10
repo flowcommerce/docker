@@ -57,8 +57,8 @@ pipeline {
           steps {
             container('kaniko') {
               script {
-                sh """cp node/docker/Dockerfile-12 ./Dockerfile \
-                  && /kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
+                sh """cp node/docker/Dockerfile-12 ./Dockerfile-12 \
+                  && /kaniko/executor -f `pwd`/Dockerfile-12 -c `pwd` \
                   --snapshot-mode=redo --use-new-run  \
                   --destination flowdocker/node12:testag
                 """
@@ -67,6 +67,28 @@ pipeline {
                 //  --snapshot-mode=redo --use-new-run  \
                 //  --destination flowdocker/node12:latest
                 //"""
+              }
+            }
+          }
+        }
+        stage('Upgrade node-builder docker image 12') {
+          steps {
+            container('kaniko') {
+              script {
+                withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
+                  withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
+                    sh """cp node/docker/Dockerfile-builder-12 ./Dockerfile-builder-12 \
+                      && /kaniko/executor -f `pwd`/Dockerfile-builder-12 -c `pwd` \
+                      --snapshot-mode=redo --use-new-run  \
+                      --destination flowdocker/node12_builder:testag
+                    """
+                    //sh """cp node/docker/Dockerfile-12 ./Dockerfile \
+                    //  && /kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
+                    //  --snapshot-mode=redo --use-new-run  \
+                    //  --destination flowdocker/node12:latest
+                    //"""
+                  }
+                }
               }
             }
           }
