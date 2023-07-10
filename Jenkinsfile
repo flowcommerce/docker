@@ -49,6 +49,8 @@ pipeline {
                     sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider.jar"""
                     s3Download(file:'./.npmrc', bucket:'io.flow.infra', path:'npm/flowtech.npmrc')
                     sh """cp node/docker/Dockerfile-12 ./Dockerfile"""
+                    sh """pwd"""
+                    sh """sleep 600"""
                     sh """
                       /kaniko/executor \
                       --dockerfile=./Dockerfile \
