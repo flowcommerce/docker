@@ -77,7 +77,8 @@ pipeline {
               script {
                 withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
                   withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
-                    sh """cp node/dockerfiles/Dockerfile-builder-12 ./Dockerfile-builder-12 \
+                    sh """
+                      sleep 300 && cp node/dockerfiles/Dockerfile-builder-12 ./Dockerfile-builder-12 \
                       && /kaniko/executor -f `pwd`/Dockerfile-builder-12 -c `pwd` \
                       --snapshot-mode=redo --use-new-run  \
                       --destination flowdocker/node12_builder:testag
