@@ -53,7 +53,7 @@ pipeline {
 
     stage('Docker image builds') {
       parallel {
-        stage('Upgrade node docker image') {
+        stage('Upgrade node docker image 12') {
           steps {
             container('kaniko') {
               script {
@@ -75,6 +75,14 @@ pipeline {
                 //  --custom-platform=linux/amd64 \
                 //  --destination flowdocker/node12:latest
                 //"""
+              }
+            }
+          }
+        }
+        stage('Upgrade node docker image 16') {
+          steps {
+            container('kaniko') {
+              script {
                 sh """cp node/docker/Dockerfile-16 ./Dockerfile \
                   && /kaniko/executor \
                   --dockerfile=./Dockerfile \
@@ -93,6 +101,14 @@ pipeline {
                 //  --custom-platform=linux/amd64 \
                 //  --destination flowdocker/node16:latest
                 //"""
+              }
+            }
+          }
+        }
+        stage('Upgrade node docker image 18') {
+          steps {
+            container('kaniko') {
+              script {
                 sh """cp node/docker/Dockerfile-18 ./Dockerfile \
                   && /kaniko/executor \
                   --dockerfile=./Dockerfile \
