@@ -14,10 +14,6 @@ pipeline {
   agent {
     kubernetes {
       inheritFrom 'kaniko-slim'
-
-      containerTemplates([
-        containerTemplate(name: 'node', image: 'docker:24', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true),
-      ])
     }
   }
 
@@ -46,13 +42,13 @@ pipeline {
       parallel {
         stage('Upgrade node docker image') {
           steps {
-            container('node') {
+            container('kaniko') {
               script {
                 withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
                   withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
                       sh """apk add --no-cache ruby curl aws-cli"""
                       sh """sleep 900"""
-                      //sh """cd node && sh -x ./build-node-kaniko testtag 12"""
+                      //sh """cd node && chmod +x ./build-node-kaniko testtag 12"""
                       //sh """cd node && ./build-node_builder-kaniko testtag 12"""
                   }
                 }

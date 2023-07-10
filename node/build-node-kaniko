@@ -43,15 +43,7 @@ begin
     run("curl -O https://cdn.flow.io/util/environment-provider/environment-provider-version.txt")
     run("curl -O https://cdn.flow.io/util/environment-provider/environment-provider.jar")
     run("aws s3 cp s3://io.flow.infra/npm/flowtech.npmrc ./.npmrc")
-    sh """
-      /kaniko/executor \
-      --dockerfile=`pwd`/Dockerfile \
-      --context=`pwd` \
-      --snapshot-mode=redo \
-      --use-new-run \
-      --custom-platform=linux/amd64 \
-      --destination #{node_image_tag}
-    """
+    run("/kaniko/executor --dockerfile=`pwd`/Dockerfile --context=`pwd` --snapshot-mode=redo --use-new-run --custom-platform=linux/amd64 --destination #{node_image_tag}")
   end
 
   sh """
