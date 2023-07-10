@@ -58,7 +58,7 @@ pipeline {
             container('kaniko') {
               script {
                 sh """cp node/docker/Dockerfile-12 ./Dockerfile \
-                  /kaniko/executor \
+                  && /kaniko/executor \
                   --dockerfile=./Dockerfile \
                   --context=`pwd` \
                   --snapshot-mode=redo \
@@ -75,9 +75,8 @@ pipeline {
                 //  --custom-platform=linux/amd64 \
                 //  --destination flowdocker/node12:latest
                 //"""
-                sh """cp node/docker/Dockerfile-16 ./Dockerfile"""
-                sh """
-                  /kaniko/executor \
+                sh """cp node/docker/Dockerfile-16 ./Dockerfile \
+                  && /kaniko/executor \
                   --dockerfile=./Dockerfile \
                   --context=`pwd` \
                   --snapshot-mode=redo \
@@ -94,9 +93,8 @@ pipeline {
                 //  --custom-platform=linux/amd64 \
                 //  --destination flowdocker/node16:latest
                 //"""
-                sh """cp node/docker/Dockerfile-18 ./Dockerfile"""
-                sh """
-                  /kaniko/executor \
+                sh """cp node/docker/Dockerfile-18 ./Dockerfile \
+                  && /kaniko/executor \
                   --dockerfile=./Dockerfile \
                   --context=`pwd` \
                   --snapshot-mode=redo \
