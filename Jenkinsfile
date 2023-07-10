@@ -62,13 +62,9 @@ pipeline {
                   --snapshot-mode=redo --use-new-run  \
                   --destination flowdocker/node12:testag
                 """
-                //sh """
-                //  /kaniko/executor \
-                //  --dockerfile=./Dockerfile \
-                //  --context=`pwd` \
-                //  --snapshot-mode=redo \
-                //  --use-new-run \
-                //  --custom-platform=linux/amd64 \
+                //sh """cp node/docker/Dockerfile-12 ./Dockerfile \
+                //  && /kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
+                //  --snapshot-mode=redo --use-new-run  \
                 //  --destination flowdocker/node12:latest
                 //"""
               }
@@ -80,21 +76,13 @@ pipeline {
 //            container('kaniko') {
 //              script {
 //                sh """cp node/docker/Dockerfile-16 ./Dockerfile \
-//                  && /kaniko/executor \
-//                  --dockerfile=./Dockerfile \
-//                  --context=`pwd` \
-//                  --snapshot-mode=redo \
-//                  --use-new-run \
-//                  --custom-platform=linux/amd64 \
-//                  --destination flowdocker/node16:testtag
+//                  && /kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
+//                  --snapshot-mode=redo --use-new-run  \
+//                  --destination flowdocker/node16:testag
 //                """
-//                //sh """
-//                //  /kaniko/executor \
-//                //  --dockerfile=./Dockerfile \
-//                //  --context=`pwd` \
-//                //  --snapshot-mode=redo \
-//                //  --use-new-run \
-//                //  --custom-platform=linux/amd64 \
+//                //sh """cp node/docker/Dockerfile-16 ./Dockerfile \
+//                //  && /kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
+//                //  --snapshot-mode=redo --use-new-run  \
 //                //  --destination flowdocker/node16:latest
 //                //"""
 //              }
@@ -106,21 +94,13 @@ pipeline {
 //            container('kaniko') {
 //              script {
 //                sh """cp node/docker/Dockerfile-18 ./Dockerfile \
-//                  && /kaniko/executor \
-//                  --dockerfile=./Dockerfile \
-//                  --context=`pwd` \
-//                  --snapshot-mode=redo \
-//                  --use-new-run \
-//                  --custom-platform=linux/amd64 \
-//                  --destination flowdocker/node18:testtag
+//                  && /kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
+//                  --snapshot-mode=redo --use-new-run  \
+//                  --destination flowdocker/node18:testag
 //                """
-//                //sh """
-//                //  /kaniko/executor \
-//                //  --dockerfile=./Dockerfile \
-//                //  --context=`pwd` \
-//                //  --snapshot-mode=redo \
-//                //  --use-new-run \
-//                //  --custom-platform=linux/amd64 \
+//                //sh """cp node/docker/Dockerfile-18 ./Dockerfile \
+//                //  && /kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
+//                //  --snapshot-mode=redo --use-new-run  \
 //                //  --destination flowdocker/node18:latest
 //                //"""
 //              }
