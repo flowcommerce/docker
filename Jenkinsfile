@@ -42,70 +42,72 @@ pipeline {
       parallel {
         stage('Upgrade node docker image') {
           steps {
-            script {
-              withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
-                withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
-                    sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider-version.txt"""
-                    sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider.jar"""
-                    s3Download(file:'./.npmrc', bucket:'io.flow.infra', path:'npm/flowtech.npmrc')
-                    sh """cp node/docker/Dockerfile-12 ./Dockerfile"""
-                    sh """pwd && ls -lrt /kaniko/"""
-                    sh """
-                      /kaniko/executor \
-                      --dockerfile=./Dockerfile \
-                      --context=`pwd` \
-                      --snapshot-mode=redo \
-                      --use-new-run \
-                      --custom-platform=linux/amd64 \
-                      --destination flowdocker/node12:testag
-                    """
-                    //sh """
-                    //  /kaniko/executor \
-                    //  --dockerfile=./Dockerfile \
-                    //  --context=`pwd` \
-                    //  --snapshot-mode=redo \
-                    //  --use-new-run \
-                    //  --custom-platform=linux/amd64 \
-                    //  --destination flowdocker/node12:latest
-                    //"""
-                    sh """cp node/docker/Dockerfile-16 ./Dockerfile"""
-                    sh """
-                      /kaniko/executor \
-                      --dockerfile=./Dockerfile \
-                      --context=`pwd` \
-                      --snapshot-mode=redo \
-                      --use-new-run \
-                      --custom-platform=linux/amd64 \
-                      --destination flowdocker/node16:testtag
-                    """
-                    //sh """
-                    //  /kaniko/executor \
-                    //  --dockerfile=./Dockerfile \
-                    //  --context=`pwd` \
-                    //  --snapshot-mode=redo \
-                    //  --use-new-run \
-                    //  --custom-platform=linux/amd64 \
-                    //  --destination flowdocker/node16:latest
-                    //"""
-                    sh """cp node/docker/Dockerfile-18 ./Dockerfile"""
-                    sh """
-                      /kaniko/executor \
-                      --dockerfile=./Dockerfile \
-                      --context=`pwd` \
-                      --snapshot-mode=redo \
-                      --use-new-run \
-                      --custom-platform=linux/amd64 \
-                      --destination flowdocker/node18:testtag
-                    """
-                    //sh """
-                    //  /kaniko/executor \
-                    //  --dockerfile=./Dockerfile \
-                    //  --context=`pwd` \
-                    //  --snapshot-mode=redo \
-                    //  --use-new-run \
-                    //  --custom-platform=linux/amd64 \
-                    //  --destination flowdocker/node18:latest
-                    //"""
+            container('kaniko') {
+              script {
+                withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
+                  withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
+                      sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider-version.txt"""
+                      sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider.jar"""
+                      s3Download(file:'./.npmrc', bucket:'io.flow.infra', path:'npm/flowtech.npmrc')
+                      sh """cp node/docker/Dockerfile-12 ./Dockerfile"""
+                      sh """pwd && ls -lrt /kaniko/"""
+                      sh """
+                        /kaniko/executor \
+                        --dockerfile=./Dockerfile \
+                        --context=`pwd` \
+                        --snapshot-mode=redo \
+                        --use-new-run \
+                        --custom-platform=linux/amd64 \
+                        --destination flowdocker/node12:testag
+                      """
+                      //sh """
+                      //  /kaniko/executor \
+                      //  --dockerfile=./Dockerfile \
+                      //  --context=`pwd` \
+                      //  --snapshot-mode=redo \
+                      //  --use-new-run \
+                      //  --custom-platform=linux/amd64 \
+                      //  --destination flowdocker/node12:latest
+                      //"""
+                      sh """cp node/docker/Dockerfile-16 ./Dockerfile"""
+                      sh """
+                        /kaniko/executor \
+                        --dockerfile=./Dockerfile \
+                        --context=`pwd` \
+                        --snapshot-mode=redo \
+                        --use-new-run \
+                        --custom-platform=linux/amd64 \
+                        --destination flowdocker/node16:testtag
+                      """
+                      //sh """
+                      //  /kaniko/executor \
+                      //  --dockerfile=./Dockerfile \
+                      //  --context=`pwd` \
+                      //  --snapshot-mode=redo \
+                      //  --use-new-run \
+                      //  --custom-platform=linux/amd64 \
+                      //  --destination flowdocker/node16:latest
+                      //"""
+                      sh """cp node/docker/Dockerfile-18 ./Dockerfile"""
+                      sh """
+                        /kaniko/executor \
+                        --dockerfile=./Dockerfile \
+                        --context=`pwd` \
+                        --snapshot-mode=redo \
+                        --use-new-run \
+                        --custom-platform=linux/amd64 \
+                        --destination flowdocker/node18:testtag
+                      """
+                      //sh """
+                      //  /kaniko/executor \
+                      //  --dockerfile=./Dockerfile \
+                      //  --context=`pwd` \
+                      //  --snapshot-mode=redo \
+                      //  --use-new-run \
+                      //  --custom-platform=linux/amd64 \
+                      //  --destination flowdocker/node18:latest
+                      //"""
+                  }
                 }
               }
             }
