@@ -47,7 +47,7 @@ pipeline {
                 withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
                     sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider-version.txt"""
                     sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider.jar"""
-                    s3Download(file:'npm/flowtech.npmrc', bucket:'io.flow.infra', path:'./')
+                    s3Download(file:'./.npmrc', bucket:'io.flow.infra', path:'npm/flowtech.npmrc')
                     sh """sleep 900"""
                     //sh """cd node && chmod +x ./build-node-kaniko testtag 12"""
                     //sh """cd node && ./build-node_builder-kaniko testtag 12"""
