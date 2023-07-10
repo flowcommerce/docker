@@ -50,14 +50,13 @@ pipeline {
                     s3Download(file:'./.npmrc', bucket:'io.flow.infra', path:'npm/flowtech.npmrc')
                     sh """cp node/docker/Dockerfile-12 ./Dockerfile"""
                     sh """
-                      export semver=testtag &&
                       /kaniko/executor \
                       --dockerfile=./Dockerfile \
                       --context=`pwd` \
                       --snapshot-mode=redo \
                       --use-new-run \
                       --custom-platform=linux/amd64 \
-                      --destination flowdocker/node12:$semver
+                      --destination flowdocker/node12:testag
                     """
                     //sh """
                     //  /kaniko/executor \
@@ -70,14 +69,13 @@ pipeline {
                     //"""
                     sh """cp node/docker/Dockerfile-16 ./Dockerfile"""
                     sh """
-                      export semver=testtag &&
                       /kaniko/executor \
                       --dockerfile=./Dockerfile \
                       --context=`pwd` \
                       --snapshot-mode=redo \
                       --use-new-run \
                       --custom-platform=linux/amd64 \
-                      --destination flowdocker/node16:$semver
+                      --destination flowdocker/node16:testtag
                     """
                     //sh """
                     //  /kaniko/executor \
@@ -90,14 +88,13 @@ pipeline {
                     //"""
                     sh """cp node/docker/Dockerfile-18 ./Dockerfile"""
                     sh """
-                      export semver=testtag &&
                       /kaniko/executor \
                       --dockerfile=./Dockerfile \
                       --context=`pwd` \
                       --snapshot-mode=redo \
                       --use-new-run \
                       --custom-platform=linux/amd64 \
-                      --destination flowdocker/node18:$semver
+                      --destination flowdocker/node18:testtag
                     """
                     //sh """
                     //  /kaniko/executor \
