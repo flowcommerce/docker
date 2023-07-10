@@ -56,8 +56,19 @@ pipeline {
                       --snapshot-mode=redo \
                       --use-new-run \
                       --custom-platform=linux/amd64 \
-                      --destination flowdocker/node12:$semver
+                      --destination flowdocker/node12:testag
+                      #--destination flowdocker/node12:$semver
                     """
+                    //sh """
+                    //  /kaniko/executor \
+                    //  --dockerfile=./Dockerfile \
+                    //  --context=`pwd` \
+                    //  --snapshot-mode=redo \
+                    //  --use-new-run \
+                    //  --custom-platform=linux/amd64 \
+                    //  --destination flowdocker/node12:latest
+                    //"""
+                    sh """cp node/docker/Dockerfile-16 ./Dockerfile"""
                     sh """
                       /kaniko/executor \
                       --dockerfile=./Dockerfile \
@@ -65,9 +76,38 @@ pipeline {
                       --snapshot-mode=redo \
                       --use-new-run \
                       --custom-platform=linux/amd64 \
-                      --destination flowdocker/node12:latest
+                      --destination flowdocker/node16:testtag
+                      #--destination flowdocker/node16:$semver
                     """
-                    sh """sleep 900"""
+                    //sh """
+                    //  /kaniko/executor \
+                    //  --dockerfile=./Dockerfile \
+                    //  --context=`pwd` \
+                    //  --snapshot-mode=redo \
+                    //  --use-new-run \
+                    //  --custom-platform=linux/amd64 \
+                    //  --destination flowdocker/node16:latest
+                    //"""
+                    sh """cp node/docker/Dockerfile-18 ./Dockerfile"""
+                    sh """
+                      /kaniko/executor \
+                      --dockerfile=./Dockerfile \
+                      --context=`pwd` \
+                      --snapshot-mode=redo \
+                      --use-new-run \
+                      --custom-platform=linux/amd64 \
+                      --destination flowdocker/node18:testtag
+                      #--destination flowdocker/node18:$semver
+                    """
+                    //sh """
+                    //  /kaniko/executor \
+                    //  --dockerfile=./Dockerfile \
+                    //  --context=`pwd` \
+                    //  --snapshot-mode=redo \
+                    //  --use-new-run \
+                    //  --custom-platform=linux/amd64 \
+                    //  --destination flowdocker/node18:latest
+                    //"""
                 }
               }
             }
