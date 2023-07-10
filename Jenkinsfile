@@ -14,6 +14,10 @@ pipeline {
   agent {
     kubernetes {
       inheritFrom 'kaniko-slim'
+      containerTemplates([
+         containerTemplate(name: 'node', image: 'docker:24', resourceRequestCpu: '1', resourceRequestMemory: '2Gi', command: 'cat', ttyEnabled: true)
+       ])
+
     }
   }
 
