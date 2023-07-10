@@ -48,9 +48,26 @@ pipeline {
                     sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider-version.txt"""
                     sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider.jar"""
                     s3Download(file:'./.npmrc', bucket:'io.flow.infra', path:'npm/flowtech.npmrc')
+                    sh """cp node/docker/Dockerfile-12 ./Dockerfile"""
+                    sh """
+                      /kaniko/executor \
+                      --dockerfile=./Dockerfile \
+                      --context=`pwd` \
+                      --snapshot-mode=redo \
+                      --use-new-run \
+                      --custom-platform=linux/amd64 \
+                      --destination flowdocker/node12:$semver
+                    """
+                    sh """
+                      /kaniko/executor \
+                      --dockerfile=./Dockerfile \
+                      --context=`pwd` \
+                      --snapshot-mode=redo \
+                      --use-new-run \
+                      --custom-platform=linux/amd64 \
+                      --destination flowdocker/node12:latest
+                    """
                     sh """sleep 900"""
-                    //sh """cd node && chmod +x ./build-node-kaniko testtag 12"""
-                    //sh """cd node && ./build-node_builder-kaniko testtag 12"""
                 }
               }
             }
