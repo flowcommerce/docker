@@ -50,14 +50,14 @@ pipeline {
                     s3Download(file:'./.npmrc', bucket:'io.flow.infra', path:'npm/flowtech.npmrc')
                     sh """cp node/docker/Dockerfile-12 ./Dockerfile"""
                     sh """
+                      export semver=testtag &&
                       /kaniko/executor \
                       --dockerfile=./Dockerfile \
                       --context=`pwd` \
                       --snapshot-mode=redo \
                       --use-new-run \
                       --custom-platform=linux/amd64 \
-                      --destination flowdocker/node12:testag
-                      #--destination flowdocker/node12:$semver
+                      --destination flowdocker/node12:$semver
                     """
                     //sh """
                     //  /kaniko/executor \
@@ -70,14 +70,14 @@ pipeline {
                     //"""
                     sh """cp node/docker/Dockerfile-16 ./Dockerfile"""
                     sh """
+                      export semver=testtag &&
                       /kaniko/executor \
                       --dockerfile=./Dockerfile \
                       --context=`pwd` \
                       --snapshot-mode=redo \
                       --use-new-run \
                       --custom-platform=linux/amd64 \
-                      --destination flowdocker/node16:testtag
-                      #--destination flowdocker/node16:$semver
+                      --destination flowdocker/node16:$semver
                     """
                     //sh """
                     //  /kaniko/executor \
@@ -90,14 +90,14 @@ pipeline {
                     //"""
                     sh """cp node/docker/Dockerfile-18 ./Dockerfile"""
                     sh """
+                      export semver=testtag &&
                       /kaniko/executor \
                       --dockerfile=./Dockerfile \
                       --context=`pwd` \
                       --snapshot-mode=redo \
                       --use-new-run \
                       --custom-platform=linux/amd64 \
-                      --destination flowdocker/node18:testtag
-                      #--destination flowdocker/node18:$semver
+                      --destination flowdocker/node18:$semver
                     """
                     //sh """
                     //  /kaniko/executor \
@@ -153,18 +153,18 @@ pipeline {
       }
     }
   }
-  post {
-    failure {
-      withCredentials([string(credentialsId: 'slack-team-foundation-notifications-token', variable: 'slackToken')]) {
-        slackSend(
-          channel: "#team-foundation-notifications",
-          teamDomain: 'flowio.slack.com',
-          baseUrl: 'https://flowio.slack.com/services/hooks/jenkins-ci/',
-          token: slackToken,
-          color: "#ff0000",
-          message: "Build of base docker images failed. Please see https://jenkins.flo.pub/blue/organizations/jenkins/flowcommerce%2Fdocker/activity for details."
-        )
-      }
-    }
-  }
+  //post {
+  //  failure {
+  //    withCredentials([string(credentialsId: 'slack-team-foundation-notifications-token', variable: 'slackToken')]) {
+  //      slackSend(
+  //        channel: "#team-foundation-notifications",
+  //        teamDomain: 'flowio.slack.com',
+  //        baseUrl: 'https://flowio.slack.com/services/hooks/jenkins-ci/',
+  //        token: slackToken,
+  //        color: "#ff0000",
+  //        message: "Build of base docker images failed. Please see https://jenkins.flo.pub/blue/organizations/jenkins/flowcommerce%2Fdocker/activity for details."
+  //      )
+  //    }
+  //  }
+  //}
 }
