@@ -58,12 +58,8 @@ pipeline {
             container('kaniko') {
               script {
                 sh """cp node/docker/Dockerfile-12 ./Dockerfile \
-                  && /kaniko/executor \
-                  --dockerfile=./Dockerfile \
-                  --context=`pwd` \
-                  --snapshot-mode=redo \
-                  --use-new-run \
-                  --custom-platform=linux/amd64 \
+                  && /kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
+                  --snapshot-mode=redo --use-new-run  \
                   --destination flowdocker/node12:testag
                 """
                 //sh """
@@ -79,58 +75,58 @@ pipeline {
             }
           }
         }
-        stage('Upgrade node docker image 16') {
-          steps {
-            container('kaniko') {
-              script {
-                sh """cp node/docker/Dockerfile-16 ./Dockerfile \
-                  && /kaniko/executor \
-                  --dockerfile=./Dockerfile \
-                  --context=`pwd` \
-                  --snapshot-mode=redo \
-                  --use-new-run \
-                  --custom-platform=linux/amd64 \
-                  --destination flowdocker/node16:testtag
-                """
-                //sh """
-                //  /kaniko/executor \
-                //  --dockerfile=./Dockerfile \
-                //  --context=`pwd` \
-                //  --snapshot-mode=redo \
-                //  --use-new-run \
-                //  --custom-platform=linux/amd64 \
-                //  --destination flowdocker/node16:latest
-                //"""
-              }
-            }
-          }
-        }
-        stage('Upgrade node docker image 18') {
-          steps {
-            container('kaniko') {
-              script {
-                sh """cp node/docker/Dockerfile-18 ./Dockerfile \
-                  && /kaniko/executor \
-                  --dockerfile=./Dockerfile \
-                  --context=`pwd` \
-                  --snapshot-mode=redo \
-                  --use-new-run \
-                  --custom-platform=linux/amd64 \
-                  --destination flowdocker/node18:testtag
-                """
-                //sh """
-                //  /kaniko/executor \
-                //  --dockerfile=./Dockerfile \
-                //  --context=`pwd` \
-                //  --snapshot-mode=redo \
-                //  --use-new-run \
-                //  --custom-platform=linux/amd64 \
-                //  --destination flowdocker/node18:latest
-                //"""
-              }
-            }
-          }
-        }
+//        stage('Upgrade node docker image 16') {
+//          steps {
+//            container('kaniko') {
+//              script {
+//                sh """cp node/docker/Dockerfile-16 ./Dockerfile \
+//                  && /kaniko/executor \
+//                  --dockerfile=./Dockerfile \
+//                  --context=`pwd` \
+//                  --snapshot-mode=redo \
+//                  --use-new-run \
+//                  --custom-platform=linux/amd64 \
+//                  --destination flowdocker/node16:testtag
+//                """
+//                //sh """
+//                //  /kaniko/executor \
+//                //  --dockerfile=./Dockerfile \
+//                //  --context=`pwd` \
+//                //  --snapshot-mode=redo \
+//                //  --use-new-run \
+//                //  --custom-platform=linux/amd64 \
+//                //  --destination flowdocker/node16:latest
+//                //"""
+//              }
+//            }
+//          }
+//        }
+//        stage('Upgrade node docker image 18') {
+//          steps {
+//            container('kaniko') {
+//              script {
+//                sh """cp node/docker/Dockerfile-18 ./Dockerfile \
+//                  && /kaniko/executor \
+//                  --dockerfile=./Dockerfile \
+//                  --context=`pwd` \
+//                  --snapshot-mode=redo \
+//                  --use-new-run \
+//                  --custom-platform=linux/amd64 \
+//                  --destination flowdocker/node18:testtag
+//                """
+//                //sh """
+//                //  /kaniko/executor \
+//                //  --dockerfile=./Dockerfile \
+//                //  --context=`pwd` \
+//                //  --snapshot-mode=redo \
+//                //  --use-new-run \
+//                //  --custom-platform=linux/amd64 \
+//                //  --destination flowdocker/node18:latest
+//                //"""
+//              }
+//            }
+//          }
+//        }
         // stage('Upgrade play jre docker image') {
         //   when { branch 'main' }
         //   steps {
