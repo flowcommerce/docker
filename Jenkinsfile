@@ -265,75 +265,95 @@ pipeline {
 //      }
 //    }
 
-    stage('Upgrade node docker play java 13') {
+//    stage('Upgrade node docker play java 13') {
+//      agent {
+//        kubernetes {
+//          label 'docker-play-13'
+//          inheritFrom 'kaniko-slim'
+//        }
+//      }
+//      steps {
+//        script {
+//          withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
+//            sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider-version.txt"""
+//            sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider.jar"""
+//          }
+//        }
+//        container('kaniko') {
+//          script {
+//            semver = VERSION.printable()
+//            env.JAVAVERSION = "13"
+//            sh """/kaniko/executor -f `pwd`/Dockerfile-play-${JAVAVERSION} -c `pwd` \
+//              --snapshot-mode=redo --use-new-run  \
+//              --destination flowdocker/play:testtag-java${JAVAVERSION}
+//            """
+//            //sh """/kaniko/executor -f `pwd`/Dockerfile-play-${JAVAVERSION} -c `pwd` \
+//            //  --snapshot-mode=redo --use-new-run  \
+//            //  --destination flowdocker/play:latest-java${JAVAVERSION}
+//            //"""
+//          }
+//        }
+//      }
+//    }
+//
+//    stage('Upgrade node docker play java 17') {
+//      agent {
+//        kubernetes {
+//          label 'docker-play-17'
+//          inheritFrom 'kaniko-slim'
+//        }
+//      }
+//      steps {
+//        script {
+//          withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
+//            sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider-version.txt"""
+//            sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider.jar"""
+//          }
+//        }
+//        container('kaniko') {
+//          script {
+//            semver = VERSION.printable()
+//            env.JAVAVERSION = "17"
+//            sh """/kaniko/executor -f `pwd`/Dockerfile-play-${JAVAVERSION} -c `pwd` \
+//              --snapshot-mode=redo --use-new-run  \
+//              --destination flowdocker/play:testtag-java${JAVAVERSION}
+//            """
+//            //sh """/kaniko/executor -f `pwd`/Dockerfile-play-${JAVAVERSION} -c `pwd` \
+//            //  --snapshot-mode=redo --use-new-run  \
+//            //  --destination flowdocker/play:latest-java${JAVAVERSION}
+//            //"""
+//          }
+//        }
+//      }
+//    }
+
+    stage('Upgrade node docker play builder java 13') {
       agent {
         kubernetes {
-          label 'docker-play-13'
+          label 'docker-play-builder-13'
           inheritFrom 'kaniko-slim'
         }
       }
       steps {
-        script {
-          withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
-            withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
-              sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider-version.txt"""
-              sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider.jar"""
-              s3Download(file:'./.npmrc', bucket:'io.flow.infra', path:'npm/flowtech.npmrc')
-            }
-          }
-        }
         container('kaniko') {
           script {
-            withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
+            withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]){
               semver = VERSION.printable()
               env.JAVAVERSION = "13"
-              sh """/kaniko/executor -f `pwd`/Dockerfile-play-${JAVAVERSION} -c `pwd` \
+              env.SBT_VERSION = "1.8.3"
+              sh """/kaniko/executor -f `pwd`/Dockerfile-play-builder-${JAVAVERSION} -c `pwd` \
                 --snapshot-mode=redo --use-new-run  \
-                --build-arg NODE_VERSION=${JAVAVERSION} \
-                --destination flowdocker/play:testtag-java${JAVAVERSION}
+                --build-arg SBT_VERSION=${SBT_VERSION} \
+                --build-arg GIT_PASSWORD=$GIT_PASSWORD \
+                --build-arg GIT_USERNAME=$GIT_USERNAME \
+                --destination flowdocker/play_builder:testtag-java${JAVAVERSION}
               """
               //sh """/kaniko/executor -f `pwd`/Dockerfile-play-${JAVAVERSION} -c `pwd` \
               //  --snapshot-mode=redo --use-new-run  \
-              //  --build-arg NODE_VERSION=${JAVAVERSION} \
-              //  --destination flowdocker/play:latest-java${JAVAVERSION}
-              //"""
-            }
-          }
-        }
-      }
-    }
-
-    stage('Upgrade node docker play java 17') {
-      agent {
-        kubernetes {
-          label 'docker-play-17'
-          inheritFrom 'kaniko-slim'
-        }
-      }
-      steps {
-        script {
-          withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
-            withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
-              sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider-version.txt"""
-              sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider.jar"""
-              s3Download(file:'./.npmrc', bucket:'io.flow.infra', path:'npm/flowtech.npmrc')
-            }
-          }
-        }
-        container('kaniko') {
-          script {
-            withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
-              semver = VERSION.printable()
-              env.JAVAVERSION = "17"
-              sh """/kaniko/executor -f `pwd`/Dockerfile-play-${JAVAVERSION} -c `pwd` \
-                --snapshot-mode=redo --use-new-run  \
-                --build-arg NODE_VERSION=${JAVAVERSION} \
-                --destination flowdocker/play:testtag-java${JAVAVERSION}
-              """
-              //sh """/kaniko/executor -f `pwd`/Dockerfile-play-${JAVAVERSION} -c `pwd` \
-              //  --snapshot-mode=redo --use-new-run  \
-              //  --build-arg NODE_VERSION=${JAVAVERSION} \
-              //  --destination flowdocker/play:latest-java${JAVAVERSION}
+              //  --build-arg SBT_VERSION=${SBT_VERSION} \
+              //  --build-arg GIT_PASSWORD=$GIT_PASSWORD \
+              //  --build-arg GIT_USERNAME=$GIT_USERNAME \
+              //  --destination flowdocker/play_builder:latest-java${JAVAVERSION}
               //"""
             }
           }
