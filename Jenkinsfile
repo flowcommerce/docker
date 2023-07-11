@@ -158,7 +158,6 @@ pipeline {
     }
 
     stage('Upgrade docker play builder java 17') {
-      when { branch 'main' }
       agent {
         kubernetes {
           label 'docker-play-builder-17'
