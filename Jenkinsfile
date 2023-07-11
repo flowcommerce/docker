@@ -62,13 +62,13 @@ pipeline {
             sh """/kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
               --snapshot-mode=redo --use-new-run  \
               --build-arg NODE_VERSION=${NODEVERSION} \
-              --destination flowdocker/node${NODEVERSION}:testag
+              --destination flowdocker/node${NODEVERSION}:testtag
             """
-            //sh """cp node/dockerfiles/Dockerfile-12 ./Dockerfile \
-            //  && /kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
-            //  --snapshot-mode=redo --use-new-run  \
-            //  --destination flowdocker/node12:latest
-            //"""
+            sh """/kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
+              --snapshot-mode=redo --use-new-run  \
+              --build-arg NODE_VERSION=${NODEVERSION} \
+              --destination flowdocker/node${NODEVERSION}:latest-test
+            """
           }
         }
       }
@@ -99,10 +99,10 @@ pipeline {
               --build-arg NODE_VERSION=${NODEVERSION} \
               --destination flowdocker/node${NODEVERSION}:testag
             """
-            //sh """cp node/dockerfiles/Dockerfile-12 ./Dockerfile \
-            //  && /kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
+            //sh """/kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
             //  --snapshot-mode=redo --use-new-run  \
-            //  --destination flowdocker/node12:latest
+            //  --build-arg NODE_VERSION=${NODEVERSION} \
+            //  --destination flowdocker/node${NODEVERSION}:latest-test
             //"""
           }
         }
@@ -134,10 +134,10 @@ pipeline {
               --build-arg NODE_VERSION=${NODEVERSION} \
               --destination flowdocker/node${NODEVERSION}:testag
             """
-            //sh """cp node/dockerfiles/Dockerfile-12 ./Dockerfile \
-            //  && /kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
+            //sh """/kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
             //  --snapshot-mode=redo --use-new-run  \
-            //  --destination flowdocker/node12:latest
+            //  --build-arg NODE_VERSION=${NODEVERSION} \
+            //  --destination flowdocker/node${NODEVERSION}:latest-test
             //"""
           }
         }
