@@ -47,8 +47,8 @@ pipeline {
       steps {
         script {
           withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
-            sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider-version.txt /root"""
-            sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider.jar /root"""
+            sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider-version.txt && mv environment-provider-version.txt /root/"""
+            sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider.jar && mv environment-provider.jar /root/"""
           }
         }
         container('kaniko') {
