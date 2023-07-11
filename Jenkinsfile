@@ -163,13 +163,13 @@ pipeline {
           script {
             withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
               env.NODEVERSION = "12"
-              sh """/kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
+              sh """/kaniko/executor -f `pwd`/Dockerfile-builder -c `pwd` \
                 --snapshot-mode=redo --use-new-run  \
                 --build-arg NODE_VERSION=${NODEVERSION} \
                 --build-arg GITHUB_TOKEN=$GITHUB_TOKEN \
                 --destination flowdocker/node${NODEVERSION}_builder:testtag
               """
-              sh """/kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
+              sh """/kaniko/executor -f `pwd`/Dockerfile-builder -c `pwd` \
                 --snapshot-mode=redo --use-new-run  \
                 --build-arg NODE_VERSION=${NODEVERSION} \
                 --build-arg GITHUB_TOKEN=$GITHUB_TOKEN \
