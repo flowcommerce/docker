@@ -37,40 +37,41 @@ pipeline {
       }
     }
 
-    //stage('Docker image builds') {
+    stage('Docker image builds') {
     //  parallel {
-    def versions = ['12', '16', '18']
-    for (int i = 0; i < versions.length; i++) {
-      stage('Upgrade node docker image ${versions[i]}') {
-        agent {
-          kubernetes {
-            label 'docker-image-${versions[i]}'
-            inheritFrom 'kaniko-slim'
-          }
-        }
-        steps {
-          script {
-            withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
-              withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
-                sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider-version.txt"""
-                sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider.jar"""
-                s3Download(file:'./.npmrc', bucket:'io.flow.infra', path:'npm/flowtech.npmrc')
-              }
+      def versions = ['12', '16', '18']
+      for (int i = 0; i < versions.length; i++) {
+        stage('Upgrade node docker image ${versions[i]}') {
+          agent {
+            kubernetes {
+              label 'docker-image-${versions[i]}'
+              inheritFrom 'kaniko-slim'
             }
           }
-          container('kaniko') {
+          steps {
             script {
-              env.NODEVERSION = "${versions[i]}"
-              sh """/kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
-                --snapshot-mode=redo --use-new-run  \
-                --build-arg NODE_VERSION=${NODEVERSION} \
-                --destination flowdocker/node${NODEVERSION}:testtag
-              """
-              sh """/kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
-                --snapshot-mode=redo --use-new-run  \
-                --build-arg NODE_VERSION=${NODEVERSION} \
-                --destination flowdocker/node${NODEVERSION}:latest-test
-              """
+              withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
+                withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
+                  sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider-version.txt"""
+                  sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider.jar"""
+                  s3Download(file:'./.npmrc', bucket:'io.flow.infra', path:'npm/flowtech.npmrc')
+                }
+              }
+            }
+            container('kaniko') {
+              script {
+                env.NODEVERSION = "${versions[i]}"
+                sh """/kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
+                  --snapshot-mode=redo --use-new-run  \
+                  --build-arg NODE_VERSION=${NODEVERSION} \
+                  --destination flowdocker/node${NODEVERSION}:testtag
+                """
+                sh """/kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
+                  --snapshot-mode=redo --use-new-run  \
+                  --build-arg NODE_VERSION=${NODEVERSION} \
+                  --destination flowdocker/node${NODEVERSION}:latest-test
+                """
+              }
             }
           }
         }
