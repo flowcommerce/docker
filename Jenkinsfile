@@ -71,6 +71,42 @@ pipeline {
             }
           }
         }
+        stage('Upgrade node docker image 16') {
+          steps {
+            container('kaniko') {
+              script {
+                sh """cp node/dockerfiles/Dockerfile-16 ./Dockerfile-16 \
+                  && /kaniko/executor -f `pwd`/Dockerfile-16 -c `pwd` \
+                  --snapshot-mode=redo --use-new-run  \
+                  --destination flowdocker/node12:testag
+                """
+                //sh """cp node/dockerfiles/Dockerfile-16 ./Dockerfile \
+                //  && /kaniko/executor -f `pwd`/Dockerfile-16 -c `pwd` \
+                //  --snapshot-mode=redo --use-new-run  \
+                //  --destination flowdocker/node12:latest
+                //"""
+              }
+            }
+          }
+        }
+        stage('Upgrade node docker image 18') {
+          steps {
+            container('kaniko') {
+              script {
+                sh """cp node/dockerfiles/Dockerfile-16 ./Dockerfile-18 \
+                  && /kaniko/executor -f `pwd`/Dockerfile-18 -c `pwd` \
+                  --snapshot-mode=redo --use-new-run  \
+                  --destination flowdocker/node12:testag
+                """
+                //sh """cp node/dockerfiles/Dockerfile-18 ./Dockerfile \
+                //  && /kaniko/executor -f `pwd`/Dockerfile-16 -c `pwd` \
+                //  --snapshot-mode=redo --use-new-run  \
+                //  --destination flowdocker/node12:latest
+                //"""
+              }
+            }
+          }
+        }
       }
     }
 
