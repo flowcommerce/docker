@@ -55,8 +55,6 @@ pipeline {
           script {
             semver = VERSION.printable()
             env.JAVAVERSION = "13"
-            sh """sleep 120"""
-            sh """mv environment-provider-version.txt /root/ && mv environment-provider.jar /root/"""
             sh """/kaniko/executor -f `pwd`/Dockerfile-play-${JAVAVERSION} -c `pwd` \
               --snapshot-mode=redo --use-new-run  \
               --destination flowdocker/play:testtag-java${JAVAVERSION}
