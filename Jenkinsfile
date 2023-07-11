@@ -59,12 +59,12 @@ pipeline {
           script {
             semver = VERSION.printable()
             env.NODEVERSION = "12"
-            sh """/kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
+            sh """/kaniko/executor -f `pwd`/Dockerfile-node -c `pwd` \
               --snapshot-mode=redo --use-new-run  \
               --build-arg NODE_VERSION=${NODEVERSION} \
               --destination flowdocker/node${NODEVERSION}:$semver
             """
-            sh """/kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
+            sh """/kaniko/executor -f `pwd`/Dockerfile-node -c `pwd` \
               --snapshot-mode=redo --use-new-run  \
               --build-arg NODE_VERSION=${NODEVERSION} \
               --destination flowdocker/node${NODEVERSION}:latest
@@ -96,12 +96,12 @@ pipeline {
           script {
             semver = VERSION.printable()
             env.NODEVERSION = "16"
-            sh """/kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
+            sh """/kaniko/executor -f `pwd`/Dockerfile-node -c `pwd` \
               --snapshot-mode=redo --use-new-run  \
               --build-arg NODE_VERSION=${NODEVERSION} \
               --destination flowdocker/node${NODEVERSION}:$semver
             """
-            sh """/kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
+            sh """/kaniko/executor -f `pwd`/Dockerfile-node -c `pwd` \
               --snapshot-mode=redo --use-new-run  \
               --build-arg NODE_VERSION=${NODEVERSION} \
               --destination flowdocker/node${NODEVERSION}:latest
@@ -133,12 +133,12 @@ pipeline {
           script {
             semver = VERSION.printable()
             env.NODEVERSION = "18"
-            sh """/kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
+            sh """/kaniko/executor -f `pwd`/Dockerfile-node -c `pwd` \
               --snapshot-mode=redo --use-new-run  \
               --build-arg NODE_VERSION=${NODEVERSION} \
               --destination flowdocker/node${NODEVERSION}:$semver
             """
-            sh """/kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
+            sh """/kaniko/executor -f `pwd`/Dockerfile-node -c `pwd` \
               --snapshot-mode=redo --use-new-run  \
               --build-arg NODE_VERSION=${NODEVERSION} \
               --destination flowdocker/node${NODEVERSION}:latest
