@@ -58,11 +58,11 @@ pipeline {
         }
         container('kaniko') {
           script {
-            sh """export NODEVERSION=12 \
-              && /kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
+            env.NODEVERSION = "12"
+            sh """/kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
               --snapshot-mode=redo --use-new-run  \
-              --build-arg NODE_VERSION=$NODEVERSION \
-              --destination flowdocker/node$NODEVERSION:testag
+              --build-arg NODE_VERSION=${NODEVERSION} \
+              --destination flowdocker/node${NODEVERSION}:testag
             """
             //sh """cp node/dockerfiles/Dockerfile-12 ./Dockerfile \
             //  && /kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
