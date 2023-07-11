@@ -71,6 +71,11 @@ pipeline {
             }
           }
         }
+      }
+    }
+
+    stage('Docker image node builds') {
+      parallel {
         stage('Upgrade node-builder docker image 12') {
           steps {
             container('kaniko') {
@@ -95,79 +100,6 @@ pipeline {
             }
           }
         }
-//        stage('Upgrade node docker image 16') {
-//          steps {
-//            container('kaniko') {
-//              script {
-//                sh """cp node/dockerfiles/Dockerfile-16 ./Dockerfile \
-//                  && /kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
-//                  --snapshot-mode=redo --use-new-run  \
-//                  --destination flowdocker/node16:testag
-//                """
-//                //sh """cp node/dockerfiles/Dockerfile-16 ./Dockerfile \
-//                //  && /kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
-//                //  --snapshot-mode=redo --use-new-run  \
-//                //  --destination flowdocker/node16:latest
-//                //"""
-//              }
-//            }
-//          }
-//        }
-//        stage('Upgrade node docker image 18') {
-//          steps {
-//            container('kaniko') {
-//              script {
-//                sh """cp node/dockerfiles/Dockerfile-18 ./Dockerfile \
-//                  && /kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
-//                  --snapshot-mode=redo --use-new-run  \
-//                  --destination flowdocker/node18:testag
-//                """
-//                //sh """cp node/dockerfiles/Dockerfile-18 ./Dockerfile \
-//                //  && /kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
-//                //  --snapshot-mode=redo --use-new-run  \
-//                //  --destination flowdocker/node18:latest
-//                //"""
-//              }
-//            }
-//          }
-//        }
-        // stage('Upgrade play jre docker image') {
-        //   when { branch 'main' }
-        //   steps {
-        //     container('play') {
-        //       script {
-        //         docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
-        //           sh """apk add --no-cache curl ruby"""
-        //           sh """cd play && ./build-play ${VERSION.printable()} 13"""
-        //           sh """cd play && ./build-play ${VERSION.printable()} 17"""
-        //         }
-        //       }
-        //     }
-        //   }
-        // }
-        // stage('Upgrade play builder docker image') {
-        //   when { branch 'main' }
-        //   steps {
-        //     container('play-builder') {
-        //       script {
-        //         semver = VERSION.printable()
-        //         SBT_VERSION = '1.8.3'
-        //         withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]){
-        //           withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
-        //             docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
-        //               db = docker.build("flowdocker/play_builder:$semver-java13", "--network=host --build-arg GIT_PASSWORD=$GIT_PASSWORD --build-arg GIT_USERNAME=$GIT_USERNAME --build-arg SBT_VERSION=$SBT_VERSION -f play/Dockerfile.play_builder-13 .")
-        //               db.push()
-        //               db.push("latest-java13")
-        //               db = docker.build("flowdocker/play_builder:$semver-java17", "--network=host --build-arg GIT_PASSWORD=$GIT_PASSWORD --build-arg GIT_USERNAME=$GIT_USERNAME --build-arg SBT_VERSION=$SBT_VERSION -f play/Dockerfile.play_builder-17 .")
-        //               db.push()
-        //               db.push("latest-java17")
-        //             }
-        //           }
-        //         }
-        //       }
-        //     }
-        //   }
-        // }
       }
     }
   }
