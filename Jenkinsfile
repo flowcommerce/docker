@@ -81,6 +81,7 @@ pipeline {
                       cp node/dockerfiles/Dockerfile-builder-12 ./Dockerfile-builder-12 \
                       && /kaniko/executor -f `pwd`/Dockerfile-builder-12 -c `pwd` \
                       --snapshot-mode=redo --use-new-run  \
+                      --build-arg GITHUB_TOKEN=$GITHUB_TOKEN \
                       --destination flowdocker/node12_builder:testag
                     """
                     //sh """cp node/dockerfiles/Dockerfile-12 ./Dockerfile \
