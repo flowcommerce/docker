@@ -376,7 +376,7 @@ pipeline {
                 --build-arg GIT_USERNAME=$GIT_USERNAME \
                 --destination flowdocker/play_builder:$semver-java${JAVAVERSION}
               """
-              sh """/kaniko/executor -f `pwd`/Dockerfile-play-${JAVAVERSION} -c `pwd` \
+              sh """/kaniko/executor -f `pwd`/Dockerfile-play-builder-${JAVAVERSION} -c `pwd` \
                 --snapshot-mode=redo --use-new-run  \
                 --build-arg SBT_VERSION=${SBT_VERSION} \
                 --build-arg GIT_PASSWORD=$GIT_PASSWORD \
@@ -411,7 +411,7 @@ pipeline {
                 --build-arg GIT_USERNAME=$GIT_USERNAME \
                 --destination flowdocker/play_builder:$semver-java${JAVAVERSION}
               """
-              sh """/kaniko/executor -f `pwd`/Dockerfile-play-${JAVAVERSION} -c `pwd` \
+              sh """/kaniko/executor -f `pwd`/Dockerfile-play-builder-${JAVAVERSION} -c `pwd` \
                 --snapshot-mode=redo --use-new-run  \
                 --build-arg SBT_VERSION=${SBT_VERSION} \
                 --build-arg GIT_PASSWORD=$GIT_PASSWORD \
@@ -425,18 +425,18 @@ pipeline {
     }
   }
 
-  //post {
-  //  failure {
-  //    withCredentials([string(credentialsId: 'slack-team-foundation-notifications-token', variable: 'slackToken')]) {
-  //      slackSend(
-  //        channel: "#team-foundation-notifications",
-  //        teamDomain: 'flowio.slack.com',
-  //        baseUrl: 'https://flowio.slack.com/services/hooks/jenkins-ci/',
-  //        token: slackToken,
-  //        color: "#ff0000",
-  //        message: "Build of base docker images failed. Please see https://jenkins.flo.pub/blue/organizations/jenkins/flowcommerce%2Fdocker/activity for details."
-  //      )
-  //    }
-  //  }
-  //}
+  post {
+    failure {
+      withCredentials([string(credentialsId: 'slack-team-foundation-notifications-token', variable: 'slackToken')]) {
+        slackSend(
+          channel: "#team-foundation-notifications",
+          teamDomain: 'flowio.slack.com',
+          baseUrl: 'https://flowio.slack.com/services/hooks/jenkins-ci/',
+          token: slackToken,
+          color: "#ff0000",
+          message: "Build of base docker images failed. Please see https://jenkins.flo.pub/blue/organizations/jenkins/flowcommerce%2Fdocker/activity for details."
+        )
+      }
+    }
+  }
 }
