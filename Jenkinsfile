@@ -54,6 +54,12 @@ pipeline {
     //stage('Docker image builds') {
     //  parallel {
     stage('Upgrade node docker image 12') {
+      agent {
+        kubernetes {
+          label 'docker-image-12'
+          inheritFrom 'kaniko-slim'
+        }
+      }
       steps {
         container('kaniko') {
           script {
@@ -72,6 +78,12 @@ pipeline {
       }
     }
     stage('Upgrade node docker image 16') {
+      agent {
+        kubernetes {
+          label 'docker-image-16'
+          inheritFrom 'kaniko-slim'
+        }
+      }
       steps {
         container('kaniko') {
           script {
@@ -90,6 +102,12 @@ pipeline {
       }
     }
     stage('Upgrade node docker image 18') {
+      agent {
+        kubernetes {
+          label 'docker-image-18'
+          inheritFrom 'kaniko-slim'
+        }
+      }
       steps {
         container('kaniko') {
           script {
