@@ -12,11 +12,12 @@ WORKDIR /root
 COPY environment-provider.jar .
 COPY environment-provider-version.txt .
 
-RUN apk update && apk upgrade && \
-    apk add --no-cache openjdk11-jre && \
-    npm install -g forever && \
-    apk add --no-cache --update ca-certificates curl && \
-    mkdir -p /opt/node/log
+RUN apk update 
+RUN apk upgrade
+RUN apk add --no-cache openjdk11-jre
+RUN npm install -g forever 
+RUN apk add --no-cache --update ca-certificates curl
+RUN mkdir -p /opt/node/log
 
 COPY .npmrc /opt/node/.npmrc
 
