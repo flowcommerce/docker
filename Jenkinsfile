@@ -39,6 +39,43 @@ pipeline {
 
     //stage('Docker image builds') {
     //  parallel {
+    def versions = ['12', '16', '18']
+    for (int i = 0; i < versions.length; i++) {
+      stage('Upgrade node docker image ${versions[i]}') {
+        agent {
+          kubernetes {
+            label 'docker-image-${versions[i]}'
+            inheritFrom 'kaniko-slim'
+          }
+        }
+        steps {
+          script {
+            withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
+              withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
+                sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider-version.txt"""
+                sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider.jar"""
+                s3Download(file:'./.npmrc', bucket:'io.flow.infra', path:'npm/flowtech.npmrc')
+              }
+            }
+          }
+          container('kaniko') {
+            script {
+              env.NODEVERSION = "${versions[i]}"
+              sh """/kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
+                --snapshot-mode=redo --use-new-run  \
+                --build-arg NODE_VERSION=${NODEVERSION} \
+                --destination flowdocker/node${NODEVERSION}:testtag
+              """
+              sh """/kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
+                --snapshot-mode=redo --use-new-run  \
+                --build-arg NODE_VERSION=${NODEVERSION} \
+                --destination flowdocker/node${NODEVERSION}:latest-test
+              """
+            }
+          }
+        }
+      }
+    }
 //    stage('Upgrade node docker image 12') {
 //      agent {
 //        kubernetes {
@@ -144,116 +181,116 @@ pipeline {
 //      }
 //    }
 
-    stage('Upgrade node docker builder image 12') {
-      agent {
-        kubernetes {
-          label 'docker-builder-image-12'
-          inheritFrom 'kaniko-slim'
-        }
-      }
-      steps {
-        script {
-          withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
-            withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
-              s3Download(file:'./.npmrc', bucket:'io.flow.infra', path:'npm/flowtech.npmrc')
-            }
-          }
-        }
-        container('kaniko') {
-          script {
-            withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
-              env.NODEVERSION = "12"
-              sh """/kaniko/executor -f `pwd`/Dockerfile-builder -c `pwd` \
-                --snapshot-mode=redo --use-new-run  \
-                --build-arg NODE_VERSION=${NODEVERSION} \
-                --build-arg GITHUB_TOKEN=$GITHUB_TOKEN \
-                --destination flowdocker/node${NODEVERSION}_builder:testtag
-              """
-              sh """/kaniko/executor -f `pwd`/Dockerfile-builder -c `pwd` \
-                --snapshot-mode=redo --use-new-run  \
-                --build-arg NODE_VERSION=${NODEVERSION} \
-                --build-arg GITHUB_TOKEN=$GITHUB_TOKEN \
-                --destination flowdocker/node${NODEVERSION}_builder:latest-test
-              """
-            }
-          }
-        }
-      }
-    }
-
-    stage('Upgrade node docker builder image 16') {
-      agent {
-        kubernetes {
-          label 'docker-builder-image-16'
-          inheritFrom 'kaniko-slim'
-        }
-      }
-      steps {
-        script {
-          withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
-            withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
-              s3Download(file:'./.npmrc', bucket:'io.flow.infra', path:'npm/flowtech.npmrc')
-            }
-          }
-        }
-        container('kaniko') {
-          script {
-            withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
-              env.NODEVERSION = "16"
-              sh """/kaniko/executor -f `pwd`/Dockerfile-builder -c `pwd` \
-                --snapshot-mode=redo --use-new-run  \
-                --build-arg NODE_VERSION=${NODEVERSION} \
-                --build-arg GITHUB_TOKEN=$GITHUB_TOKEN \
-                --destination flowdocker/node${NODEVERSION}_builder:testtag
-              """
-              //sh """/kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
-              //  --snapshot-mode=redo --use-new-run  \
-              //  --build-arg NODE_VERSION=${NODEVERSION} \
-              //  --build-arg GITHUB_TOKEN=$GITHUB_TOKEN \
-              //  --destination flowdocker/node${NODEVERSION}_builder:latest-test
-              //"""
-            }
-          }
-        }
-      }
-    }
-
-    stage('Upgrade node docker builder image 18') {
-      agent {
-        kubernetes {
-          label 'docker-builder-image-18'
-          inheritFrom 'kaniko-slim'
-        }
-      }
-      steps {
-        script {
-          withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
-            withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
-              s3Download(file:'./.npmrc', bucket:'io.flow.infra', path:'npm/flowtech.npmrc')
-            }
-          }
-        }
-        container('kaniko') {
-          script {
-            withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
-              env.NODEVERSION = "18"
-              sh """/kaniko/executor -f `pwd`/Dockerfile-builder -c `pwd` \
-                --snapshot-mode=redo --use-new-run  \
-                --build-arg NODE_VERSION=${NODEVERSION} \
-                --build-arg GITHUB_TOKEN=$GITHUB_TOKEN \
-                --destination flowdocker/node${NODEVERSION}_builder:testtag
-              """
-              //sh """/kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
-              //  --snapshot-mode=redo --use-new-run  \
-              //  --build-arg NODE_VERSION=${NODEVERSION} \
-              //  --build-arg GITHUB_TOKEN=$GITHUB_TOKEN \
-              //  --destination flowdocker/node${NODEVERSION}_builder:latest-test
-              //"""
-            }
-          }
-        }
-      }
-    }
+//    stage('Upgrade node docker builder image 12') {
+//      agent {
+//        kubernetes {
+//          label 'docker-builder-image-12'
+//          inheritFrom 'kaniko-slim'
+//        }
+//      }
+//      steps {
+//        script {
+//          withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
+//            withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
+//              s3Download(file:'./.npmrc', bucket:'io.flow.infra', path:'npm/flowtech.npmrc')
+//            }
+//          }
+//        }
+//        container('kaniko') {
+//          script {
+//            withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
+//              env.NODEVERSION = "12"
+//              sh """/kaniko/executor -f `pwd`/Dockerfile-builder -c `pwd` \
+//                --snapshot-mode=redo --use-new-run  \
+//                --build-arg NODE_VERSION=${NODEVERSION} \
+//                --build-arg GITHUB_TOKEN=$GITHUB_TOKEN \
+//                --destination flowdocker/node${NODEVERSION}_builder:testtag
+//              """
+//              sh """/kaniko/executor -f `pwd`/Dockerfile-builder -c `pwd` \
+//                --snapshot-mode=redo --use-new-run  \
+//                --build-arg NODE_VERSION=${NODEVERSION} \
+//                --build-arg GITHUB_TOKEN=$GITHUB_TOKEN \
+//                --destination flowdocker/node${NODEVERSION}_builder:latest-test
+//              """
+//            }
+//          }
+//        }
+//      }
+//    }
+//
+//    stage('Upgrade node docker builder image 16') {
+//      agent {
+//        kubernetes {
+//          label 'docker-builder-image-16'
+//          inheritFrom 'kaniko-slim'
+//        }
+//      }
+//      steps {
+//        script {
+//          withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
+//            withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
+//              s3Download(file:'./.npmrc', bucket:'io.flow.infra', path:'npm/flowtech.npmrc')
+//            }
+//          }
+//        }
+//        container('kaniko') {
+//          script {
+//            withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
+//              env.NODEVERSION = "16"
+//              sh """/kaniko/executor -f `pwd`/Dockerfile-builder -c `pwd` \
+//                --snapshot-mode=redo --use-new-run  \
+//                --build-arg NODE_VERSION=${NODEVERSION} \
+//                --build-arg GITHUB_TOKEN=$GITHUB_TOKEN \
+//                --destination flowdocker/node${NODEVERSION}_builder:testtag
+//              """
+//              //sh """/kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
+//              //  --snapshot-mode=redo --use-new-run  \
+//              //  --build-arg NODE_VERSION=${NODEVERSION} \
+//              //  --build-arg GITHUB_TOKEN=$GITHUB_TOKEN \
+//              //  --destination flowdocker/node${NODEVERSION}_builder:latest-test
+//              //"""
+//            }
+//          }
+//        }
+//      }
+//    }
+//
+//    stage('Upgrade node docker builder image 18') {
+//      agent {
+//        kubernetes {
+//          label 'docker-builder-image-18'
+//          inheritFrom 'kaniko-slim'
+//        }
+//      }
+//      steps {
+//        script {
+//          withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
+//            withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
+//              s3Download(file:'./.npmrc', bucket:'io.flow.infra', path:'npm/flowtech.npmrc')
+//            }
+//          }
+//        }
+//        container('kaniko') {
+//          script {
+//            withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
+//              env.NODEVERSION = "18"
+//              sh """/kaniko/executor -f `pwd`/Dockerfile-builder -c `pwd` \
+//                --snapshot-mode=redo --use-new-run  \
+//                --build-arg NODE_VERSION=${NODEVERSION} \
+//                --build-arg GITHUB_TOKEN=$GITHUB_TOKEN \
+//                --destination flowdocker/node${NODEVERSION}_builder:testtag
+//              """
+//              //sh """/kaniko/executor -f `pwd`/Dockerfile -c `pwd` \
+//              //  --snapshot-mode=redo --use-new-run  \
+//              //  --build-arg NODE_VERSION=${NODEVERSION} \
+//              //  --build-arg GITHUB_TOKEN=$GITHUB_TOKEN \
+//              //  --destination flowdocker/node${NODEVERSION}_builder:latest-test
+//              //"""
+//            }
+//          }
+//        }
+//      }
+//    }
 //      }
 //    }
 
