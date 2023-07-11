@@ -288,6 +288,31 @@ pipeline {
               --snapshot-mode=redo --use-new-run  \
               --destination flowdocker/play:$semver-java${JAVAVERSION}
             """
+          }
+        }
+      }
+    }
+
+    // Destructive action when building play java 13
+    stage('Upgrade docker play java 13 latest') {
+      when { branch 'main' }
+      agent {
+        kubernetes {
+          label 'docker-play-13-latest'
+          inheritFrom 'kaniko-slim'
+        }
+      }
+      steps {
+        script {
+          withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
+            sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider-version.txt"""
+            sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider.jar"""
+          }
+        }
+        container('kaniko') {
+          script {
+            semver = VERSION.printable()
+            env.JAVAVERSION = "13"
             sh """/kaniko/executor -f `pwd`/Dockerfile-play-${JAVAVERSION} -c `pwd` \
               --snapshot-mode=redo --use-new-run  \
               --destination flowdocker/play:latest-java${JAVAVERSION}
