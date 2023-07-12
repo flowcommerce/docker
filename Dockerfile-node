@@ -7,10 +7,12 @@ ENV LANG C.UTF-8
 
 ENV NODE_ENV production
 
-WORKDIR /root
-
 COPY environment-provider.jar .
 COPY environment-provider-version.txt .
+RUN mv environment-provider.jar /root/
+RUN mv environment-provider-version.txt /root/
+
+WORKDIR /root
 
 RUN apk update && apk upgrade && \
     apk add --no-cache openjdk11-jre && \
