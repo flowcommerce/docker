@@ -136,12 +136,12 @@ pipeline {
             sh """/kaniko/executor -f `pwd`/Dockerfile-node -c `pwd` \
               --snapshot-mode=redo --use-new-run  \
               --build-arg NODE_VERSION=${NODEVERSION} \
-              --destination flowdocker/node${NODEVERSION}:$semver
+              --destination flowdocker/node${NODEVERSION}:latest
             """
             sh """/kaniko/executor -f `pwd`/Dockerfile-node -c `pwd` \
               --snapshot-mode=redo --use-new-run  \
               --build-arg NODE_VERSION=${NODEVERSION} \
-              --destination flowdocker/node${NODEVERSION}:latest
+              --destination flowdocker/node${NODEVERSION}:$semver
             """
           }
         }
