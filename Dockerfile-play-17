@@ -9,5 +9,6 @@ COPY environment-provider.jar .
 COPY environment-provider-version.txt .
 RUN mv environment-provider.jar /root/
 RUN mv environment-provider-version.txt /root/
+RUN chown root:root /root/environment-provider*
 
 WORKDIR /root
