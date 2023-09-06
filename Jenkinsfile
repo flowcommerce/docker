@@ -310,7 +310,7 @@ pipeline {
             withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]){
               semver = VERSION.printable()
               env.JAVAVERSION = "13"
-              env.SBT_VERSION = "1.8.3"
+              env.SBT_VERSION = "1.9.4"
               sh """/kaniko/executor -f `pwd`/Dockerfile-play-builder-${JAVAVERSION} -c `pwd` \
                 --snapshot-mode=redo --use-new-run  \
                 --build-arg SBT_VERSION=${SBT_VERSION} \
@@ -339,7 +339,7 @@ pipeline {
             withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]){
               semver = VERSION.printable()
               env.JAVAVERSION = "17"
-              env.SBT_VERSION = "1.8.3"
+              env.SBT_VERSION = "1.9.4"
               sh """/kaniko/executor -f `pwd`/Dockerfile-play-builder-${JAVAVERSION} -c `pwd` \
                 --snapshot-mode=redo --use-new-run  \
                 --build-arg SBT_VERSION=${SBT_VERSION} \
