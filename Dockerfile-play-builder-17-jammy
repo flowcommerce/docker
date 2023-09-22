@@ -1,0 +1,52 @@
+FROM eclipse-temurin:17-jdk-jammy AS builder
+
+ARG GIT_USERNAME
+ARG GIT_PASSWORD
+ARG SBT_VERSION
+ENV GIT_USERNAME $GIT_USERNAME
+ENV GIT_PASSWORD $GIT_PASSWORD
+ENV SBT_VERSION $SBT_VERSION
+
+ENV PROJECTS_TO_BUILD "experience catalog label shopify webhook demandware harmonization tax order-messenger bundle metric shopify-markets calculator data-platform"
+
+WORKDIR /root
+
+RUN apt update
+RUN apt upgrade -qy
+RUN apt install -qy openssh-client curl git ruby bash
+
+RUN mkdir /root/.ssh
+RUN chmod 0700 /root/.ssh
+RUN ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+RUN curl -sL "https://github.com/sbt/sbt/releases/download/v$SBT_VERSION/sbt-$SBT_VERSION.tgz" | gunzip | tar -x -C /usr/local
+RUN ln -s /usr/local/sbt/bin/sbt /usr/local/bin/sbt
+RUN chmod 0755 /usr/local/bin/sbt
+
+RUN for repo in $PROJECTS_TO_BUILD; do echo $repo; git clone --depth 1 https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/flowcommerce/$repo.git; cd $repo; sbt update; cd -; done
+
+FROM eclipse-temurin:17-jdk-jammy
+
+LABEL maintainer="tech@flow.io"
+
+ARG SBT_VERSION
+ENV SBT_VERSION $SBT_VERSION
+
+WORKDIR /root
+
+RUN apt update
+RUN apt upgrade -qy
+RUN apt install -qy bash curl postgresql-client wkhtmltopdf
+RUN echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections
+RUN apt install -qy ttf-mscorefonts-installer
+RUN wget https://www.princexml.com/download/prince_15.1-1_ubuntu22.04_amd64.deb
+RUN dpkg -i prince_15.1-1_ubuntu22.04_amd64.deb || true
+RUN apt -qyf install
+RUN dpkg -i prince_15.1-1_ubuntu22.04_amd64.deb
+
+RUN curl -sL "https://github.com/sbt/sbt/releases/download/v$SBT_VERSION/sbt-$SBT_VERSION.tgz" | gunzip | tar -x -C /usr/local
+RUN ln -s /usr/local/sbt/bin/sbt /usr/local/bin/sbt
+RUN chmod 0755 /usr/local/bin/sbt
+RUN mkdir -p .sbt ivy2
+
+COPY --from=builder /root/.sbt/ .sbt/.
+COPY --from=builder /root/.cache/ .cache/.
