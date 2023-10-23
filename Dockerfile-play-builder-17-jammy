@@ -42,7 +42,7 @@ ENV PATH $PATH:$GOBIN
 RUN curl -L https://github.com/apicollective/apibuilder-cli/archive/$APIBUILDER_CLI_VERSION.zip -o apibuilder-cli.zip \
     && unzip apibuilder-cli.zip \
     && ls -la \
-    && mv /apibuilder-cli-$APIBUILDER_CLI_VERSION /apibuilder-cli
+    && mv apibuilder-cli-$APIBUILDER_CLI_VERSION apibuilder-cli
 RUN curl -sL "https://github.com/sbt/sbt/releases/download/v$SBT_VERSION/sbt-$SBT_VERSION.tgz" | gunzip | tar -x -C /usr/local
 RUN ln -s /usr/local/sbt/bin/sbt /usr/local/bin/sbt
 RUN chmod 0755 /usr/local/bin/sbt
