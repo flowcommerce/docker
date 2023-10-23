@@ -365,7 +365,7 @@ pipeline {
       steps {
         container('kaniko') {
           script {
-            withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]){
+            withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME'), string(credentialsId: 'jenkins-hub-api-token', variable: 'GITHUB_TOKEN')]) {
               semver = VERSION.printable()
               env.JAVAVERSION = "17"
               env.SBT_VERSION = "1.9.6"
@@ -374,6 +374,7 @@ pipeline {
                 --build-arg SBT_VERSION=${SBT_VERSION} \
                 --build-arg GIT_PASSWORD=$GIT_PASSWORD \
                 --build-arg GIT_USERNAME=$GIT_USERNAME \
+                --build-arg GITHUB_TOKEN=$GITHUB_TOKEN \
                 --destination flowdocker/play_builder:$semver-java${JAVAVERSION}-jammy \
                 --destination flowdocker/play_builder:latest-java${JAVAVERSION}-jammy
               """
