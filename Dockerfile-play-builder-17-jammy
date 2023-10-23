@@ -8,7 +8,7 @@ ARG GIT_PASSWORD
 ARG SBT_VERSION
 ARG SCALA_VERSION=2.13
 ARG AMMONITE_VERSION=2.5.11
-ARG APIBUILDER_CLI_VERSION=0.1.42
+ARG APIBUILDER_CLI_VERSION=0.1.45
 ENV GIT_USERNAME $GIT_USERNAME
 ENV GIT_PASSWORD $GIT_PASSWORD
 ENV SBT_VERSION $SBT_VERSION
@@ -41,6 +41,7 @@ ENV PATH $PATH:$GOBIN
 
 RUN curl -L https://github.com/apicollective/apibuilder-cli/archive/$APIBUILDER_CLI_VERSION.zip -o apibuilder-cli.zip \
     && unzip apibuilder-cli.zip \
+    && ls -la \
     && mv /apibuilder-cli-$APIBUILDER_CLI_VERSION /apibuilder-cli
 RUN curl -sL "https://github.com/sbt/sbt/releases/download/v$SBT_VERSION/sbt-$SBT_VERSION.tgz" | gunzip | tar -x -C /usr/local
 RUN ln -s /usr/local/sbt/bin/sbt /usr/local/bin/sbt
