@@ -95,7 +95,7 @@ COPY --from=builder /root/go/bin/dev /usr/bin/dev
 
 #API Builder Setup
 
-COPY --from=builder apibuilder-cli /opt/apibuilder-cli
+COPY --from=builder /root/apibuilder-cli /opt/apibuilder-cli
 RUN mkdir -p $HOME/.apibuilder && touch $HOME/.apibuilder/config
 
 # Update PATH with apibuilder
