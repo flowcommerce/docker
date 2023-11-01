@@ -98,6 +98,7 @@ COPY --from=builder /root/go/bin/dev /usr/bin/dev
 
 COPY --from=builder /root/apibuilder-cli /opt/apibuilder-cli
 RUN mkdir -p $HOME/.apibuilder && touch $HOME/.apibuilder/config
+RUN echo "[default]" >> $HOME/.apibuilder/config
 RUN echo "token=$APIBUILDER_TOKEN" >> $HOME/.apibuilder/config
 
 # Update PATH with apibuilder
