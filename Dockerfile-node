@@ -16,7 +16,7 @@ RUN chown root:root /root/environment-provider*
 WORKDIR /root
 
 RUN apk update && apk upgrade && \
-    apk add --no-cache openjdk11-jre && \
+    apk add --no-cache openjdk17-jre && \
     npm install -g forever && \
     apk add --no-cache --update ca-certificates curl && \
     mkdir -p /opt/node/log
