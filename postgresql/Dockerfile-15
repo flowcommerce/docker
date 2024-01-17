@@ -42,7 +42,7 @@ RUN apt-get install -y --no-install-recommends ca-certificates wget sudo gnupg
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
 
 RUN apt-get update
-RUN apt-get install -y postgresql-11
+RUN apt-get install -y postgresql-15
 RUN apt-get install -y --no-install-recommends git
 RUN apt-get install -y --no-install-recommends ruby
 RUN apt-get install -y --no-install-recommends curl
@@ -55,22 +55,19 @@ RUN git checkout 0.9.35
 RUN ruby ./configure.rb --prefix /usr/local
 RUN ./install.rb
 
-RUN sed -i 's/peer/trust/' /etc/postgresql/11/main/pg_hba.conf
-RUN sed -i 's/md5/trust/' /etc/postgresql/11/main/pg_hba.conf
-RUN sed -i 's/127.0.0.1\/32/0.0.0.0\/0/' /etc/postgresql/11/main/pg_hba.conf
-RUN cat /etc/postgresql/11/main/pg_hba.conf
+RUN sed -i 's/peer/trust/' /etc/postgresql/15/main/pg_hba.conf
+RUN sed -i 's/scram-sha-256/trust/' /etc/postgresql/15/main/pg_hba.conf
+RUN sed -i 's/127.0.0.1\/32/0.0.0.0\/0/' /etc/postgresql/15/main/pg_hba.conf
+RUN cat /etc/postgresql/15/main/pg_hba.conf
 
 RUN cat "/etc/init.d/postgresql"
 
 RUN mkdir -p /var/run/postgresql && chown -R postgres /var/run/postgresql
 
-WORKDIR /var/lib/postgresql/11/main
-RUN ln -s /etc/postgresql/11/main/postgresql.conf
+WORKDIR /var/lib/postgresql/15/main
+RUN ln -s /etc/postgresql/15/main/postgresql.conf
 
-RUN sed -i 's/include_dir/#include_dir/' /etc/postgresql/11/main/postgresql.conf
+RUN sed -i 's/include_dir/#include_dir/' /etc/postgresql/15/main/postgresql.conf
 
-VOLUME /var/lib/postgresql/11/base
+VOLUME /var/lib/postgresql/15/base
 EXPOSE 5432
-
-# see - https://github.com/nimiq/docker-postgresql93/pull/4/files
-RUN mkdir /etc/ssl/private-copy; mv /etc/ssl/private/* /etc/ssl/private-copy/; rm -r /etc/ssl/private; mv /etc/ssl/private-copy /etc/ssl/private; chmod -R 0700 /etc/ssl/private; chown -R postgres /etc/ssl/private
