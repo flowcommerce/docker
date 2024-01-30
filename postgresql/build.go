@@ -11,9 +11,13 @@ import (
 
 func main() {
 	executor := executor.Create("docker-postgresql")
-	image := fmt.Sprintf("flowdocker/postgresql:%s", latestTag())
 
+	image := fmt.Sprintf("flowdocker/postgresql:%s", latestTag())
 	executor = executor.Add(fmt.Sprintf("docker build -t %s .", image))
+	executor = executor.Add(fmt.Sprintf("docker push %s", image))
+
+	image = fmt.Sprintf("flowdocker/postgresql15:%s", latestTag())
+	executor = executor.Add(fmt.Sprintf("docker build -f Dockerfile-15 -t %s .", image))
 	executor = executor.Add(fmt.Sprintf("docker push %s", image))
 
 	executor.Run()
