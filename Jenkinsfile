@@ -300,35 +300,6 @@ pipeline {
       }
     }
 
-    stage('Upgrade docker play java 13') {
-      when { branch 'main' }
-      agent {
-        kubernetes {
-          label 'docker-play-13'
-          inheritFrom 'kaniko-slim'
-        }
-      }
-      steps {
-        script {
-          withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
-            sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider-version.txt"""
-            sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider.jar"""
-          }
-        }
-        container('kaniko') {
-          script {
-            semver = VERSION.printable()
-            env.JAVAVERSION = "13"
-            sh """/kaniko/executor -f `pwd`/Dockerfile-play-${JAVAVERSION} -c `pwd` \
-              --snapshot-mode=redo --use-new-run  \
-              --destination flowdocker/play:$semver-java${JAVAVERSION} \
-              --destination flowdocker/play:latest-java${JAVAVERSION}
-            """
-          }
-        }
-      }
-    }
-
     stage('Upgrade docker play java 17') {
       when { branch 'main' }
       agent {
@@ -353,35 +324,6 @@ pipeline {
               --destination flowdocker/play:$semver-java${JAVAVERSION} \
               --destination flowdocker/play:latest-java${JAVAVERSION}
             """
-          }
-        }
-      }
-    }
-
-    stage('Upgrade docker play builder java 13') {
-      when { branch 'main' }
-      agent {
-        kubernetes {
-          label 'docker-play-builder-13'
-          inheritFrom 'kaniko-slim'
-        }
-      }
-      steps {
-        container('kaniko') {
-          script {
-            withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]){
-              semver = VERSION.printable()
-              env.JAVAVERSION = "13"
-              env.SBT_VERSION = "1.9.8"
-              sh """/kaniko/executor -f `pwd`/Dockerfile-play-builder-${JAVAVERSION} -c `pwd` \
-                --snapshot-mode=redo --use-new-run  \
-                --build-arg SBT_VERSION=${SBT_VERSION} \
-                --build-arg GIT_PASSWORD=$GIT_PASSWORD \
-                --build-arg GIT_USERNAME=$GIT_USERNAME \
-                --destination flowdocker/play_builder:$semver-java${JAVAVERSION} \
-                --destination flowdocker/play_builder:latest-java${JAVAVERSION}
-              """
-            }
           }
         }
       }
