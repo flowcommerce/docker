@@ -410,8 +410,9 @@ pipeline {
                 --build-arg GIT_USERNAME=$GIT_USERNAME \
                 --build-arg GITHUB_TOKEN=$GITHUB_TOKEN \
                 --build-arg APIBUILDER_TOKEN=$APIBUILDER_TOKEN \
-                --destination flowdocker/play_builder:$semver-java${JAVAVERSION}-jammy \
-                --destination flowdocker/play_builder:latest-java${JAVAVERSION}-jammy
+                --destination flowdocker/play_builder:$semver-java${JAVAVERSION}-jammy-arm64 \
+                --destination flowdocker/play_builder:latest-java${JAVAVERSION}-jammy-arm64 \
+                --verbosity debug
               """
             }
           }
