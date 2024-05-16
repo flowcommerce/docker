@@ -403,7 +403,7 @@ pipeline {
               semver = VERSION.printable()
               env.JAVAVERSION = "17"
               env.SBT_VERSION = "1.9.9"
-              sh """/kaniko/executor --custom-platform linux/arm64 -f `pwd`/Dockerfile-play-builder-${JAVAVERSION}-jammy-arm64 -c `pwd` \
+              sh """/kaniko/executor -f `pwd`/Dockerfile-play-builder-${JAVAVERSION}-jammy-arm64 -c `pwd` \
                 --snapshot-mode=redo --use-new-run  \
                 --build-arg SBT_VERSION=${SBT_VERSION} \
                 --build-arg GIT_PASSWORD=$GIT_PASSWORD \
@@ -412,6 +412,7 @@ pipeline {
                 --build-arg APIBUILDER_TOKEN=$APIBUILDER_TOKEN \
                 --destination flowdocker/play_builder:$semver-java${JAVAVERSION}-jammy-arm64 \
                 --destination flowdocker/play_builder:latest-java${JAVAVERSION}-jammy-arm64 \
+                --custom-platform linux/arm64 \
                 --verbosity debug
               """
             }
