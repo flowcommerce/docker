@@ -390,7 +390,6 @@ pipeline {
     }
 
     stage('Upgrade docker play builder java 17 arm64 - Ubuntu Jammy') {
-      when { branch 'main' }
       agent {
         kubernetes {
           label 'docker-play-builder-17-jammy-arm64'
