@@ -413,8 +413,8 @@ pipeline {
                 --build-arg opts='GOARCH=arm64' \
                 --destination flowdocker/play_builder:$semver-java${JAVAVERSION}-jammy-arm64 \
                 --destination flowdocker/play_builder:latest-java${JAVAVERSION}-jammy-arm64 \
-                --custom-platform=linux/arm64 \
-                --verbosity trace
+                --custom-platform=linux/arm64/v8 \
+                --verbosity debug
               """
             }
           }
