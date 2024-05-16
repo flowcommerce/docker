@@ -31,7 +31,7 @@ pipeline {
         }
       }
     }
-
+/*
     stage('Upgrade node docker image 12') {
       when { branch 'main' }
       agent {
@@ -388,7 +388,7 @@ pipeline {
         }
       }
     }
-
+*/
     stage('Upgrade docker play builder java 17 arm64 - Ubuntu Jammy') {
       agent {
         kubernetes {
@@ -413,7 +413,7 @@ pipeline {
                 --build-arg opts='GOARCH=arm64' \
                 --destination flowdocker/play_builder:$semver-java${JAVAVERSION}-jammy-arm64 \
                 --destination flowdocker/play_builder:latest-java${JAVAVERSION}-jammy-arm64 \
-                --customPlatform=linux/arm64
+                --custom-platform=linux/arm64 \
                 --verbosity debug
               """
             }
@@ -439,5 +439,3 @@ pipeline {
   }
 */  
 }
-
-
