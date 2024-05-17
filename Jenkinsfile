@@ -395,7 +395,7 @@ pipeline {
           label 'docker-play-builder-17-jammy-arm64'
           inheritFrom 'default'
           containerTemplates([
-              containerTemplate(name: 'kaniko', image: 'gcr.io/kaniko-project/executor:debug', alwaysPullImage: true)
+              containerTemplate(name: 'kaniko', image: 'gcr.io/kaniko-project/executor:latest', alwaysPullImage: true)
           ])
         }
       }
@@ -416,7 +416,6 @@ pipeline {
                 --destination flowdocker/play_builder:$semver-java${JAVAVERSION}-jammy-arm64 \
                 --destination flowdocker/play_builder:latest-java${JAVAVERSION}-jammy-arm64 \
                 --verbosity debug;
-                sleep 900
               """
             }
           }
