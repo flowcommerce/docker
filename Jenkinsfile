@@ -11,7 +11,7 @@ pipeline {
   }
   agent {
     kubernetes {
-      inheritFrom 'kaniko-slim'
+      inheritFrom 'default'
     }
   }
   stages {
@@ -393,7 +393,10 @@ pipeline {
       agent {
         kubernetes {
           label 'docker-play-builder-17-jammy-arm64'
-          inheritFrom 'kaniko-slim'
+          inheritFrom 'default'
+          containerTemplates([
+              containerTemplate(name: 'kaniko', image: 'gcr.io/kaniko-project/executor:debug', alwaysPullImage: true)
+          ])
         }
       }
       steps {
