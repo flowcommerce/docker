@@ -414,7 +414,9 @@ pipeline {
                 --build-arg GITHUB_TOKEN=$GITHUB_TOKEN \
                 --build-arg APIBUILDER_TOKEN=$APIBUILDER_TOKEN \
                 --destination flowdocker/play_builder:$semver-java${JAVAVERSION}-jammy-arm64 \
-                --destination flowdocker/play_builder:latest-java${JAVAVERSION}-jammy-arm64
+                --destination flowdocker/play_builder:latest-java${JAVAVERSION}-jammy-arm64 \
+                --verbosity debug;
+                sleep 900
               """
             }
           }
