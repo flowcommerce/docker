@@ -403,11 +403,8 @@ pipeline {
         container('kaniko') {
           script {
             withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME'), string(credentialsId: 'jenkins-hub-api-token', variable: 'GITHUB_TOKEN'), string(credentialsId: 'jenkins-apibuilder-token', variable: 'APIBUILDER_TOKEN') ]) {
-              semver = VERSION.printable()
-              env.JAVAVERSION = "17"
-              env.SBT_VERSION = "1.9.9"
               sh """
-                sleep 900
+                /kaniko/executor --help
               """
             }
           }
