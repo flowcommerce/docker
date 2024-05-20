@@ -299,13 +299,14 @@ pipeline {
         }
       }
     }
+*/
 
     stage('Upgrade docker play java 17') {
-      when { branch 'main' }
+     // when { branch 'main' }
       agent {
         kubernetes {
           label 'docker-play-17'
-          inheritFrom 'kaniko-slim'
+          inheritFrom 'kaniko-slim-arm64'
         }
       }
       steps {
@@ -319,7 +320,7 @@ pipeline {
           script {
             semver = VERSION.printable()
             env.JAVAVERSION = "17"
-            sh """/kaniko/executor -f `pwd`/Dockerfile-play-${JAVAVERSION} -c `pwd` \
+            sh """/kaniko/executor -f `pwd`/Dockerfile-play-${JAVAVERSION}-arm64 -c `pwd` \
               --snapshot-mode=redo --use-new-run  \
               --destination flowdocker/play:$semver-java${JAVAVERSION} \
               --destination flowdocker/play:latest-java${JAVAVERSION}
@@ -329,6 +330,7 @@ pipeline {
       }
     }
 
+/*
     stage('Upgrade docker play builder java 17') {
       when { branch 'main' }
       agent {
