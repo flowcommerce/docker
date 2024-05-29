@@ -357,7 +357,7 @@ pipeline {
   //   }
   // }
 
-  stage('Upgrade docker play java 17 arm64') {
+    stage('Upgrade docker play java 17 arm64') {
       //when { branch 'main' }
       agent {
         kubernetes {
@@ -376,40 +376,11 @@ pipeline {
           script {
             semver = VERSION.printable()
             env.JAVAVERSION = "17"
-            sh """/kaniko/executor -f `pwd`/Dockerfile-play-${JAVAVERSION}-arm64 -c `pwd` \
+            sh """/kaniko/executor -f `pwd`/Dockerfile-play-${JAVAVERSION} -c `pwd` \
               --snapshot-mode=redo --use-new-run  \
               --destination flowdocker/play:$semver-java${JAVAVERSION}-arm64 \
               --destination flowdocker/play:latest-java${JAVAVERSION}-arm64
             """
-          }
-        }
-      }
-    }
-
-    stage('Upgrade docker play builder java 17 arm64') {
-      //when { branch 'main' }
-      agent {
-        kubernetes {
-          label 'docker-play-builder-17-arm64'
-          inheritFrom 'kaniko-slim-arm64'
-        }
-      }
-      steps {
-        container('kaniko') {
-          script {
-            withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]){
-              semver = VERSION.printable()
-              env.JAVAVERSION = "17"
-              env.SBT_VERSION = "1.9.9"
-              sh """/kaniko/executor -f `pwd`/Dockerfile-play-builder-${JAVAVERSION}-arm64 -c `pwd` \
-                --snapshot-mode=redo --use-new-run  \
-                --build-arg SBT_VERSION=${SBT_VERSION} \
-                --build-arg GIT_PASSWORD=$GIT_PASSWORD \
-                --build-arg GIT_USERNAME=$GIT_USERNAME \
-                --destination flowdocker/play_builder:$semver-java${JAVAVERSION}-arm64 \
-                --destination flowdocker/play_builder:latest-java${JAVAVERSION}-arm64
-              """
-            }
           }
         }
       }
