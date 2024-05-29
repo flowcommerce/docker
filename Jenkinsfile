@@ -402,7 +402,7 @@ pipeline {
               env.JAVAVERSION = "17"
               env.SBT_VERSION = "1.9.9"
               env.ARCH = "arm64"
-              sh """/kaniko/executor -f `pwd`/Dockerfile-play-builder-${JAVAVERSION}-jammy-arm64 -c `pwd` \
+              sh """/kaniko/executor -f `pwd`/Dockerfile-play-builder-${JAVAVERSION}-jammy -c `pwd` \
                 --snapshot-mode=redo --use-new-run  \
                 --build-arg SBT_VERSION=${SBT_VERSION} \
                 --build-arg GIT_PASSWORD=$GIT_PASSWORD \
