@@ -1,0 +1,46 @@
+FROM --platform=linux/arm64 eclipse-temurin:17-jdk as builder
+
+ARG GIT_USERNAME
+ARG GIT_PASSWORD
+ARG SBT_VERSION
+ENV GIT_USERNAME $GIT_USERNAME
+ENV GIT_PASSWORD $GIT_PASSWORD
+ENV SBT_VERSION $SBT_VERSION
+
+ENV PROJECTS_TO_BUILD "experience catalog label shopify webhook demandware harmonization tax order-messenger bundle metric shopify-markets calculator data-platform"
+
+WORKDIR /root
+
+RUN apk add --no-cache docker-cli openssh curl git ruby bash && \
+    mkdir /root/.ssh && chmod 0700 /root/.ssh && \
+    ssh-keyscan -H github.com >> ~/.ssh/known_hosts && \
+    curl -sL "https://github.com/sbt/sbt/releases/download/v$SBT_VERSION/sbt-$SBT_VERSION.tgz" | gunzip | tar -x -C /usr/local && \
+    ln -s /usr/local/sbt/bin/sbt /usr/local/bin/sbt && \
+    chmod 0755 /usr/local/bin/sbt
+
+RUN for repo in $PROJECTS_TO_BUILD; do \
+      echo $repo; git clone --depth 1 https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/flowcommerce/$repo.git; cd $repo; sbt update; cd -; \
+    done
+
+FROM --platform=linux/arm64 eclipse-temurin:17-jdk
+
+LABEL maintainer="tech@flow.io"
+
+ARG SBT_VERSION
+ENV SBT_VERSION $SBT_VERSION
+
+
+WORKDIR /root
+
+# Install SBT
+RUN apk update && apk upgrade && \
+    apk add --no-cache --update bash postgresql-client && \
+    apk add --no-cache curl && \
+    curl -sL "https://github.com/sbt/sbt/releases/download/v$SBT_VERSION/sbt-$SBT_VERSION.tgz" | gunzip | tar -x -C /usr/local && \
+    ln -s /usr/local/sbt/bin/sbt /usr/local/bin/sbt && \
+    chmod 0755 /usr/local/bin/sbt && \
+    mkdir -p .sbt/ && \
+    mkdir -p .ivy2/
+
+COPY --from=builder /root/.sbt/ .sbt/.
+COPY --from=builder /root/.cache/ .cache/.
