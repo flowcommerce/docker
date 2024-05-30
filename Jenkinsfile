@@ -64,7 +64,7 @@ pipeline {
         }
       }
     }
-
+    
     stage('Upgrade node docker image 16') {
       when { branch 'main' }
       agent {
@@ -373,6 +373,7 @@ pipeline {
               semver = VERSION.printable()
               env.JAVAVERSION = "17"
               env.SBT_VERSION = "1.9.9"
+              env.ARCH = "amd64"
               sh """/kaniko/executor -f `pwd`/Dockerfile-play-builder-${JAVAVERSION}-jammy -c `pwd` \
                 --snapshot-mode=redo --use-new-run  \
                 --build-arg SBT_VERSION=${SBT_VERSION} \
@@ -380,6 +381,7 @@ pipeline {
                 --build-arg GIT_USERNAME=$GIT_USERNAME \
                 --build-arg GITHUB_TOKEN=$GITHUB_TOKEN \
                 --build-arg APIBUILDER_TOKEN=$APIBUILDER_TOKEN \
+                --build-arg ARCH=$ARCH \
                 --destination flowdocker/play_builder:$semver-java${JAVAVERSION}-jammy \
                 --destination flowdocker/play_builder:latest-java${JAVAVERSION}-jammy
               """
@@ -388,8 +390,69 @@ pipeline {
         }
       }
     }
-  }
 
+    stage('Upgrade docker play java 17 arm64') {
+      when { branch 'main' }
+      agent {
+        kubernetes {
+          label 'docker-play-17-arm64'
+          inheritFrom 'kaniko-slim-arm64'
+        }
+      }
+      steps {
+        script {
+          withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
+            sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider-version.txt"""
+            sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider.jar"""
+          }
+        }
+        container('kaniko') {
+          script {
+            semver = VERSION.printable()
+            env.JAVAVERSION = "17"
+            sh """/kaniko/executor -f `pwd`/Dockerfile-play-${JAVAVERSION} -c `pwd` \
+              --snapshot-mode=redo --use-new-run  \
+              --destination flowdocker/play:$semver-java${JAVAVERSION}-arm64 \
+              --destination flowdocker/play:latest-java${JAVAVERSION}-arm64
+            """
+          }
+        }
+      }
+    }
+
+    stage('Upgrade docker play builder java 17 - Ubuntu Jammy arm64') {
+      when { branch 'main' }
+      agent {
+        kubernetes {
+          label 'docker-play-builder-17-jammy-arm64'
+          inheritFrom 'kaniko-slim-arm64'
+        }
+      }
+      steps {
+        container('kaniko') {
+          script {
+            withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME'), string(credentialsId: 'jenkins-hub-api-token', variable: 'GITHUB_TOKEN'), string(credentialsId: 'jenkins-apibuilder-token', variable: 'APIBUILDER_TOKEN') ]) {
+              semver = VERSION.printable()
+              env.JAVAVERSION = "17"
+              env.SBT_VERSION = "1.9.9"
+              env.ARCH = "arm64"
+              sh """/kaniko/executor -f `pwd`/Dockerfile-play-builder-${JAVAVERSION}-jammy -c `pwd` \
+                --snapshot-mode=redo --use-new-run  \
+                --build-arg SBT_VERSION=${SBT_VERSION} \
+                --build-arg GIT_PASSWORD=$GIT_PASSWORD \
+                --build-arg GIT_USERNAME=$GIT_USERNAME \
+                --build-arg GITHUB_TOKEN=$GITHUB_TOKEN \
+                --build-arg APIBUILDER_TOKEN=$APIBUILDER_TOKEN \
+                --build-arg ARCH=$ARCH \
+                --destination flowdocker/play_builder:$semver-java${JAVAVERSION}-jammy-arm64 \
+                --destination flowdocker/play_builder:latest-java${JAVAVERSION}-jammy-arm64
+              """
+            }
+          }
+        }
+      }
+    }
+  }
   post {
     failure {
       withCredentials([string(credentialsId: 'slack-team-foundation-notifications-token', variable: 'slackToken')]) {
