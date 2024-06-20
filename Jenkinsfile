@@ -415,6 +415,12 @@ pipeline {
               --destination flowdocker/play-arm64:$semver-java${JAVAVERSION}-arm64 \
               --destination flowdocker/play-arm64:latest-java${JAVAVERSION}-arm64
             """
+            sh """
+              curl -s -L https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz | tar xvz
+              mv manifest-tool-linux-amd64 manifest-tool
+              chmod +x manifest-tool
+              manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowcommerce/play-ARCH:$semver --target flowcommerce/play-test:$semver
+              """
           }
         }
       }
@@ -448,29 +454,6 @@ pipeline {
                 --destination flowdocker/play_builder:latest-java${JAVAVERSION}-jammy-arm64
               """
             }
-          }
-        }
-      }
-    }
-    
-    stage('manifest tool step for play docker images') {
-      //when {branch 'main'}
-      agent {
-        kubernetes {
-          label 'manifest-tool-play-images'
-          inheritFrom 'kaniko-slim'
-        }
-      }
-      steps {
-        container('kaniko') {
-          script {
-            sh """
-              apk --update add curl
-              curl -s -L https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz | tar xvz
-              mv manifest-tool-linux-amd64 manifest-tool
-              chmod +x manifest-tool
-              manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowcommerce/play-ARCH:$semver --target flowcommerce/play-test:$semver
-              """
           }
         }
       }
