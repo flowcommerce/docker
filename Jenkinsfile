@@ -301,7 +301,7 @@ pipeline {
     }
 
     stage('Upgrade docker play java 17') {
-      when { branch 'main' }
+      //when { branch 'main' }
       agent {
         kubernetes {
           label 'docker-play-17'
@@ -321,8 +321,8 @@ pipeline {
             env.JAVAVERSION = "17"
             sh """/kaniko/executor -f `pwd`/Dockerfile-play-${JAVAVERSION} -c `pwd` \
               --snapshot-mode=redo --use-new-run  \
-              --destination flowdocker/play:$semver-java${JAVAVERSION} \
-              --destination flowdocker/play:latest-java${JAVAVERSION}
+              --destination flowdocker/play-amd64:$semver-java${JAVAVERSION} \
+              --destination flowdocker/play-amd64:latest-java${JAVAVERSION}
             """
           }
         }
@@ -392,7 +392,7 @@ pipeline {
     }
 
     stage('Upgrade docker play java 17 arm64') {
-      when { branch 'main' }
+      //when { branch 'main' }
       agent {
         kubernetes {
           label 'docker-play-17-arm64'
@@ -412,8 +412,8 @@ pipeline {
             env.JAVAVERSION = "17"
             sh """/kaniko/executor -f `pwd`/Dockerfile-play-${JAVAVERSION} -c `pwd` \
               --snapshot-mode=redo --use-new-run  \
-              --destination flowdocker/play:$semver-java${JAVAVERSION}-arm64 \
-              --destination flowdocker/play:latest-java${JAVAVERSION}-arm64
+              --destination flowdocker/play-arm64:$semver-java${JAVAVERSION}-arm64 \
+              --destination flowdocker/play-arm64:latest-java${JAVAVERSION}-arm64
             """
           }
         }
@@ -452,19 +452,42 @@ pipeline {
         }
       }
     }
-  }
-  post {
-    failure {
-      withCredentials([string(credentialsId: 'slack-team-foundation-notifications-token', variable: 'slackToken')]) {
-        slackSend(
-          channel: "#team-foundation-notifications",
-          teamDomain: 'flowio.slack.com',
-          baseUrl: 'https://flowio.slack.com/services/hooks/jenkins-ci/',
-          token: slackToken,
-          color: "#ff0000",
-          message: "Build of base docker images failed. Please see https://jenkins.flo.pub/blue/organizations/jenkins/flowcommerce%2Fdocker/activity for details."
-        )
+    
+    stage('manifest tool step for play docker images') {
+      //when {branch 'main'}
+      agent {
+        kubernetes {
+          label 'manifest-tool-play-images'
+          inheritFrom 'kaniko-slim'
+        }
+      }
+      steps {
+        container('kaniko') {
+          script {
+            sh """
+              cd /tmp
+              curl -s -L https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz | tar xvz
+              mv manifest-tool-linux-amd64 manifest-tool
+              chmod +x manifest-tool
+              manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowcommerce/play-ARCH:$semver --target flowcommerce/play-test:$semver
+              """
+          }
+        }
       }
     }
   }
+  // post {
+  //   failure {
+  //     withCredentials([string(credentialsId: 'slack-team-foundation-notifications-token', variable: 'slackToken')]) {
+  //       slackSend(
+  //         channel: "#team-foundation-notifications",
+  //         teamDomain: 'flowio.slack.com',
+  //         baseUrl: 'https://flowio.slack.com/services/hooks/jenkins-ci/',
+  //         token: slackToken,
+  //         color: "#ff0000",
+  //         message: "Build of base docker images failed. Please see https://jenkins.flo.pub/blue/organizations/jenkins/flowcommerce%2Fdocker/activity for details."
+  //       )
+  //     }
+  //   }
+  // }
 }
