@@ -425,11 +425,11 @@ pipeline {
       agent {
         kubernetes {
           label 'manifest-tool-play-images'
-          inheritFrom 'default'
+          inheritFrom 'generic'
         }
       }
       steps {
-        container('play') {
+        container('docker') {
           script {
             sh """
               curl -s -L https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz | tar xvz
