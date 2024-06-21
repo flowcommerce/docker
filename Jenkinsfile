@@ -429,7 +429,7 @@ pipeline {
         }
       }
       steps {
-        container('jnlp') {
+        container('play') {
           script {
             sh """
               curl -s -L https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz | tar xvz
