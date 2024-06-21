@@ -33,7 +33,8 @@ pipeline {
         }
       }
     }
-
+  }
+  
   // post {
   //   failure {
   //     withCredentials([string(credentialsId: 'slack-team-foundation-notifications-token', variable: 'slackToken')]) {
