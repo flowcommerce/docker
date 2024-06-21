@@ -435,7 +435,7 @@ pipeline {
               curl -s -L https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz | tar xvz
               mv manifest-tool-linux-amd64 manifest-tool
               chmod +x manifest-tool
-              manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowcommerce/play-ARCH:$semver --target flowcommerce/play-test:$semver
+              ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowcommerce/play-ARCH:$semver --target flowcommerce/play-test:$semver
               """
           }
         }
