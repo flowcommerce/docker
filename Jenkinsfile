@@ -412,8 +412,8 @@ pipeline {
             env.JAVAVERSION = "17"
             sh """/kaniko/executor -f `pwd`/Dockerfile-play-${JAVAVERSION} -c `pwd` \
               --snapshot-mode=redo --use-new-run  \
-              --destination flowdocker/play-arm64:$semver-java${JAVAVERSION}-arm64 \
-              --destination flowdocker/play-arm64:latest-java${JAVAVERSION}-arm64
+              --destination flowdocker/play-arm64:$semver-java${JAVAVERSION} \
+              --destination flowdocker/play-arm64:latest-java${JAVAVERSION}
             """
           }
         }
