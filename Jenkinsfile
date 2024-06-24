@@ -300,30 +300,88 @@ pipeline {
       }
     }
 
-    stage('Upgrade docker play java 17') {
-      //when { branch 'main' }
+    stage {
+      parallel {
+        stage('Upgrade amd64 docker play java 17') {
+          //when { branch 'main' }
+          agent {
+            kubernetes {
+              label 'docker-play-17'
+              inheritFrom 'kaniko-slim'
+            }
+          }
+          steps {
+            script {
+              withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
+                sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider-version.txt"""
+                sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider.jar"""
+              }
+            }
+            container('kaniko') {
+              script {
+                semver = VERSION.printable()
+                env.JAVAVERSION = "17"
+                sh """/kaniko/executor -f `pwd`/Dockerfile-play-${JAVAVERSION} -c `pwd` \
+                  --snapshot-mode=redo --use-new-run  \
+                  --destination flowdocker/play-amd64:$semver-java${JAVAVERSION} \
+                  --destination flowdocker/play-amd64:latest-java${JAVAVERSION}
+                """
+              }
+            }
+          }
+        }
+        stage('Upgrade arm64 docker play java 17') {
+          //when { branch 'main' }
+          agent {
+            kubernetes {
+              label 'docker-play-17-arm64'
+              inheritFrom 'kaniko-slim-arm64'
+            }
+          }
+          steps {
+            script {
+              withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
+                sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider-version.txt"""
+                sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider.jar"""
+              }
+            }
+            container('kaniko') {
+              script {
+                semver = VERSION.printable()
+                env.JAVAVERSION = "17"
+                sh """/kaniko/executor -f `pwd`/Dockerfile-play-${JAVAVERSION} -c `pwd` \
+                  --snapshot-mode=redo --use-new-run  \
+                  --destination flowdocker/play-arm64:$semver-java${JAVAVERSION} \
+                  --destination flowdocker/play-arm64:latest-java${JAVAVERSION}
+                """
+              }
+            }
+          }
+        }
+      }
+    }
+
+    stage('manifest tool step for play docker images') {
+      //when {branch 'main'}
       agent {
         kubernetes {
-          label 'docker-play-17'
-          inheritFrom 'kaniko-slim'
+          label 'manifest-tool-play-images'
+          inheritFrom 'kaniko-slim-arm64'
         }
       }
       steps {
-        script {
-          withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
-            sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider-version.txt"""
-            sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider.jar"""
-          }
-        }
         container('kaniko') {
           script {
-            semver = VERSION.printable()
-            env.JAVAVERSION = "17"
-            sh """/kaniko/executor -f `pwd`/Dockerfile-play-${JAVAVERSION} -c `pwd` \
-              --snapshot-mode=redo --use-new-run  \
-              --destination flowdocker/play-amd64:$semver-java${JAVAVERSION} \
-              --destination flowdocker/play-amd64:latest-java${JAVAVERSION}
-            """
+            sh """
+              wget https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz
+              gunzip binaries-manifest-tool-2.0.8.tar.gz
+              tar -xvf binaries-manifest-tool-2.0.8.tar
+              #sleep 300
+              mv manifest-tool-linux-arm64 manifest-tool
+              chmod +x manifest-tool
+              ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/play-ARCH:${semver}-java${JAVAVERSION} --target flowdocker/play:${semver}-java${JAVAVERSION}
+              ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/play-ARCH:latest-java${JAVAVERSION} --target flowdocker/play:latest-java${JAVAVERSION}
+              """
           }
         }
       }
@@ -386,58 +444,6 @@ pipeline {
                 --destination flowdocker/play_builder:latest-java${JAVAVERSION}-jammy
               """
             }
-          }
-        }
-      }
-    }
-
-    stage('Upgrade docker play java 17 arm64') {
-      //when { branch 'main' }
-      agent {
-        kubernetes {
-          label 'docker-play-17-arm64'
-          inheritFrom 'kaniko-slim-arm64'
-        }
-      }
-      steps {
-        script {
-          withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
-            sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider-version.txt"""
-            sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider.jar"""
-          }
-        }
-        container('kaniko') {
-          script {
-            semver = VERSION.printable()
-            env.JAVAVERSION = "17"
-            sh """/kaniko/executor -f `pwd`/Dockerfile-play-${JAVAVERSION} -c `pwd` \
-              --snapshot-mode=redo --use-new-run  \
-              --destination flowdocker/play-arm64:$semver-java${JAVAVERSION} \
-              --destination flowdocker/play-arm64:latest-java${JAVAVERSION}
-            """
-          }
-        }
-      }
-    }
-
-    stage('manifest tool step for play docker images') {
-      //when {branch 'main'}
-      agent {
-        kubernetes {
-          label 'manifest-tool-play-images'
-          inheritFrom 'generic'
-        }
-      }
-      steps {
-        container('docker') {
-          script {
-            sh """
-              apk add --update curl
-              curl -s -L https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz | tar xvz
-              mv manifest-tool-linux-amd64 manifest-tool
-              chmod +x manifest-tool
-              ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowcommerce/play-ARCH:$semver --target flowcommerce/play-test:$semver
-              """
           }
         }
       }
