@@ -36,9 +36,9 @@ pipeline {
       //when {branch 'main'}
       steps {
         container('kaniko') {
-          semver = VERSION.printable()
-          env.JAVAVERSION = "17"
           script {
+            semver = VERSION.printable()
+            env.JAVAVERSION = "17"
             sh """
               wget https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz -C ./ | tar xvz
               sleep 300
