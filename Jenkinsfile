@@ -86,18 +86,6 @@ pipeline {
               --destination flowdocker/play-arm64:$semver-java${JAVAVERSION} \
               --destination flowdocker/play-arm64:latest-java${JAVAVERSION}
             """
-          }
-        }
-      }
-    }
-
-    stage('manifest tool step for play docker images') {
-      //when {branch 'main'}
-      steps {
-        container('kaniko') {
-          script {
-            semver = VERSION.printable()
-            env.JAVAVERSION = "17"
             sh """
               wget https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz
               gunzip binaries-manifest-tool-2.0.8.tar.gz
