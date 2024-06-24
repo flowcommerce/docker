@@ -300,7 +300,7 @@ pipeline {
       }
     }
 
-    stage {
+    stages {
       parallel {
         stage('Upgrade amd64 docker play java 17') {
           //when { branch 'main' }
