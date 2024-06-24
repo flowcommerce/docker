@@ -25,7 +25,7 @@ pipeline {
       }
     }
     stage('Commit SemVer tag') {
-      when { branch 'main' }
+      //when { branch 'main' }
       steps {
         script {
           new flowSemver().commitSemver(VERSION)
