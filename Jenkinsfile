@@ -40,7 +40,7 @@ pipeline {
             semver = VERSION.printable()
             env.JAVAVERSION = "17"
             sh """
-              wget https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz -C ./ | tar xvz
+              wget https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz | tar xvz
               sleep 300
               mv manifest-tool-linux-amd64 manifest-tool
               chmod +x manifest-tool
