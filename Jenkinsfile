@@ -91,7 +91,7 @@ pipeline {
               gunzip binaries-manifest-tool-2.0.8.tar.gz
               tar -xvf binaries-manifest-tool-2.0.8.tar
               #sleep 300
-              mv manifest-tool-linux-amd64 manifest-tool
+              mv manifest-tool-linux-arm64 manifest-tool
               chmod +x manifest-tool
               ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/play-ARCH:${semver}-java${JAVAVERSION} --target flowdocker/play:${semver}-java${JAVAVERSION}
               ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/play-ARCH:latest-java${JAVAVERSION} --target flowdocker/play:latest-java${JAVAVERSION}
