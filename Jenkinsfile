@@ -94,6 +94,7 @@ pipeline {
               mv manifest-tool-linux-amd64 manifest-tool
               chmod +x manifest-tool
               ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/play-ARCH:${semver}-java${JAVAVERSION} --target flowdocker/play:${semver}-java${JAVAVERSION}
+              ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/play-ARCH:latest-java${JAVAVERSION} --target flowdocker/play:latest-java${JAVAVERSION}
               """
           }
         }
