@@ -36,13 +36,15 @@ pipeline {
       //when {branch 'main'}
       steps {
         container('kaniko') {
+          semver = VERSION.printable()
+          env.JAVAVERSION = "17"
           script {
             sh """
               wget https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz -C ./ | tar xvz
               sleep 300
               mv manifest-tool-linux-amd64 manifest-tool
               chmod +x manifest-tool
-              ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/play-ARCH:$semver --target flowdocker/play:$semver
+              ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/play-ARCH:${semver}-${JAVAVERSION} --target flowdocker/play:${semver}-${JAVAVERSION}
               """
           }
         }
