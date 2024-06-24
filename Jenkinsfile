@@ -16,18 +16,33 @@ pipeline {
   }
 
   stages {
+    stage('Checkout') {
+      steps {
+        checkoutWithTags scm
+        script {
+          VERSION = new flowSemver().calculateSemver() //requires checkout
+        }
+      }
+    }
+    stage('Commit SemVer tag') {
+      when { branch 'main' }
+      steps {
+        script {
+          new flowSemver().commitSemver(VERSION)
+        }
+      }
+    }
     stage('manifest tool step for play docker images') {
       //when {branch 'main'}
       steps {
         container('kaniko') {
           script {
             sh """
-              sleep 900
-              apk add --update curl
-              curl -s -L https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz | tar xvz
+              wget https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz -C ./ | tar xvz
+              sleep 300
               mv manifest-tool-linux-amd64 manifest-tool
               chmod +x manifest-tool
-              ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowcommerce/play-ARCH:0.2.83-java17-ARCH --target flowcommerce/play-test:0.2.83-java17-ARCH
+              ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/play-ARCH:$semver --target flowdocker/play:$semver
               """
           }
         }
