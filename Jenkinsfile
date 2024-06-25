@@ -454,94 +454,37 @@ pipeline {
       }
     } 
 
-    // Multi archtecture play builder docker image build in parallel, manifest-tool push multi platform container image reference
-    stage('build Multi arch docker play builder java 17 docker images') {
-      parallel {
-        stage('Upgrade amd64 docker play builder java 17') {
-          // when { branch 'main' }
-          agent {
-            kubernetes {
-              label 'docker-play-builder-17'
-              inheritFrom 'kaniko-slim'
-            }
-          }
-          steps {
-            container('kaniko') {
-              script {
-                withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]){
-                  semver = VERSION.printable()
-                  env.JAVAVERSION = "17"
-                  env.SBT_VERSION = "1.9.9"
-                  sh """/kaniko/executor -f `pwd`/Dockerfile-play-builder-${JAVAVERSION} -c `pwd` \
-                    --snapshot-mode=redo --use-new-run  \
-                    --build-arg SBT_VERSION=${SBT_VERSION} \
-                    --build-arg GIT_PASSWORD=$GIT_PASSWORD \
-                    --build-arg GIT_USERNAME=$GIT_USERNAME \
-                    --destination flowdocker/play_builder-amd64:$semver-java${JAVAVERSION} \
-                    --destination flowdocker/play_builder-amd64:latest-java${JAVAVERSION}
-                  """
-                }
-              }
-            }
-          }
-        }
-        stage('Upgrade arm64 docker play builder java 17') {
-          // when { branch 'main' }
-          agent {
-            kubernetes {
-              label 'docker-play-builder-17-arm64'
-              inheritFrom 'kaniko-slim-arm64'
-            }
-          }
-          steps {
-            container('kaniko') {
-              script {
-                withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]){
-                  semver = VERSION.printable()
-                  env.JAVAVERSION = "17"
-                  env.SBT_VERSION = "1.9.9"
-                  sh """/kaniko/executor -f `pwd`/Dockerfile-play-builder-${JAVAVERSION} -c `pwd` \
-                    --snapshot-mode=redo --use-new-run  \
-                    --build-arg SBT_VERSION=${SBT_VERSION} \
-                    --build-arg GIT_PASSWORD=$GIT_PASSWORD \
-                    --build-arg GIT_USERNAME=$GIT_USERNAME \
-                    --destination flowdocker/play_builder-arm64:$semver-java${JAVAVERSION} \
-                    --destination flowdocker/play_builder-arm64:latest-java${JAVAVERSION}
-                  """
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+    // eclipse-temurin:17-jdk-alpine doesn't have arm64 image, we don't support multiplatform play_builder image
+    // use play_builder:latest-java20-jammy
     
-    stage('manifest tool step for play builder docker images') {
-      //when {branch 'main'}
+    stage('Upgrade amd64 docker play builder java 17') {
+      // when { branch 'main' }
       agent {
         kubernetes {
-          label 'manifest-tool-play-images'
-          inheritFrom 'kaniko-slim-arm64'
+          label 'docker-play-builder-17'
+          inheritFrom 'kaniko-slim'
         }
       }
       steps {
         container('kaniko') {
           script {
-            semver = VERSION.printable()
-            env.JAVAVERSION = "17"
-            sh """
-              wget https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz
-              gunzip binaries-manifest-tool-2.0.8.tar.gz
-              tar -xvf binaries-manifest-tool-2.0.8.tar
-              mv manifest-tool-linux-arm64 manifest-tool
-              chmod +x manifest-tool
-              ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/play_builder-ARCH:$semver-java${JAVAVERSION} --target flowdocker/play_builder:$semver-java${JAVAVERSION}
-              ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/play_builder-ARCH:latest-java${JAVAVERSION} --target flowdocker/play_builder:latest-java${JAVAVERSION}
+            withCredentials([usernamePassword(credentialsId: 'jenkins-x-github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]){
+              semver = VERSION.printable()
+              env.JAVAVERSION = "17"
+              env.SBT_VERSION = "1.9.9"
+              sh """/kaniko/executor -f `pwd`/Dockerfile-play-builder-${JAVAVERSION} -c `pwd` \
+                --snapshot-mode=redo --use-new-run  \
+                --build-arg SBT_VERSION=${SBT_VERSION} \
+                --build-arg GIT_PASSWORD=$GIT_PASSWORD \
+                --build-arg GIT_USERNAME=$GIT_USERNAME \
+                --destination flowdocker/play_builder:$semver-java${JAVAVERSION} \
+                --destination flowdocker/play_builder:latest-java${JAVAVERSION}
               """
+            }
           }
         }
       }
-    } 
+    }
 
     // Multi archtecture play builder jammy docker image build in parallel, manifest-tool push multi platform container image reference
     stage('build Multi arch docker play builder Jammy java 17 docker images') {
