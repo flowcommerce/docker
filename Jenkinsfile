@@ -306,7 +306,7 @@ pipeline {
           //when { branch 'main' }
           agent {
             kubernetes {
-              label 'docker-builder-image-20'
+              label 'docker-builder-image-20-arm64'
               inheritFrom 'kaniko-slim-arm64'
             }
           }
@@ -489,7 +489,7 @@ pipeline {
           // when { branch 'main' }
           agent {
             kubernetes {
-              label 'docker-play-builder-17'
+              label 'docker-play-builder-17-arm64'
               inheritFrom 'kaniko-slim-arm64'
             }
           }
