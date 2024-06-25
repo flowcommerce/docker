@@ -544,7 +544,7 @@ pipeline {
     } 
 
     // Multi archtecture play builder jammy docker image build in parallel, manifest-tool push multi platform container image reference
-    stage('build Multi arch docker play builder java 17 docker images') {
+    stage('build Multi arch docker play builder Jammy java 17 docker images') {
       parallel {
         stage('Upgrade docker play builder java 17 - Ubuntu Jammy') {
           // when { branch 'main' }
