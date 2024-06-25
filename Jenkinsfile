@@ -36,7 +36,7 @@ pipeline {
     stage('Multi arch Upgrade node docker image 12') {
       parallel {
         stage('Upgrade node docker image 12 amd64') {
-          // when { branch 'main' }
+          when { branch 'main' }
           agent {
             kubernetes {
               label 'docker-image-12'
@@ -68,7 +68,7 @@ pipeline {
           }
         }
         stage('Upgrade node docker image 12 arm64') {
-          // when { branch 'main' }
+          when { branch 'main' }
           agent {
             kubernetes {
               label 'docker-image-12-arm64'
@@ -103,7 +103,7 @@ pipeline {
     }
     
     stage('manifest tool step for Node 12 docker images') {
-      //when {branch 'main'}
+      when {branch 'main'}
       agent {
         kubernetes {
           label 'manifest-tool-play-images'
@@ -133,7 +133,7 @@ pipeline {
     stage('Multi arch Upgrade node docker image 16') {
       parallel {
         stage('Upgrade node docker image 16 amd64') {
-          // when { branch 'main' }
+          when { branch 'main' }
           agent {
             kubernetes {
               label 'docker-image-16'
@@ -165,7 +165,7 @@ pipeline {
           }
         }
         stage('Upgrade node docker image 16 arm64') {
-          // when { branch 'main' }
+          when { branch 'main' }
           agent {
             kubernetes {
               label 'docker-image-16-arm64'
@@ -200,7 +200,7 @@ pipeline {
     }
     
     stage('manifest tool step for Node 16 docker images') {
-      //when {branch 'main'}
+      when {branch 'main'}
       agent {
         kubernetes {
           label 'manifest-tool-play-images'
@@ -230,7 +230,7 @@ pipeline {
     stage('Multi arch Upgrade node docker image 18') {
       parallel {
         stage('Upgrade node docker image 18 amd64') {
-          // when { branch 'main' }
+          when { branch 'main' }
           agent {
             kubernetes {
               label 'docker-image-18'
@@ -262,7 +262,7 @@ pipeline {
           }
         }
         stage('Upgrade node docker image 18 arm64') {
-          // when { branch 'main' }
+          when { branch 'main' }
           agent {
             kubernetes {
               label 'docker-image-18-arm64'
@@ -297,7 +297,7 @@ pipeline {
     }
     
     stage('manifest tool step for Node 18 docker images') {
-      //when {branch 'main'}
+      when {branch 'main'}
       agent {
         kubernetes {
           label 'manifest-tool-play-images'
@@ -327,7 +327,7 @@ pipeline {
     stage('Multi arch Upgrade node docker image 20') {
       parallel {
         stage('Upgrade node docker image 20 amd64') {
-          // when { branch 'main' }
+          when { branch 'main' }
           agent {
             kubernetes {
               label 'docker-image-20'
@@ -359,7 +359,7 @@ pipeline {
           }
         }
         stage('Upgrade node docker image 20 arm64') {
-          //when { branch 'main' }
+          when { branch 'main' }
           agent {
             kubernetes {
               label 'docker-image-20-arm64'
@@ -394,7 +394,7 @@ pipeline {
     }
     
     stage('manifest tool step for Node 20 docker images') {
-      //when {branch 'main'}
+      when {branch 'main'}
       agent {
         kubernetes {
           label 'manifest-tool-play-images'
@@ -424,7 +424,7 @@ pipeline {
     stage('Multi platform Upgrade node docker builder image 12') {
       parallel {
         stage('Upgrade node docker builder image 12 amd64') {
-          //when { branch 'main' }
+          when { branch 'main' }
           agent {
             kubernetes {
               label 'docker-builder-image-12'
@@ -457,7 +457,7 @@ pipeline {
           }
         }
         stage('Upgrade node docker builder image 12 arm64') {
-          //when { branch 'main' }
+          when { branch 'main' }
           agent {
             kubernetes {
               label 'docker-builder-image-12-arm64'
@@ -493,7 +493,7 @@ pipeline {
     }
     
     stage('manifest tool step for Node 12 docker builder images') {
-      //when {branch 'main'}
+      when {branch 'main'}
       agent {
         kubernetes {
           label 'manifest-tool-play-images'
@@ -523,7 +523,7 @@ pipeline {
     stage('Multi platform Upgrade node docker builder image 16') {
       parallel {
         stage('Upgrade node docker builder image 16 amd64') {
-          //when { branch 'main' }
+          when { branch 'main' }
           agent {
             kubernetes {
               label 'docker-builder-image-16'
@@ -556,7 +556,7 @@ pipeline {
           }
         }
         stage('Upgrade node docker builder image 16 arm64') {
-          //when { branch 'main' }
+          when { branch 'main' }
           agent {
             kubernetes {
               label 'docker-builder-image-16-arm64'
@@ -592,7 +592,7 @@ pipeline {
     }
     
     stage('manifest tool step for Node 16 docker builder images') {
-      //when {branch 'main'}
+      when {branch 'main'}
       agent {
         kubernetes {
           label 'manifest-tool-play-images'
@@ -622,7 +622,7 @@ pipeline {
     stage('Multi platform Upgrade node docker builder image 18') {
       parallel {
         stage('Upgrade node docker builder image 18 amd64') {
-          //when { branch 'main' }
+          when { branch 'main' }
           agent {
             kubernetes {
               label 'docker-builder-image-18'
@@ -655,7 +655,7 @@ pipeline {
           }
         }
         stage('Upgrade node docker builder image 18 arm64') {
-          //when { branch 'main' }
+          when { branch 'main' }
           agent {
             kubernetes {
               label 'docker-builder-image-18-arm64'
@@ -691,7 +691,7 @@ pipeline {
     }
     
     stage('manifest tool step for Node 18 docker builder images') {
-      //when {branch 'main'}
+      when {branch 'main'}
       agent {
         kubernetes {
           label 'manifest-tool-play-images'
@@ -721,7 +721,7 @@ pipeline {
     stage('Multi platform Upgrade node docker builder image 20') {
       parallel {
         stage('Upgrade  amd64 node docker builder image 20') {
-          //when { branch 'main' }
+          when { branch 'main' }
           agent {
             kubernetes {
               label 'docker-builder-image-20'
@@ -754,7 +754,7 @@ pipeline {
           }
         }
         stage('Upgrade arm64 node docker builder image 20') {
-          //when { branch 'main' }
+          when { branch 'main' }
           agent {
             kubernetes {
               label 'docker-builder-image-20-arm64'
@@ -790,7 +790,7 @@ pipeline {
     }
 
     stage('manifest tool step for Node 20 docker builder images') {
-      //when {branch 'main'}
+      when {branch 'main'}
       agent {
         kubernetes {
           label 'manifest-tool-play-images'
@@ -821,7 +821,7 @@ pipeline {
     stage('build Multi arch play java 17 docker images') {
       parallel {
         stage('Upgrade amd64 docker play java 17') {
-          //when { branch 'main' }
+          when { branch 'main' }
           agent {
             kubernetes {
               label 'docker-play-17'
@@ -849,7 +849,7 @@ pipeline {
           }
         }
         stage('Upgrade arm64 docker play java 17') {
-          //when { branch 'main' }
+          when { branch 'main' }
           agent {
             kubernetes {
               label 'docker-play-17-arm64'
@@ -879,7 +879,7 @@ pipeline {
       }
     }
     stage('manifest tool step for play docker images') {
-      //when {branch 'main'}
+      when {branch 'main'}
       agent {
         kubernetes {
           label 'manifest-tool-play-images'
@@ -909,7 +909,7 @@ pipeline {
     // use play_builder:latest-java20-jammy
 
     stage('Upgrade amd64 docker play builder java 17') {
-      // when { branch 'main' }
+      when { branch 'main' }
       agent {
         kubernetes {
           label 'docker-play-builder-17'
@@ -941,7 +941,7 @@ pipeline {
     stage('build Multi arch docker play builder Jammy java 17 docker images') {
       parallel {
         stage('Upgrade docker play builder java 17 - Ubuntu Jammy') {
-          // when { branch 'main' }
+          when { branch 'main' }
           agent {
             kubernetes {
               label 'docker-play-builder-17-jammy'
@@ -973,7 +973,7 @@ pipeline {
           }
         }
         stage('Upgrade docker play builder java 17 - Ubuntu Jammy arm64') {
-          // when { branch 'main' }
+          when { branch 'main' }
           agent {
             kubernetes {
               label 'docker-play-builder-17-jammy-arm64'
@@ -1007,7 +1007,7 @@ pipeline {
       }
     }
     stage('manifest tool step for play builder jammy docker images') {
-      //when {branch 'main'}
+      when {branch 'main'}
       agent {
         kubernetes {
           label 'manifest-tool-play-images'
@@ -1033,18 +1033,18 @@ pipeline {
       }
     }
   }
-  // post {
-  //   failure {
-  //     withCredentials([string(credentialsId: 'slack-team-foundation-notifications-token', variable: 'slackToken')]) {
-  //       slackSend(
-  //         channel: "#team-foundation-notifications",
-  //         teamDomain: 'flowio.slack.com',
-  //         baseUrl: 'https://flowio.slack.com/services/hooks/jenkins-ci/',
-  //         token: slackToken,
-  //         color: "#ff0000",
-  //         message: "Build of base docker images failed. Please see https://jenkins.flo.pub/blue/organizations/jenkins/flowcommerce%2Fdocker/activity for details."
-  //       )
-  //     }
-  //   }
-  // }
+  post {
+    failure {
+      withCredentials([string(credentialsId: 'slack-team-foundation-notifications-token', variable: 'slackToken')]) {
+        slackSend(
+          channel: "#team-foundation-notifications",
+          teamDomain: 'flowio.slack.com',
+          baseUrl: 'https://flowio.slack.com/services/hooks/jenkins-ci/',
+          token: slackToken,
+          color: "#ff0000",
+          message: "Build of base docker images failed. Please see https://jenkins.flo.pub/blue/organizations/jenkins/flowcommerce%2Fdocker/activity for details."
+        )
+      }
+    }
+  }
 }
