@@ -789,7 +789,7 @@ pipeline {
       }
     }
 
-    stage('manifest tool step for Node 20 docker images') {
+    stage('manifest tool step for Node 20 docker builder images') {
       //when {branch 'main'}
       agent {
         kubernetes {
