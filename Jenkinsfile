@@ -33,101 +33,101 @@ pipeline {
     }
 
     // Multi archtecture node 12  docker  image build in parallel, manifest-tool push multi platform container image reference
-    stage('Multi arch Upgrade node docker image 12') {
-      parallel {
-        stage('Upgrade node docker image 12 amd64') {
-          when { branch 'main' }
-          agent {
-            kubernetes {
-              label 'docker-image-12'
-              inheritFrom 'kaniko-slim'
-            }
-          }
-          steps {
-            script {
-              withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
-                withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
-                  sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider-version.txt"""
-                  sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider.jar"""
-                  s3Download(file:'./.npmrc', bucket:'io.flow.infra', path:'npm/flowtech.npmrc')
-                }
-              }
-            }
-            container('kaniko') {
-              script {
-                semver = VERSION.printable()
-                env.NODEVERSION = "12"
-                sh """/kaniko/executor -f `pwd`/Dockerfile-node -c `pwd` \
-                  --snapshot-mode=redo --use-new-run  \
-                  --build-arg NODE_VERSION=${NODEVERSION} \
-                  --destination flowdocker/node${NODEVERSION}-amd64:$semver \
-                  --destination flowdocker/node${NODEVERSION}-amd64:latest
-                """
-              }
-            }
-          }
-        }
-        stage('Upgrade node docker image 12 arm64') {
-          when { branch 'main' }
-          agent {
-            kubernetes {
-              label 'docker-image-12-arm64'
-              inheritFrom 'kaniko-slim-arm64'
-            }
-          }
-          steps {
-            script {
-              withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
-                withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
-                  sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider-version.txt"""
-                  sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider.jar"""
-                  s3Download(file:'./.npmrc', bucket:'io.flow.infra', path:'npm/flowtech.npmrc')
-                }
-              }
-            }
-            container('kaniko') {
-              script {
-                semver = VERSION.printable()
-                env.NODEVERSION = "12"
-                sh """/kaniko/executor -f `pwd`/Dockerfile-node -c `pwd` \
-                  --snapshot-mode=redo --use-new-run  \
-                  --build-arg NODE_VERSION=${NODEVERSION} \
-                  --destination flowdocker/node${NODEVERSION}-arm64:$semver \
-                  --destination flowdocker/node${NODEVERSION}-arm64:latest
-                """
-              }
-            }
-          }
-        }
-      }
-    }
+    // stage('Multi arch Upgrade node docker image 12') {
+    //   parallel {
+    //     stage('Upgrade node docker image 12 amd64') {
+    //       when { branch 'main' }
+    //       agent {
+    //         kubernetes {
+    //           label 'docker-image-12'
+    //           inheritFrom 'kaniko-slim'
+    //         }
+    //       }
+    //       steps {
+    //         script {
+    //           withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
+    //             withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
+    //               sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider-version.txt"""
+    //               sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider.jar"""
+    //               s3Download(file:'./.npmrc', bucket:'io.flow.infra', path:'npm/flowtech.npmrc')
+    //             }
+    //           }
+    //         }
+    //         container('kaniko') {
+    //           script {
+    //             semver = VERSION.printable()
+    //             env.NODEVERSION = "12"
+    //             sh """/kaniko/executor -f `pwd`/Dockerfile-node -c `pwd` \
+    //               --snapshot-mode=redo --use-new-run  \
+    //               --build-arg NODE_VERSION=${NODEVERSION} \
+    //               --destination flowdocker/node${NODEVERSION}-amd64:$semver \
+    //               --destination flowdocker/node${NODEVERSION}-amd64:latest
+    //             """
+    //           }
+    //         }
+    //       }
+    //     }
+    //     stage('Upgrade node docker image 12 arm64') {
+    //       when { branch 'main' }
+    //       agent {
+    //         kubernetes {
+    //           label 'docker-image-12-arm64'
+    //           inheritFrom 'kaniko-slim-arm64'
+    //         }
+    //       }
+    //       steps {
+    //         script {
+    //           withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
+    //             withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
+    //               sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider-version.txt"""
+    //               sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider.jar"""
+    //               s3Download(file:'./.npmrc', bucket:'io.flow.infra', path:'npm/flowtech.npmrc')
+    //             }
+    //           }
+    //         }
+    //         container('kaniko') {
+    //           script {
+    //             semver = VERSION.printable()
+    //             env.NODEVERSION = "12"
+    //             sh """/kaniko/executor -f `pwd`/Dockerfile-node -c `pwd` \
+    //               --snapshot-mode=redo --use-new-run  \
+    //               --build-arg NODE_VERSION=${NODEVERSION} \
+    //               --destination flowdocker/node${NODEVERSION}-arm64:$semver \
+    //               --destination flowdocker/node${NODEVERSION}-arm64:latest
+    //             """
+    //           }
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
     
-    stage('manifest tool step for Node 12 docker images') {
-      when {branch 'main'}
-      agent {
-        kubernetes {
-          label 'manifest-tool-play-images'
-          inheritFrom 'kaniko-slim-arm64'
-        }
-      }
-      steps {
-        container('kaniko') {
-          script {
-            semver = VERSION.printable()
-            env.NODEVERSION = "12"
-            sh """
-              wget https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz
-              gunzip binaries-manifest-tool-2.0.8.tar.gz
-              tar -xvf binaries-manifest-tool-2.0.8.tar
-              mv manifest-tool-linux-arm64 manifest-tool
-              chmod +x manifest-tool
-              ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/node${NODEVERSION}-ARCH:$semver --target flowdocker/node${NODEVERSION}:$semver
-              ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/node${NODEVERSION}-ARCH:latest --target flowdocker/node${NODEVERSION}:latest
-              """
-          }
-        }
-      }
-    } 
+    // stage('manifest tool step for Node 12 docker images') {
+    //   when {branch 'main'}
+    //   agent {
+    //     kubernetes {
+    //       label 'manifest-tool-play-images'
+    //       inheritFrom 'kaniko-slim-arm64'
+    //     }
+    //   }
+    //   steps {
+    //     container('kaniko') {
+    //       script {
+    //         semver = VERSION.printable()
+    //         env.NODEVERSION = "12"
+    //         sh """
+    //           wget https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz
+    //           gunzip binaries-manifest-tool-2.0.8.tar.gz
+    //           tar -xvf binaries-manifest-tool-2.0.8.tar
+    //           mv manifest-tool-linux-arm64 manifest-tool
+    //           chmod +x manifest-tool
+    //           ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/node${NODEVERSION}-ARCH:$semver --target flowdocker/node${NODEVERSION}:$semver
+    //           ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/node${NODEVERSION}-ARCH:latest --target flowdocker/node${NODEVERSION}:latest
+    //           """
+    //       }
+    //     }
+    //   }
+    // } 
     
     // Multi archtecture node 16  docker  image build in parallel, manifest-tool push multi platform container image reference
     stage('Multi arch Upgrade node docker image 16') {
