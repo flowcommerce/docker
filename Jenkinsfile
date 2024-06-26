@@ -36,7 +36,7 @@ pipeline {
     stage('Multi arch Upgrade node docker image 18') {
       parallel {
         stage('Upgrade node docker image 18 amd64') {
-          //when { branch 'main' }
+          when { branch 'main' }
           agent {
             kubernetes {
               label 'docker-image-18'
@@ -68,7 +68,7 @@ pipeline {
           }
         }
         stage('Upgrade node docker image 18 arm64') {
-          //when { branch 'main' }
+          when { branch 'main' }
           agent {
             kubernetes {
               label 'docker-image-18-arm64'
@@ -103,7 +103,7 @@ pipeline {
     }
     
     stage('manifest tool step for Node 18 docker images') {
-      // when {branch 'main'}
+      when {branch 'main'}
       steps {
         container('kaniko') {
           script {
@@ -129,7 +129,7 @@ pipeline {
     stage('Multi arch Upgrade node docker image 20') {
       parallel {
         stage('Upgrade node docker image 20 amd64') {
-          // when { branch 'main' }
+          when { branch 'main' }
           agent {
             kubernetes {
               label 'docker-image-20'
@@ -161,7 +161,7 @@ pipeline {
           }
         }
         stage('Upgrade node docker image 20 arm64') {
-          // when { branch 'main' }
+          when { branch 'main' }
           agent {
             kubernetes {
               label 'docker-image-20-arm64'
@@ -196,7 +196,7 @@ pipeline {
     }
     
     stage('manifest tool step for Node 20 docker images') {
-      // when {branch 'main'}
+      when {branch 'main'}
       steps {
         container('kaniko') {
           script {
@@ -298,11 +298,13 @@ pipeline {
             semver = VERSION.printable()
             env.NODEVERSION = "18"
             sh """
-              wget https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz
-              gunzip binaries-manifest-tool-2.0.8.tar.gz
-              tar -xvf binaries-manifest-tool-2.0.8.tar
-              mv manifest-tool-linux-amd64 manifest-tool
-              chmod +x manifest-tool
+              if ! [ -f manifest-tool ]; then
+                wget https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz
+                gunzip binaries-manifest-tool-2.0.8.tar.gz
+                tar -xvf binaries-manifest-tool-2.0.8.tar
+                mv manifest-tool-linux-amd64 manifest-tool
+                chmod +x manifest-tool
+              fi          
               ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/node${NODEVERSION}_builder_ARCH:$semver --target flowdocker/node${NODEVERSION}_builder:$semver
               ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/node${NODEVERSION}_builder_ARCH:latest --target flowdocker/node${NODEVERSION}_builder:latest
               """
@@ -391,11 +393,13 @@ pipeline {
             semver = VERSION.printable()
             env.NODEVERSION = "20"
             sh """
-              wget https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz
-              gunzip binaries-manifest-tool-2.0.8.tar.gz
-              tar -xvf binaries-manifest-tool-2.0.8.tar
-              mv manifest-tool-linux-amd64 manifest-tool
-              chmod +x manifest-tool
+              if ! [ -f manifest-tool ]; then
+                wget https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz
+                gunzip binaries-manifest-tool-2.0.8.tar.gz
+                tar -xvf binaries-manifest-tool-2.0.8.tar
+                mv manifest-tool-linux-amd64 manifest-tool
+                chmod +x manifest-tool
+              fi          
               ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/node${NODEVERSION}_builder_ARCH:$semver --target flowdocker/node${NODEVERSION}_builder:$semver
               ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/node${NODEVERSION}_builder_ARCH:latest --target flowdocker/node${NODEVERSION}_builder:latest
               """
@@ -474,11 +478,13 @@ pipeline {
             semver = VERSION.printable()
             env.JAVAVERSION = "17"
             sh """
-              wget https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz
-              gunzip binaries-manifest-tool-2.0.8.tar.gz
-              tar -xvf binaries-manifest-tool-2.0.8.tar
-              mv manifest-tool-linux-amd64 manifest-tool
-              chmod +x manifest-tool
+              if ! [ -f manifest-tool ]; then
+                wget https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz
+                gunzip binaries-manifest-tool-2.0.8.tar.gz
+                tar -xvf binaries-manifest-tool-2.0.8.tar
+                mv manifest-tool-linux-amd64 manifest-tool
+                chmod +x manifest-tool
+              fi
               ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/play-ARCH:$semver-java${JAVAVERSION} --target flowdocker/play:$semver-java${JAVAVERSION}
               ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/play-ARCH:latest-java${JAVAVERSION} --target flowdocker/play:latest-java${JAVAVERSION}
               """
@@ -596,11 +602,13 @@ pipeline {
             semver = VERSION.printable()
             env.JAVAVERSION = "17"
             sh """
-              wget https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz
-              gunzip binaries-manifest-tool-2.0.8.tar.gz
-              tar -xvf binaries-manifest-tool-2.0.8.tar
-              mv manifest-tool-linux-amd64 manifest-tool
-              chmod +x manifest-tool
+              if ! [ -f manifest-tool ]; then
+                wget https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz
+                gunzip binaries-manifest-tool-2.0.8.tar.gz
+                tar -xvf binaries-manifest-tool-2.0.8.tar
+                mv manifest-tool-linux-amd64 manifest-tool
+                chmod +x manifest-tool
+              fi          
               ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/play_builder_ARCH:$semver-java${JAVAVERSION}-jammy --target flowdocker/play_builder:$semver-java${JAVAVERSION}-jammy
               ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/play_builder_ARCH:latest-java${JAVAVERSION}-jammy --target flowdocker/play_builder:latest-java${JAVAVERSION}-jammy
               """
@@ -609,18 +617,18 @@ pipeline {
       }
     }
   }
-  // post {
-  //   failure {
-  //     withCredentials([string(credentialsId: 'slack-team-foundation-notifications-token', variable: 'slackToken')]) {
-  //       slackSend(
-  //         channel: "#team-foundation-notifications",
-  //         teamDomain: 'flowio.slack.com',
-  //         baseUrl: 'https://flowio.slack.com/services/hooks/jenkins-ci/',
-  //         token: slackToken,
-  //         color: "#ff0000",
-  //         message: "Build of base docker images failed. Please see https://jenkins.flo.pub/blue/organizations/jenkins/flowcommerce%2Fdocker/activity for details."
-  //       )
-  //     }
-  //   }
-  // }
+  post {
+    failure {
+      withCredentials([string(credentialsId: 'slack-team-foundation-notifications-token', variable: 'slackToken')]) {
+        slackSend(
+          channel: "#team-foundation-notifications",
+          teamDomain: 'flowio.slack.com',
+          baseUrl: 'https://flowio.slack.com/services/hooks/jenkins-ci/',
+          token: slackToken,
+          color: "#ff0000",
+          message: "Build of base docker images failed. Please see https://jenkins.flo.pub/blue/organizations/jenkins/flowcommerce%2Fdocker/activity for details."
+        )
+      }
+    }
+  }
 }
