@@ -110,11 +110,13 @@ pipeline {
             semver = VERSION.printable()
             env.NODEVERSION = "18"
             sh """
-              wget https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz
-              gunzip binaries-manifest-tool-2.0.8.tar.gz
-              tar -xvf binaries-manifest-tool-2.0.8.tar
-              mv manifest-tool-linux-amd64 manifest-tool
-              chmod +x manifest-tool
+              if ! [ -f manifest-tool ]; then
+                wget https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz
+                gunzip binaries-manifest-tool-2.0.8.tar.gz
+                tar -xvf binaries-manifest-tool-2.0.8.tar
+                mv manifest-tool-linux-amd64 manifest-tool
+                chmod +x manifest-tool
+              fi          
               ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/node${NODEVERSION}-ARCH:$semver --target flowdocker/node${NODEVERSION}:$semver
               ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/node${NODEVERSION}-ARCH:latest --target flowdocker/node${NODEVERSION}:latest
               """
@@ -201,11 +203,13 @@ pipeline {
             semver = VERSION.printable()
             env.NODEVERSION = "20"
             sh """
-              wget https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz
-              gunzip binaries-manifest-tool-2.0.8.tar.gz
-              tar -xvf binaries-manifest-tool-2.0.8.tar
-              mv manifest-tool-linux-amd64 manifest-tool
-              chmod +x manifest-tool
+              if ! [ -f manifest-tool ]; then
+                wget https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz
+                gunzip binaries-manifest-tool-2.0.8.tar.gz
+                tar -xvf binaries-manifest-tool-2.0.8.tar
+                mv manifest-tool-linux-amd64 manifest-tool
+                chmod +x manifest-tool
+              fi            
               ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/node${NODEVERSION}-ARCH:$semver --target flowdocker/node${NODEVERSION}:$semver
               ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/node${NODEVERSION}-ARCH:latest --target flowdocker/node${NODEVERSION}:latest
               """
@@ -294,11 +298,13 @@ pipeline {
             semver = VERSION.printable()
             env.NODEVERSION = "18"
             sh """
-              wget https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz
-              gunzip binaries-manifest-tool-2.0.8.tar.gz
-              tar -xvf binaries-manifest-tool-2.0.8.tar
-              mv manifest-tool-linux-amd64 manifest-tool
-              chmod +x manifest-tool
+              if ! [ -f manifest-tool ]; then
+                wget https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz
+                gunzip binaries-manifest-tool-2.0.8.tar.gz
+                tar -xvf binaries-manifest-tool-2.0.8.tar
+                mv manifest-tool-linux-amd64 manifest-tool
+                chmod +x manifest-tool
+              fi          
               ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/node${NODEVERSION}_builder_ARCH:$semver --target flowdocker/node${NODEVERSION}_builder:$semver
               ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/node${NODEVERSION}_builder_ARCH:latest --target flowdocker/node${NODEVERSION}_builder:latest
               """
@@ -387,11 +393,13 @@ pipeline {
             semver = VERSION.printable()
             env.NODEVERSION = "20"
             sh """
-              wget https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz
-              gunzip binaries-manifest-tool-2.0.8.tar.gz
-              tar -xvf binaries-manifest-tool-2.0.8.tar
-              mv manifest-tool-linux-amd64 manifest-tool
-              chmod +x manifest-tool
+              if ! [ -f manifest-tool ]; then
+                wget https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz
+                gunzip binaries-manifest-tool-2.0.8.tar.gz
+                tar -xvf binaries-manifest-tool-2.0.8.tar
+                mv manifest-tool-linux-amd64 manifest-tool
+                chmod +x manifest-tool
+              fi          
               ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/node${NODEVERSION}_builder_ARCH:$semver --target flowdocker/node${NODEVERSION}_builder:$semver
               ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/node${NODEVERSION}_builder_ARCH:latest --target flowdocker/node${NODEVERSION}_builder:latest
               """
@@ -470,11 +478,13 @@ pipeline {
             semver = VERSION.printable()
             env.JAVAVERSION = "17"
             sh """
-              wget https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz
-              gunzip binaries-manifest-tool-2.0.8.tar.gz
-              tar -xvf binaries-manifest-tool-2.0.8.tar
-              mv manifest-tool-linux-amd64 manifest-tool
-              chmod +x manifest-tool
+              if ! [ -f manifest-tool ]; then
+                wget https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz
+                gunzip binaries-manifest-tool-2.0.8.tar.gz
+                tar -xvf binaries-manifest-tool-2.0.8.tar
+                mv manifest-tool-linux-amd64 manifest-tool
+                chmod +x manifest-tool
+              fi
               ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/play-ARCH:$semver-java${JAVAVERSION} --target flowdocker/play:$semver-java${JAVAVERSION}
               ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/play-ARCH:latest-java${JAVAVERSION} --target flowdocker/play:latest-java${JAVAVERSION}
               """
@@ -592,11 +602,13 @@ pipeline {
             semver = VERSION.printable()
             env.JAVAVERSION = "17"
             sh """
-              wget https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz
-              gunzip binaries-manifest-tool-2.0.8.tar.gz
-              tar -xvf binaries-manifest-tool-2.0.8.tar
-              mv manifest-tool-linux-amd64 manifest-tool
-              chmod +x manifest-tool
+              if ! [ -f manifest-tool ]; then
+                wget https://github.com/estesp/manifest-tool/releases/download/v2.0.8/binaries-manifest-tool-2.0.8.tar.gz
+                gunzip binaries-manifest-tool-2.0.8.tar.gz
+                tar -xvf binaries-manifest-tool-2.0.8.tar
+                mv manifest-tool-linux-amd64 manifest-tool
+                chmod +x manifest-tool
+              fi          
               ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/play_builder_ARCH:$semver-java${JAVAVERSION}-jammy --target flowdocker/play_builder:$semver-java${JAVAVERSION}-jammy
               ./manifest-tool push from-args --platforms linux/amd64,linux/arm64 --template flowdocker/play_builder_ARCH:latest-java${JAVAVERSION}-jammy --target flowdocker/play_builder:latest-java${JAVAVERSION}-jammy
               """
