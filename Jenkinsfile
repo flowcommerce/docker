@@ -533,7 +533,7 @@ pipeline {
           agent {
             kubernetes {
               label 'docker-play-builder-17-jammy'
-              inheritFrom 'kaniko-slim'
+              inheritFrom 'kaniko-slim-2xl'
             }
           }
           steps {
@@ -565,7 +565,7 @@ pipeline {
           agent {
             kubernetes {
               label 'docker-play-builder-17-jammy-arm64'
-              inheritFrom 'kaniko-slim-arm64'
+              inheritFrom 'kaniko-slim-2xl-arm64'
             }
           }
           steps {
