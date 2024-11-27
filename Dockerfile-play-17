@@ -5,6 +5,9 @@ LABEL maintainer="tech@flow.io"
 RUN apt update && apt upgrade -y && \
     sed -i s/#networkaddress.cache.ttl=-1/networkaddress.cache.ttl=10/ $JAVA_HOME/conf/security/java.security
 
+# Set TCP Keepalive
+RUN printf '\n# detect dead connections after 70 seconds\nnet.ipv4.tcp_keepalive_time = 60\nnet.ipv4.tcp_keepalive_intvl = 5\nnet.ipv4.tcp_keepalive_probes = 3\n' >> /etc/sysctl.conf
+
 COPY environment-provider.jar .
 COPY environment-provider-version.txt .
 RUN mv environment-provider.jar /root/
