@@ -46,7 +46,7 @@ pipeline {
           steps {
             script {
               withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
-                withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
+                withAWS(roleAccount: '479720515435', role: 'flow-prod-eks-production-jenkins-role') {
                   sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider-version.txt"""
                   sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider.jar"""
                   s3Download(file:'./.npmrc', bucket:'io.flow.infra', path:'npm/flowtech.npmrc')
@@ -78,7 +78,7 @@ pipeline {
           steps {
             script {
               withCredentials([string(credentialsId: "jenkins-hub-api-token", variable: 'GITHUB_TOKEN')]){
-                withAWS(roleAccount: '479720515435', role: 'jenkins-build') {
+                withAWS(roleAccount: '479720515435', role: 'flow-prod-eks-production-jenkins-role') {
                   sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider-version.txt"""
                   sh """curl -O https://cdn.flow.io/util/environment-provider/environment-provider.jar"""
                   s3Download(file:'./.npmrc', bucket:'io.flow.infra', path:'npm/flowtech.npmrc')
