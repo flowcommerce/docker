@@ -501,7 +501,7 @@ pipeline {
       agent {
         kubernetes {
           label 'docker-play-builder-17'
-          inheritFrom 'kaniko-slim'
+          inheritFrom 'kaniko-slim-2xl'
         }
       }
       steps {
