@@ -90,9 +90,6 @@ COPY --from=builder /root/.cache/ .cache/.
 COPY --from=builder /amm /usr/bin/amm
 RUN chmod +x /usr/bin/amm
 
-#Dev tool
-COPY --from=builder /root/go/bin/dev /usr/bin/dev
-
 #API Builder Setup
 
 COPY --from=builder /root/apibuilder-cli /opt/apibuilder-cli
