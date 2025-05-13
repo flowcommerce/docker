@@ -50,9 +50,6 @@ RUN curl -sL "https://github.com/sbt/sbt/releases/download/v$SBT_VERSION/sbt-$SB
 RUN ln -s /usr/local/sbt/bin/sbt /usr/local/bin/sbt
 RUN chmod 0755 /usr/local/bin/sbt
 RUN curl -L -o /amm https://github.com/lihaoyi/Ammonite/releases/download/$AMMONITE_VERSION/${SCALA_VERSION}-$AMMONITE_VERSION
-RUN git clone "https://$GITHUB_TOKEN@github.com/flowcommerce/tools.git" && \
-    cd tools && \
-    make install
 RUN for repo in $PROJECTS_TO_BUILD; do echo $repo; git clone --depth 1 https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/flowcommerce/$repo.git; cd $repo; sbt update; cd -; done
 
 
