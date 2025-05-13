@@ -18,12 +18,6 @@ RUN apk update && apk upgrade && \
     npm install -g forever && \
     apk add --no-cache --update aws-cli python3 py-pip ca-certificates musl-dev git go make build-base curl
 
-RUN git clone "https://$GITHUB_TOKEN@github.com/flowcommerce/tools" && \
-    cd tools && \
-    make install && \
-    cd .. && \
-    rm -rf tools # to remove the token
-
 RUN mkdir -p /opt/node/log
 COPY .npmrc /opt/node/.npmrc
 
